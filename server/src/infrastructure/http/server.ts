@@ -14,6 +14,7 @@ import { financeRoutes } from '../../interfaces/routes/finance.routes.js';
 import { goalRoutes } from '../../interfaces/routes/goal.routes.js';
 import { eventRoutes } from '../../interfaces/routes/event.routes.js';
 import { profileRoutes } from '../../interfaces/routes/profile.routes.js';
+import { trainingPlanRoutes } from '../../interfaces/routes/training.routes.js';
 
 export function createServer(): Application {
   const app = express();
@@ -49,6 +50,7 @@ export function createServer(): Application {
   app.use('/api/goals', goalRoutes);
   app.use('/api/events', eventRoutes);
   app.use('/api/profile', profileRoutes);
+  app.use('/api/training-plans', trainingPlanRoutes);
 
   // 404 handler
   app.use(notFoundMiddleware);
