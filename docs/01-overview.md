@@ -42,20 +42,20 @@ Strava Sync ─→ Activity ─→ Bike (update km)
 
 ### MVP (Phase 1)
 
-| # | Modul | Fungsi Utama |
-|---|---|---|
-| 1 | **Activity Tracking** | Sync aktivitas dari Strava, statistik, peta rute interaktif, riwayat |
-| 2 | **Bike & Gear Inventory** | Multi-sepeda, komponen (rantai, ban, dll), umur pakai berbasis jarak, status |
-| 3 | **Maintenance Log** | Service log, reminder berbasis jarak/waktu, prediksi penggantian komponen |
-| 4 | **Finance Tracker** | Pengeluaran (IDR), kategori (gear/maintenance/event), budget bulanan, laporan |
-| 7 | **Dashboard ERP** | Overview KPI multi-modul, alert maintenance, summary keuangan, recent activities |
+| #   | Modul                     | Fungsi Utama                                                                     |
+| --- | ------------------------- | -------------------------------------------------------------------------------- |
+| 1   | **Activity Tracking**     | Sync aktivitas dari Strava, statistik, peta rute interaktif, riwayat             |
+| 2   | **Bike & Gear Inventory** | Multi-sepeda, komponen (rantai, ban, dll), umur pakai berbasis jarak, status     |
+| 3   | **Maintenance Log**       | Service log, reminder berbasis jarak/waktu, prediksi penggantian komponen        |
+| 4   | **Finance Tracker**       | Pengeluaran (IDR), kategori (gear/maintenance/event), budget bulanan, laporan    |
+| 7   | **Dashboard ERP**         | Overview KPI multi-modul, alert maintenance, summary keuangan, recent activities |
 
 ### Phase 2
 
-| # | Modul | Fungsi Utama |
-|---|---|---|
-| 5 | **Goals & Training** | Target jarak/bulan, target event, progres training, analisis performa |
-| 6 | **Events** | Kalender event sepeda (race, gran fondo, group ride), persiapan, hasil |
+| #   | Modul                | Fungsi Utama                                                           |
+| --- | -------------------- | ---------------------------------------------------------------------- |
+| 5   | **Goals & Training** | Target jarak/bulan, target event, progres training, analisis performa  |
+| 6   | **Events**           | Kalender event sepeda (race, gran fondo, group ride), persiapan, hasil |
 
 ---
 
@@ -72,14 +72,14 @@ Strava Sync ─→ Activity ─→ Bike (update km)
 
 Strava berperan sebagai **sumber data otomatis** untuk modul Activity, dan terhubung ke modul Inventory:
 
-| Modul | Koneksi Strava |
-|---|---|
-| Activity Tracking | Sync penuh — ambil semua aktivitas tipe `Ride` dari Strava |
+| Modul                 | Koneksi Strava                                                 |
+| --------------------- | -------------------------------------------------------------- |
+| Activity Tracking     | Sync penuh — ambil semua aktivitas tipe `Ride` dari Strava     |
 | Bike & Gear Inventory | Auto-update `current_km` sepeda & komponen saat aktivitas sync |
-| Maintenance Log | Tidak langsung — trigger dari Inventory wear tracking |
-| Finance Tracker | Manual — user input pengeluaran |
-| Goals & Training | Auto-update progres dari aktivitas yang tersync |
-| Events | Manual — user input event, bisa link ke aktivitas |
+| Maintenance Log       | Tidak langsung — trigger dari Inventory wear tracking          |
+| Finance Tracker       | Manual — user input pengeluaran                                |
+| Goals & Training      | Auto-update progres dari aktivitas yang tersync                |
+| Events                | Manual — user input event, bisa link ke aktivitas              |
 
 ---
 

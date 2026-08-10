@@ -6,14 +6,15 @@ Panduan step-by-step untuk menyiapkan environment development: Strava Developer,
 
 ## Prasyarat
 
-| Tool | Versi | Cara Cek |
-|---|---|---|
-| **Node.js** | 22+ (wajib, untuk Vite 8) | `node --version` |
-| **npm** | 10+ | `npm --version` |
-| **Git** | 2.40+ | `git --version` |
-| **VS Code** (opsional) | terbaru | — |
+| Tool                   | Versi                     | Cara Cek         |
+| ---------------------- | ------------------------- | ---------------- |
+| **Node.js**            | 22+ (wajib, untuk Vite 8) | `node --version` |
+| **npm**                | 10+                       | `npm --version`  |
+| **Git**                | 2.40+                     | `git --version`  |
+| **VS Code** (opsional) | terbaru                   | —                |
 
 ### VS Code Extensions (rekomendasi)
+
 - ESLint
 - Prettier - Code formatter
 - Tailwind CSS IntelliSense
@@ -61,11 +62,13 @@ Strava API gratis untuk penggunaan pribadi (limit: 200 req/15 menit, 1000 req/ha
 ### OAuth Scopes yang Dibutuhkan
 
 Aplikasi akan meminta scopes berikut saat user login:
+
 - `read` — baca profil
 - `activity:read_all` — baca semua aktivitas
 - `profile:read_all` — baca profil lengkap
 
 URL authorization:
+
 ```
 https://www.strava.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=read,activity:read_all,profile:read_all&approval_prompt=auto
 ```
@@ -159,11 +162,13 @@ cd ..
 ### Server (`server/.env`)
 
 Copy template:
+
 ```bash
 cp server/.env.example server/.env
 ```
 
 Edit `server/.env`:
+
 ```env
 # Server
 PORT=3001
@@ -187,6 +192,7 @@ CLIENT_URL=http://localhost:5173
 ```
 
 **Generate JWT_SECRET**:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
@@ -194,11 +200,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ### Client (`client/.env`)
 
 Copy template:
+
 ```bash
 cp client/.env.example client/.env
 ```
 
 Edit `client/.env`:
+
 ```env
 VITE_API_URL=http://localhost:3001
 ```
@@ -217,6 +225,7 @@ npm run dev
 ```
 
 Expected output:
+
 ```
 [tsx] Running in dev mode
 Server running on http://localhost:3001
@@ -230,6 +239,7 @@ npm run dev
 ```
 
 Expected output:
+
 ```
   VITE v8.2.1  ready in 342 ms
 
@@ -363,6 +373,7 @@ taskkill /PID <PID> /F
 ## Next Steps
 
 Setelah setup berhasil:
+
 1. Baca [Architecture](./03-architecture.md) untuk memahami struktur code
 2. Baca [Modules](./05-modules.md) untuk detail fitur per modul
 3. Baca [Implementation Phases](./09-implementation-phases.md) untuk roadmap development

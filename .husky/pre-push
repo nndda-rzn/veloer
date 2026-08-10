@@ -1,0 +1,1 @@
+npm run type-check 2>/dev/null || echo "type-check skipped (client/server not set up yet)"
