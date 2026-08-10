@@ -5,6 +5,8 @@ import { env } from '../../config/env.js';
 import { errorMiddleware } from '../../interfaces/middleware/error.middleware.js';
 import { notFoundMiddleware } from '../../interfaces/middleware/notFound.middleware.js';
 import { authRoutes } from '../../interfaces/routes/auth.routes.js';
+import { activityRoutes } from '../../interfaces/routes/activity.routes.js';
+import { syncRoutes } from '../../interfaces/routes/sync.routes.js';
 
 export function createServer(): Application {
   const app = express();
@@ -31,6 +33,8 @@ export function createServer(): Application {
 
   // API routes
   app.use('/api/auth', authRoutes);
+  app.use('/api/activities', activityRoutes);
+  app.use('/api/sync', syncRoutes);
 
   // 404 handler
   app.use(notFoundMiddleware);
