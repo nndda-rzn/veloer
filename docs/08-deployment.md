@@ -37,6 +37,7 @@ Vercel adalah platform terbaik untuk React + Vite, auto-deploy dari GitHub.
 ### Step-by-step
 
 1. **Push code ke GitHub**
+
    ```bash
    git push origin main
    ```
@@ -182,24 +183,24 @@ Supabase project yang dipakai di development bisa langsung dipakai di production
 
 ### Frontend (Vercel)
 
-| Var | Value | Contoh |
-|---|---|---|
+| Var            | Value                  | Contoh                                              |
+| -------------- | ---------------------- | --------------------------------------------------- |
 | `VITE_API_URL` | URL backend production | `https://tracking-sepeda-production.up.railway.app` |
 
 ### Backend (Railway/Render)
 
-| Var | Value | Contoh |
-|---|---|---|
-| `PORT` | Port server | `3001` |
-| `NODE_ENV` | Environment | `production` |
-| `STRAVA_CLIENT_ID` | Dari Strava API settings | `12345` |
-| `STRAVA_CLIENT_SECRET` | Dari Strava API settings | `abc123...` |
-| `STRAVA_REDIRECT_URI` | Backend URL + `/api/auth/callback` | `https://your-backend.railway.app/api/auth/callback` |
-| `SUPABASE_URL` | Dari Supabase dashboard | `https://xxxxxxxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Dari Supabase dashboard | `eyJhbGci...` |
-| `JWT_SECRET` | Random string 32+ chars | `a1b2c3d4...` |
-| `JWT_EXPIRES_IN` | Token expiry | `7d` |
-| `CLIENT_URL` | Frontend URL | `https://your-app.vercel.app` |
+| Var                         | Value                              | Contoh                                               |
+| --------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| `PORT`                      | Port server                        | `3001`                                               |
+| `NODE_ENV`                  | Environment                        | `production`                                         |
+| `STRAVA_CLIENT_ID`          | Dari Strava API settings           | `12345`                                              |
+| `STRAVA_CLIENT_SECRET`      | Dari Strava API settings           | `abc123...`                                          |
+| `STRAVA_REDIRECT_URI`       | Backend URL + `/api/auth/callback` | `https://your-backend.railway.app/api/auth/callback` |
+| `SUPABASE_URL`              | Dari Supabase dashboard            | `https://xxxxxxxx.supabase.co`                       |
+| `SUPABASE_SERVICE_ROLE_KEY` | Dari Supabase dashboard            | `eyJhbGci...`                                        |
+| `JWT_SECRET`                | Random string 32+ chars            | `a1b2c3d4...`                                        |
+| `JWT_EXPIRES_IN`            | Token expiry                       | `7d`                                                 |
+| `CLIENT_URL`                | Frontend URL                       | `https://your-app.vercel.app`                        |
 
 ---
 
@@ -208,10 +209,12 @@ Supabase project yang dipakai di development bisa langsung dipakai di production
 Setelah Vercel & Railway terhubung ke GitHub repo, auto-deploy otomatis:
 
 ### Vercel
+
 - Auto-deploy saat push ke `main` (production) dan `develop` (preview)
 - Setiap PR otomatis dapat preview URL
 
 ### Railway
+
 - Auto-deploy saat push ke `main`
 - Bisa config di Railway dashboard → Settings → Deploy
 
@@ -220,6 +223,7 @@ Setelah Vercel & Railway terhubung ke GitHub repo, auto-deploy otomatis:
 Lihat [GitFlow doc](./06-gitflow.md) untuk config CI/CD lengkap.
 
 `.github/workflows/deploy.yml`:
+
 ```yaml
 name: Deploy
 
@@ -254,11 +258,11 @@ jobs:
 
 Di GitHub repo → Settings → Secrets and variables → Actions:
 
-| Secret | Value |
-|---|---|
-| `VERCEL_TOKEN` | Generate di Vercel Account Settings → Tokens |
-| `RAILWAY_TOKEN` | Generate di Railway Account Settings → API Tokens |
-| `RAILWAY_SERVICE` | Service ID dari Railway dashboard |
+| Secret            | Value                                             |
+| ----------------- | ------------------------------------------------- |
+| `VERCEL_TOKEN`    | Generate di Vercel Account Settings → Tokens      |
+| `RAILWAY_TOKEN`   | Generate di Railway Account Settings → API Tokens |
+| `RAILWAY_SERVICE` | Service ID dari Railway dashboard                 |
 
 ---
 
@@ -280,23 +284,28 @@ Di GitHub repo → Settings → Secrets and variables → Actions:
 ## 8. Monitoring & Maintenance
 
 ### Vercel Analytics (free)
+
 - Vercel Dashboard → Analytics → Enable
 - Lihat traffic, performance, audience
 
 ### Railway Metrics
+
 - Railway dashboard → Metrics tab
 - Monitor CPU, memory, response time
 
 ### Supabase Usage
+
 - Supabase dashboard → Settings → Usage
 - Monitor database size, API requests, storage
 
 ### Strava API Rate Limit
+
 - Cek header response: `X-RateLimit-Limit` & `X-RateLimit-Usage`
 - Limit: 200 req/15min, 1000 req/hari
 - Jika mendekati limit, kurangi frekuensi sync
 
 ### Log Monitoring
+
 - Vercel: Dashboard → Functions → Logs
 - Railway: Dashboard → Logs tab
 - Backend: tambah logger (winston/pino) untuk structured logging

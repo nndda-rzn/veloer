@@ -9,6 +9,7 @@ Veloer adalah sistem ERP pribadi untuk mengelola seluruh siklus hidup hobi berse
 ## Ringkasan
 
 Bukan sekadar aplikasi tracking aktivitas, melainkan sistem terintegrasi yang menghubungkan:
+
 - **Aktivitas** bersepeda (sync dari Strava)
 - **Inventaris** sepeda & komponen
 - **Maintenance** log & jadwal
@@ -25,17 +26,17 @@ Semua modul saling terhubung. Contoh: aktivitas 50km hari ini otomatis update ja
 
 Dokumentasi lengkap ada di folder [`docs/`](./docs). Baca secara berurutan untuk memahami keseluruhan sistem:
 
-| # | Dokumen | Isi |
-|---|---|---|
-| 01 | [Overview](./docs/01-overview.md) | Visi, konsep ERP, daftar modul, relasi antar modul |
-| 02 | [Tech Stack](./docs/02-tech-stack.md) | Versi package terkunci, alasan pemilihan, kompatibilitas |
-| 03 | [Architecture](./docs/03-architecture.md) | Clean Architecture backend, feature-based frontend, struktur folder |
-| 04 | [Database Schema](./docs/04-database-schema.md) | 13 tabel, relasi, RLS, migration SQL |
-| 05 | [Modules](./docs/05-modules.md) | Detail 7 modul ERP, fitur, integrasi antar modul |
-| 06 | [GitFlow](./docs/06-gitflow.md) | Branch strategy, Conventional Commits, Husky, CI/CD |
-| 07 | [Setup Guide](./docs/07-setup-guide.md) | Strava Developer, Supabase, install, run dev |
-| 08 | [Deployment](./docs/08-deployment.md) | Vercel, Railway/Render, environment variables |
-| 09 | [Implementation Phases](./docs/09-implementation-phases.md) | 14 fase implementasi bertahap, branching plan |
+| #   | Dokumen                                                     | Isi                                                                 |
+| --- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| 01  | [Overview](./docs/01-overview.md)                           | Visi, konsep ERP, daftar modul, relasi antar modul                  |
+| 02  | [Tech Stack](./docs/02-tech-stack.md)                       | Versi package terkunci, alasan pemilihan, kompatibilitas            |
+| 03  | [Architecture](./docs/03-architecture.md)                   | Clean Architecture backend, feature-based frontend, struktur folder |
+| 04  | [Database Schema](./docs/04-database-schema.md)             | 13 tabel, relasi, RLS, migration SQL                                |
+| 05  | [Modules](./docs/05-modules.md)                             | Detail 7 modul ERP, fitur, integrasi antar modul                    |
+| 06  | [GitFlow](./docs/06-gitflow.md)                             | Branch strategy, Conventional Commits, Husky, CI/CD                 |
+| 07  | [Setup Guide](./docs/07-setup-guide.md)                     | Strava Developer, Supabase, install, run dev                        |
+| 08  | [Deployment](./docs/08-deployment.md)                       | Vercel, Railway/Render, environment variables                       |
+| 09  | [Implementation Phases](./docs/09-implementation-phases.md) | 14 fase implementasi bertahap, branching plan                       |
 
 ---
 

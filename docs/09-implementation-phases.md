@@ -38,6 +38,7 @@ Phase 2 — Additional Modules (v2.0.0)
 **Branch**: `feature/gitflow-setup` → `develop`
 
 **Tasks**:
+
 - [ ] Init git repo di `tracking-sepeda/`
 - [ ] Buat initial commit (README, .gitignore, docs)
 - [ ] Push ke GitHub
@@ -63,6 +64,7 @@ Phase 2 — Additional Modules (v2.0.0)
 **Branch**: `feature/project-setup` → `develop`
 
 **Tasks Client**:
+
 - [ ] Init Vite project: `npm create vite@latest client -- --template react-ts`
 - [ ] Install & upgrade deps ke versi terkunci (React 19, Vite 8, TS 7)
 - [ ] Install Tailwind v4: `npm install tailwindcss @tailwindcss/vite`
@@ -77,6 +79,7 @@ Phase 2 — Additional Modules (v2.0.0)
 - [ ] Buat layout dasar: `shared/components/layout/` (Sidebar, Header, Layout)
 
 **Tasks Server**:
+
 - [ ] Init server: `mkdir server && cd server && npm init -y`
 - [ ] Install deps: `express`, `typescript`, `tsx`, `tsyringe`, `reflect-metadata`, `@supabase/supabase-js`, `jsonwebtoken`, `cookie-parser`, `cors`, `dotenv`
 - [ ] Install dev deps: `@types/express`, `@types/node`, `@types/jsonwebtoken`, `@types/cookie-parser`, `@types/cors`, `eslint`, `prettier`
@@ -90,6 +93,7 @@ Phase 2 — Additional Modules (v2.0.0)
 - [ ] Test: run `npm run dev`, server respond di `http://localhost:3001`
 
 **Commit examples**:
+
 ```
 chore(client): init vite project with react 19 and tailwind v4
 chore(server): init express project with typescript
@@ -106,6 +110,7 @@ feat(server): setup express app with clean architecture skeleton
 **Branch**: `feature/db-schema-mvp` → `develop`
 
 **Tasks**:
+
 - [ ] Buat `supabase/migrations/001_create_users_and_profiles.sql`
 - [ ] Buat `supabase/migrations/002_create_bikes_and_components.sql`
 - [ ] Buat `supabase/migrations/003_create_activities.sql`
@@ -120,12 +125,14 @@ feat(server): setup express app with clean architecture skeleton
 - [ ] Verifikasi tabel di Table Editor
 
 **Backend tasks**:
+
 - [ ] Buat `server/src/infrastructure/database/supabase-client.ts`
 - [ ] Buat domain entities untuk semua tabel MVP
 - [ ] Buat repository interfaces di `domain/repositories/`
 - [ ] Buat Supabase repository implementations di `infrastructure/database/repositories/`
 
 **Commit examples**:
+
 ```
 feat(db): add users and profiles tables migration
 feat(db): add bikes and components tables
@@ -142,6 +149,7 @@ feat(server/infra): implement supabase repositories
 **Branch**: `feature/strava-oauth-auth` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat `domain/entities/auth/User.ts`, `StravaToken.ts`
 - [ ] Buat `domain/repositories/auth/UserRepository.ts` (interface)
 - [ ] Buat `application/ports/StravaPort.ts` (interface: getAccessToken, refreshToken, getAthlete)
@@ -157,6 +165,7 @@ feat(server/infra): implement supabase repositories
 - [ ] Buat `interfaces/middleware/auth.middleware.ts` (verify JWT, inject user)
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/auth/api/auth.api.ts` (login, logout, getMe)
 - [ ] Buat `features/auth/context/AuthContext.tsx`
 - [ ] Buat `features/auth/hooks/useAuth.ts`
@@ -165,6 +174,7 @@ feat(server/infra): implement supabase repositories
 - [ ] Setup route protection di `app/router.tsx`
 
 **Commit examples**:
+
 ```
 feat(server/domain): add User and StravaToken entities
 feat(server/application): add StravaPort and TokenPort interfaces
@@ -185,6 +195,7 @@ feat(client/features/auth): add LoginPage and ProtectedRoute
 **Branch**: `feature/activity-tracking` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat `domain/entities/activity/Activity.ts`
 - [ ] Buat `domain/repositories/activity/ActivityRepository.ts`
 - [ ] Buat `infrastructure/database/repositories/activity/SupabaseActivityRepository.ts`
@@ -195,6 +206,7 @@ feat(client/features/auth): add LoginPage and ProtectedRoute
 - [ ] Register di DI container
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/activities/api/activities.api.ts`
 - [ ] Buat `features/activities/types.ts`
 - [ ] Buat `features/activities/hooks/useActivities.ts`, `useActivityDetail.ts`
@@ -210,6 +222,7 @@ feat(client/features/auth): add LoginPage and ProtectedRoute
 - [ ] Buat `pages/ActivitiesPage.tsx`, `pages/ActivityDetailPage.tsx`
 
 **Commit examples**:
+
 ```
 feat(server/domain): add Activity entity and repository interface
 feat(server/application): add SyncStravaActivities use case
@@ -228,6 +241,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/inventory-module` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat `domain/entities/inventory/Bike.ts`, `Component.ts`
 - [ ] Buat `domain/repositories/inventory/BikeRepository.ts`, `ComponentRepository.ts`
 - [ ] Buat Supabase implementations
@@ -236,6 +250,7 @@ feat(client/features/activities): add ActivityDetail with map
 - [ ] Buat `interfaces/controllers/BikeController.ts`, `ComponentController.ts`
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/inventory/api/bikes.api.ts`, `components.api.ts`
 - [ ] Buat `features/inventory/types.ts`
 - [ ] Buat `features/inventory/hooks/useBikes.ts`, `useComponents.ts`
@@ -253,6 +268,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/strava-inventory-sync` → `develop`
 
 **Tasks**:
+
 - [ ] Modifikasi `SyncStravaActivities` use case: setelah insert aktivitas, update `bikes.current_km` & `components.current_km`
 - [ ] Atau andalkan database trigger `update_bike_km_after_activity` (lihat [Database Schema](./04-database-schema.md))
 - [ ] Tambah opsi di frontend: link aktivitas ke sepeda (dropdown di ActivityDetail)
@@ -269,6 +285,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/maintenance-module` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat domain entities: `MaintenanceLog`, `MaintenanceSchedule`
 - [ ] Buat repository interfaces + Supabase implementations
 - [ ] Buat use cases: `LogMaintenance`, `GetMaintenanceHistory`, `AddSchedule`, `UpdateSchedule`, `DeleteSchedule`, `CheckDueSchedules`
@@ -277,6 +294,7 @@ feat(client/features/activities): add ActivityDetail with map
 - [ ] Integrasi: saat `LogMaintenance` dengan cost > 0 → auto-create transaction
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/maintenance/api/maintenance.api.ts`
 - [ ] Buat `features/maintenance/types.ts`
 - [ ] Buat hooks: `useMaintenanceLogs`, `useMaintenanceSchedules`, `useDueAlerts`
@@ -296,6 +314,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/finance-module` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat domain entities: `Transaction`, `Budget`
 - [ ] Buat repository interfaces + Supabase implementations
 - [ ] Buat use cases: `AddTransaction`, `UpdateTransaction`, `DeleteTransaction`, `GetTransactions`, `GetBudgetStatus`, `GetFinanceSummary`
@@ -303,6 +322,7 @@ feat(client/features/activities): add ActivityDetail with map
 - [ ] Buat controller: `FinanceController`
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/finance/api/transactions.api.ts`, `budgets.api.ts`
 - [ ] Buat `features/finance/types.ts`
 - [ ] Buat hooks: `useTransactions`, `useBudgets`, `useFinanceSummary`
@@ -323,6 +343,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/dashboard-mvp` → `develop`
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/dashboard/hooks/useDashboardData.ts` (parallel fetch multiple endpoints)
 - [ ] Buat `features/dashboard/components/KpiCard.tsx`
 - [ ] Buat `features/dashboard/components/MaintenanceAlerts.tsx`
@@ -343,6 +364,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `release/v1.0.0` → `main`
 
 **Tasks**:
+
 - [ ] Loading states (skeleton/spinner) di semua pages
 - [ ] Error boundaries di `shared/components/feedback/ErrorBoundary.tsx`
 - [ ] Empty states (ilustrasi + message) di semua list
@@ -368,6 +390,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/goals-module` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat `domain/entities/goals/Goal.ts`
 - [ ] Buat repository interface + Supabase implementation
 - [ ] Buat use cases: `CreateGoal`, `UpdateGoal`, `DeleteGoal`, `GetGoals`, `GetGoalStatus`, `UpdateGoalProgress`
@@ -376,6 +399,7 @@ feat(client/features/activities): add ActivityDetail with map
 - [ ] Buat controller: `GoalController`
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/goals/api/goals.api.ts`, `types.ts`
 - [ ] Buat hooks: `useGoals`, `useGoalStatus`
 - [ ] Buat `features/goals/components/GoalList.tsx`, `GoalCard.tsx`, `GoalForm.tsx`
@@ -392,6 +416,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/events-module` → `develop`
 
 **Tasks Backend**:
+
 - [ ] Buat `domain/entities/events/Event.ts`
 - [ ] Buat repository interface + Supabase implementation
 - [ ] Buat use cases: `AddEvent`, `UpdateEvent`, `DeleteEvent`, `GetEvents`, `GetUpcomingEvents`, `UpdateEventResult`
@@ -400,6 +425,7 @@ feat(client/features/activities): add ActivityDetail with map
 - [ ] Buat controller: `EventController`
 
 **Tasks Frontend**:
+
 - [ ] Buat `features/events/api/events.api.ts`, `types.ts`
 - [ ] Buat hooks: `useEvents`, `useUpcomingEvents`
 - [ ] Buat `features/events/components/EventCalendar.tsx`
@@ -415,6 +441,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `feature/dashboard-v2` → `develop`
 
 **Tasks**:
+
 - [ ] Tambah `features/dashboard/components/GoalProgress.tsx` (progress ring goal aktif)
 - [ ] Tambah `features/dashboard/components/UpcomingEvents.tsx` (event 30 hari ke depan)
 - [ ] Update `useDashboardData.ts` untuk fetch goals & events juga
@@ -430,6 +457,7 @@ feat(client/features/activities): add ActivityDetail with map
 **Branch**: `release/v2.0.0` → `main`
 
 **Tasks**:
+
 - [ ] Test full flow: semua 7 modul terintegrasi
 - [ ] Test auto-progress goals setelah sync Strava
 - [ ] Test auto-create transaction saat log maintenance & event completed
@@ -444,23 +472,23 @@ feat(client/features/activities): add ActivityDetail with map
 
 ## Branching Summary
 
-| Fase | Branch | Merge Ke |
-|---|---|---|
-| F0 | `feature/gitflow-setup` | `develop` |
-| F1 | `feature/project-setup` | `develop` |
-| F2 | `feature/db-schema-mvp` | `develop` |
-| F3 | `feature/strava-oauth-auth` | `develop` |
-| F4 | `feature/activity-tracking` | `develop` |
-| F5 | `feature/inventory-module` | `develop` |
-| F6 | `feature/strava-inventory-sync` | `develop` |
-| F7 | `feature/maintenance-module` | `develop` |
-| F8 | `feature/finance-module` | `develop` |
-| F9 | `feature/dashboard-mvp` | `develop` |
-| F10 | `release/v1.0.0` | `main` + `develop` |
-| F11 | `feature/goals-module` | `develop` |
-| F12 | `feature/events-module` | `develop` |
-| F13 | `feature/dashboard-v2` | `develop` |
-| F14 | `release/v2.0.0` | `main` + `develop` |
+| Fase | Branch                          | Merge Ke           |
+| ---- | ------------------------------- | ------------------ |
+| F0   | `feature/gitflow-setup`         | `develop`          |
+| F1   | `feature/project-setup`         | `develop`          |
+| F2   | `feature/db-schema-mvp`         | `develop`          |
+| F3   | `feature/strava-oauth-auth`     | `develop`          |
+| F4   | `feature/activity-tracking`     | `develop`          |
+| F5   | `feature/inventory-module`      | `develop`          |
+| F6   | `feature/strava-inventory-sync` | `develop`          |
+| F7   | `feature/maintenance-module`    | `develop`          |
+| F8   | `feature/finance-module`        | `develop`          |
+| F9   | `feature/dashboard-mvp`         | `develop`          |
+| F10  | `release/v1.0.0`                | `main` + `develop` |
+| F11  | `feature/goals-module`          | `develop`          |
+| F12  | `feature/events-module`         | `develop`          |
+| F13  | `feature/dashboard-v2`          | `develop`          |
+| F14  | `release/v2.0.0`                | `main` + `develop` |
 
 ---
 
