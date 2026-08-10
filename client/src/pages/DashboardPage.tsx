@@ -4,13 +4,24 @@ import {
   RecentActivities,
   WeeklyDistanceChart,
   BudgetSummary,
+  GoalProgress,
+  UpcomingEvents,
   useDashboardData,
 } from '@/features/dashboard';
 import { formatDistance, formatIDR } from '@/shared/lib/utils';
 
 export function DashboardPage() {
-  const { activityStats, recentActivities, bikes, dueSchedules, financeSummary, loading, error } =
-    useDashboardData();
+  const {
+    activityStats,
+    recentActivities,
+    bikes,
+    dueSchedules,
+    financeSummary,
+    activeGoals,
+    upcomingEvents,
+    loading,
+    error,
+  } = useDashboardData();
 
   const activeBikes = bikes.filter((b) => b.status === 'active').length;
   const budgetUsed = financeSummary?.totalExpense ?? 0;
@@ -68,16 +79,20 @@ export function DashboardPage() {
 
       {/* Main grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Recent Activities — 2/3 width */}
-        <div className="lg:col-span-2 space-y-3">
+        {/* Left — 2/3 width */}
+        <div className="space-y-3 lg:col-span-2">
           <h3 className="text-sm font-semibold text-gray-700">Recent Activities</h3>
           <RecentActivities activities={recentActivities} loading={loading} />
           <WeeklyDistanceChart stats={activityStats} />
         </div>
 
-        {/* Sidebar — 1/3 width */}
+        {/* Right — 1/3 width */}
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Finance</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Goals</h3>
+          <GoalProgress goals={activeGoals} loading={loading} />
+          <h3 className="pt-2 text-sm font-semibold text-gray-700">Events</h3>
+          <UpcomingEvents events={upcomingEvents} loading={loading} />
+          <h3 className="pt-2 text-sm font-semibold text-gray-700">Finance</h3>
           <BudgetSummary summary={financeSummary} loading={loading} />
         </div>
       </div>
