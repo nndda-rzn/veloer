@@ -6,6 +6,7 @@ import {
   DeleteEvent,
   GetEvents,
 } from '../../application/use-cases/events/EventUseCases.js';
+import { AddTransaction } from '../../application/use-cases/finance/TransactionUseCases.js';
 
 export class EventController {
   async list(req: Request, res: Response): Promise<void> {
@@ -60,6 +61,19 @@ export class EventController {
       res.status(404).json({ error: 'Not Found', message: 'Event not found' });
       return;
     }
+
+    // Auto-create transaction when event completed with registration fee
+    if (req.body.status === 'completed' && event.registration_fee && event.registration_fee > 0) {
+      const addTransaction = container.resolve(AddTransaction);
+      await addTransaction.execute(req.user.userId, {
+        type: 'expense',
+        category: 'event',
+        amount: event.registration_fee,
+        date: event.date,
+        description: `[Event] ${event.name}`,
+      });
+    }
+
     res.json(event);
   }
 
