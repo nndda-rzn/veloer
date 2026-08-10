@@ -15,7 +15,7 @@ export class SyncStravaActivities {
   constructor(
     @inject('ActivityRepository') private activityRepo: ActivityRepository,
     @inject('StravaPort') private stravaPort: StravaPort,
-    private refreshStravaToken: RefreshStravaToken,
+    @inject(RefreshStravaToken) private refreshStravaToken: RefreshStravaToken,
   ) {}
 
   async execute(userId: string): Promise<SyncResult> {

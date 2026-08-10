@@ -28,6 +28,7 @@ import { SupabaseTransactionRepository } from '../infrastructure/database/reposi
 import { SupabaseBudgetRepository } from '../infrastructure/database/repositories/finance/SupabaseBudgetRepository.js';
 import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
+import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -54,6 +55,9 @@ container.registerSingleton<TransactionRepository>(
   SupabaseTransactionRepository,
 );
 container.registerSingleton<BudgetRepository>('BudgetRepository', SupabaseBudgetRepository);
+
+// Register use cases that are injected as class references
+container.registerSingleton(RefreshStravaToken);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);
