@@ -75,11 +75,22 @@ export class SupabaseActivityRepository implements ActivityRepository {
 
   async updateBikeId(activityId: string, bikeId: string | null): Promise<void> {
     const supabase = getSupabaseClient();
-    const { error } = await supabase
-      .from('activities')
-      .update({ bike_id: bikeId })
-      .eq('id', activityId);
-    if (error) throw new Error(`Failed to update activity bike: ${error.message}`);
+
+    if (bikeId) {
+      // Link activity to bike via RPC — also updates bike & component km
+      const { error } = await supabase.rpc('link_activity_bike', {
+        activity_uuid: activityId,
+        bike_uuid: bikeId,
+      });
+      if (error) throw new Error(`Failed to link activity to bike: ${error.message}`);
+    } else {
+      // Unlink bike from activity (just clear bike_id, no km adjustment)
+      const { error } = await supabase
+        .from('activities')
+        .update({ bike_id: null })
+        .eq('id', activityId);
+      if (error) throw new Error(`Failed to unlink activity bike: ${error.message}`);
+    }
   }
 
   async getStats(
