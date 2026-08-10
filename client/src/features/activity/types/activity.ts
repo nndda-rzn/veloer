@@ -26,6 +26,7 @@ export interface Activity {
   calories: number | null;
   elev_high: number | null;
   elev_low: number | null;
+  tss: number | null;
   created_at: string;
   updated_at: string;
 }
