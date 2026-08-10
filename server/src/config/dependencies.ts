@@ -34,6 +34,7 @@ import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
 import { GetGoals, UpdateGoalProgress } from '../application/use-cases/goals/GoalUseCases.js';
+import { AddTransaction } from '../application/use-cases/finance/TransactionUseCases.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -67,6 +68,7 @@ container.registerSingleton<EventRepository>('EventRepository', SupabaseEventRep
 container.registerSingleton(RefreshStravaToken);
 container.registerSingleton(GetGoals);
 container.registerSingleton(UpdateGoalProgress);
+container.registerSingleton(AddTransaction);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);

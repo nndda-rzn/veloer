@@ -33,7 +33,7 @@ export class MaintenanceController {
       return;
     }
     const logMaintenance = container.resolve(LogMaintenance);
-    const log = await logMaintenance.execute(req.body);
+    const log = await logMaintenance.execute(req.user.userId, req.body);
     res.status(201).json(log);
   }
 
