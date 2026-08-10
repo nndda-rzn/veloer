@@ -1,0 +1,24 @@
+import { Router } from 'express';
+import { EventController } from '../controllers/EventController.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+
+const router = Router();
+const controller = new EventController();
+
+router.get('/', authMiddleware, (req, res, next) => {
+  void controller.list(req, res).catch(next);
+});
+router.post('/', authMiddleware, (req, res, next) => {
+  void controller.create(req, res).catch(next);
+});
+router.get('/:id', authMiddleware, (req, res, next) => {
+  void controller.getById(req, res).catch(next);
+});
+router.patch('/:id', authMiddleware, (req, res, next) => {
+  void controller.update(req, res).catch(next);
+});
+router.delete('/:id', authMiddleware, (req, res, next) => {
+  void controller.delete(req, res).catch(next);
+});
+
+export const eventRoutes = router;
