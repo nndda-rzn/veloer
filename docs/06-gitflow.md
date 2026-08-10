@@ -139,61 +139,87 @@ git tag -a v1.0.0 -m "Release v1.0.0: Cycling ERP MVP"
 
 ---
 
-## Workflow per Fitur
+## Workflow per Sub-Fitur (Granular)
 
-### 1. Mulai Fitur Baru
+> **Penting**: Project ini menggunakan workflow **per sub-fitur (sangat granular)**.
+> Setiap fase dipecah menjadi multiple feature branch (1-5 file per PR).
+> Setiap PR membutuhkan **konfirmasi manual sebelum merge**.
 
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/server-strava-oauth
-```
+### Aturan Main
 
-### 2. Selama Development — Commit Berkala
+| Aturan           | Detail                                             |
+| ---------------- | -------------------------------------------------- |
+| **Granularitas** | Sangat granular — tiap PR 1-5 file, per sub-fitur  |
+| **Konfirmasi**   | Tanya per PR sebelum merge — user bisa review dulu |
+| **Urutan**       | F2 → F14 sesuai implementation phases              |
+| **Branch**       | `feature/<scope>-<deskripsi>` dari `develop`       |
+| **Merge**        | Squash & merge, hapus branch setelah merge         |
+| **Commit**       | Conventional Commits dengan scope per modul        |
 
-```bash
-git add server/src/domain/entities/auth/User.ts
-git commit -m "feat(server/domain): add User entity"
-
-git add server/src/domain/repositories/auth/UserRepository.ts
-git commit -m "feat(server/domain): add UserRepository interface"
-
-git add server/src/infrastructure/strava/StravaOauthAdapter.ts
-git commit -m "feat(server/infra): implement StravaOauthAdapter"
-```
-
-### 3. Sinkron dengan Develop (jika ada perubahan upstream)
+### 1. Mulai Sub-Fitur Baru
 
 ```bash
 git checkout develop
 git pull origin develop
-git checkout feature/server-strava-oauth
+git checkout -b feature/db-users-tables
+```
+
+### 2. Kerjakan Sub-Fitur (1-5 file)
+
+```bash
+# Buat/edit file (maksimal ~5 file per PR)
+# Contoh: 2 file migration SQL untuk tabel users
+
+# Commit dengan conventional commit format
+git add supabase/migrations/001_create_users_and_profiles.sql
+git commit -m "feat(db): add users and user_profiles tables"
+```
+
+### 3. Push & Buat PR
+
+```bash
+git push -u origin feature/db-users-tables
+
+# Buat PR via GitHub CLI
+gh pr create --base develop --title "[db] Add users and user_profiles tables" --body "..."
+```
+
+### 4. TUNGGU KONFIRMASI USER ⚠️
+
+> **Jangan merge sebelum user konfirmasi!**
+>
+> Setelah PR dibuat, tanyakan ke user:
+>
+> - Apakah ada yang perlu direvisi?
+> - Boleh lanjut merge & ke fitur berikutnya?
+
+### 5. Merge PR (setelah konfirmasi)
+
+```bash
+# Squash merge + hapus branch
+gh pr merge <PR_NUMBER> --squash --delete-branch
+
+# Sync local develop
+git checkout develop
+git pull origin develop
+```
+
+### 6. Lanjut ke Sub-Fitur Berikutnya
+
+Kembali ke step 1 untuk sub-fitur berikutnya dalam fase yang sama.
+
+### Sinkron dengan Develop (jika ada perubahan upstream)
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout feature/db-users-tables
 git rebase develop
 # Resolve conflicts jika ada
-git push --force-with-lease origin feature/server-strava-oauth
+git push --force-with-lease origin feature/db-users-tables
 ```
 
-### 4. Selesai Fitur — Push & Buat PR
-
-```bash
-git push -u origin feature/server-strava-oauth
-# Buat PR via GitHub: feature/server-strava-oauth → develop
-# Set reviewer (jika ada)
-# Tunggu CI pass
-```
-
-### 5. Review & Merge PR
-
-- Code review via GitHub PR
-- Pastikan CI pass (lint, type-check, build)
-- **Squash & merge** (rekomendasi) atau **Rebase & merge**
-- Delete branch setelah merge:
-  ```bash
-  git branch -d feature/server-strava-oauth
-  git push origin --delete feature/server-strava-oauth
-  ```
-
-### 6. Release ke Production
+### Release ke Production
 
 ```bash
 # Buat release branch dari develop
