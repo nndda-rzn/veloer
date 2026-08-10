@@ -16,6 +16,7 @@ import type {
   BudgetRepository,
 } from '../domain/repositories/finance/TransactionRepository.js';
 import type { GoalRepository } from '../domain/repositories/goals/GoalRepository.js';
+import type { EventRepository } from '../domain/repositories/events/EventRepository.js';
 import type { StravaPort } from '../application/ports/StravaPort.js';
 import type { TokenPort } from '../application/ports/TokenPort.js';
 import { SupabaseUserRepository } from '../infrastructure/database/repositories/auth/SupabaseUserRepository.js';
@@ -28,6 +29,7 @@ import { SupabaseMaintenanceScheduleRepository } from '../infrastructure/databas
 import { SupabaseTransactionRepository } from '../infrastructure/database/repositories/finance/SupabaseTransactionRepository.js';
 import { SupabaseBudgetRepository } from '../infrastructure/database/repositories/finance/SupabaseBudgetRepository.js';
 import { SupabaseGoalRepository } from '../infrastructure/database/repositories/goals/SupabaseGoalRepository.js';
+import { SupabaseEventRepository } from '../infrastructure/database/repositories/events/SupabaseEventRepository.js';
 import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
@@ -58,6 +60,7 @@ container.registerSingleton<TransactionRepository>(
 );
 container.registerSingleton<BudgetRepository>('BudgetRepository', SupabaseBudgetRepository);
 container.registerSingleton<GoalRepository>('GoalRepository', SupabaseGoalRepository);
+container.registerSingleton<EventRepository>('EventRepository', SupabaseEventRepository);
 
 // Register use cases that are injected as class references
 container.registerSingleton(RefreshStravaToken);
