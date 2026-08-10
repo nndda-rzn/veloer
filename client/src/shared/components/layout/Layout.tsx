@@ -10,6 +10,7 @@ const navItems = [
   { to: '/finance', label: 'Finance', icon: '💰' },
   { to: '/goals', label: 'Goals', icon: '🎯' },
   { to: '/events', label: 'Events', icon: '📅' },
+  { to: '/training-plans', label: 'Training Plans', icon: '📋' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
