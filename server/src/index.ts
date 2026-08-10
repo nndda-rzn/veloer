@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './config/dependencies.js';
 import { createServer } from './infrastructure/http/server.js';
 import { env } from './config/env.js';
 

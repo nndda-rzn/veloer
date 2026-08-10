@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { env } from '../../config/env.js';
 import { errorMiddleware } from '../../interfaces/middleware/error.middleware.js';
 import { notFoundMiddleware } from '../../interfaces/middleware/notFound.middleware.js';
+import { authRoutes } from '../../interfaces/routes/auth.routes.js';
 
 export function createServer(): Application {
   const app = express();
@@ -28,10 +29,8 @@ export function createServer(): Application {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  // API routes will be registered here
-  // app.use('/api/auth', authRoutes);
-  // app.use('/api/activities', activitiesRoutes);
-  // ...
+  // API routes
+  app.use('/api/auth', authRoutes);
 
   // 404 handler
   app.use(notFoundMiddleware);
