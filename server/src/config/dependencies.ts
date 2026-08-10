@@ -41,6 +41,7 @@ import {
   GetActivityLaps,
   GetActivityZones,
 } from '../application/use-cases/activity/GetActivityLapsZones.js';
+import { GenerateRecommendation } from '../application/use-cases/training/GenerateRecommendation.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -81,6 +82,7 @@ container.registerSingleton(UpdateGoalProgress);
 container.registerSingleton(AddTransaction);
 container.registerSingleton(GetActivityLaps);
 container.registerSingleton(GetActivityZones);
+container.registerSingleton(GenerateRecommendation);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);

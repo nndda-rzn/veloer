@@ -13,6 +13,7 @@ import {
   UpdateWorkout,
   DeleteWorkout,
 } from '../../application/use-cases/training/WorkoutUseCases.js';
+import { GenerateRecommendation } from '../../application/use-cases/training/GenerateRecommendation.js';
 
 export class TrainingPlanController {
   // ---- Plans ----
@@ -126,5 +127,17 @@ export class TrainingPlanController {
     const useCase = container.resolve(DeleteWorkout);
     await useCase.execute(String(id), req.user.userId);
     res.status(204).send();
+  }
+
+  // ---- Recommendation ----
+
+  async getRecommendation(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const useCase = container.resolve(GenerateRecommendation);
+    const recommendation = await useCase.execute(req.user.userId);
+    res.json(recommendation);
   }
 }

@@ -5,6 +5,11 @@ import { authMiddleware } from '../middleware/auth.middleware.js';
 const router = Router();
 const controller = new TrainingPlanController();
 
+// Recommendations
+router.get('/recommendations', authMiddleware, (req, res, next) => {
+  void controller.getRecommendation(req, res).catch(next);
+});
+
 // Plans
 router.get('/', authMiddleware, (req, res, next) => {
   void controller.list(req, res).catch(next);
