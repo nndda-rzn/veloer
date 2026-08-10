@@ -4,6 +4,10 @@ import { GetActivities } from '../../application/use-cases/activity/GetActivitie
 import { GetActivityById } from '../../application/use-cases/activity/GetActivityById.js';
 import { GetActivityStats } from '../../application/use-cases/activity/GetActivityStats.js';
 import { SyncStravaActivities } from '../../application/use-cases/activity/SyncStravaActivities.js';
+import {
+  GetActivityLaps,
+  GetActivityZones,
+} from '../../application/use-cases/activity/GetActivityLapsZones.js';
 import { ActivityRepository } from '../../domain/repositories/activity/ActivityRepository.js';
 
 export class ActivityController {
@@ -115,5 +119,41 @@ export class ActivityController {
     await repo.updateBikeId(String(id), bikeId || null);
 
     res.json({ success: true, message: 'Activity bike updated' });
+  }
+
+  /**
+   * GET /api/activities/:id/laps
+   */
+  async getLaps(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const getLaps = container.resolve(GetActivityLaps);
+    try {
+      const laps = await getLaps.execute(String(id), req.user.userId);
+      res.json(laps);
+    } catch {
+      res.status(404).json({ error: 'Not Found', message: 'Activity not found' });
+    }
+  }
+
+  /**
+   * GET /api/activities/:id/zones
+   */
+  async getZones(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const getZones = container.resolve(GetActivityZones);
+    try {
+      const zones = await getZones.execute(String(id), req.user.userId);
+      res.json(zones);
+    } catch {
+      res.status(404).json({ error: 'Not Found', message: 'Activity not found' });
+    }
   }
 }

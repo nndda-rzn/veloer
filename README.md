@@ -42,17 +42,19 @@ Dokumentasi lengkap ada di folder [`docs/`](./docs). Baca secara berurutan untuk
 
 ## Status Project
 
-**v1.0.0 — Phase 1 MVP Complete**
+**v2.1.0 — All Modules Complete**
 
-| Modul       | Fitur                                                  | Status  |
-| ----------- | ------------------------------------------------------ | ------- |
-| Activity    | Strava sync, list + filters, detail + map, bike linker | ✅      |
-| Inventory   | Bike CRUD, Component CRUD, Lifespan indicator          | ✅      |
-| Maintenance | Log CRUD, Due alerts, Schedule management              | ✅      |
-| Finance     | Transaction CRUD, Budget, Recharts pie chart, IDR      | ✅      |
-| Dashboard   | KPI cards, Alerts, Recent activities, Charts           | ✅      |
-| Goals       | Goal CRUD, Progress tracking                           | Phase 2 |
-| Events      | Event CRUD, Calendar                                   | Phase 2 |
+| Modul       | Fitur                                                                      | Status |
+| ----------- | -------------------------------------------------------------------------- | ------ |
+| Activity    | Strava sync, list + filters, detail + map, bike linker, laps, zones        | ✅     |
+| Inventory   | Bike CRUD, Component CRUD, Lifespan indicator                              | ✅     |
+| Maintenance | Log CRUD, Due alerts, Schedule management, auto-create transactions        | ✅     |
+| Finance     | Transaction CRUD, Budget, Recharts pie chart, IDR, auto-create from events | ✅     |
+| Dashboard   | KPI cards, Alerts, Recent activities, Goals, Events, Charts                | ✅     |
+| Goals       | Goal CRUD, Progress rings, auto-progress on sync                           | ✅     |
+| Events      | Event CRUD, 6 types, upcoming filter                                       | ✅     |
+| Settings    | Profile, preferences, FTP setting, logout                                  | ✅     |
+| Training    | Cadence, power, calories, lap breakdown, zone chart, TSS/IF analysis       | ✅     |
 
 ---
 

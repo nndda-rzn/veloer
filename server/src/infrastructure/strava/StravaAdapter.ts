@@ -4,6 +4,8 @@ import type {
   StravaPort,
   StravaAthlete,
   StravaActivity,
+  StravaLap,
+  StravaZone,
 } from '../../application/ports/StravaPort.js';
 import type { StravaToken } from '../../domain/entities/auth/User.js';
 
@@ -136,5 +138,29 @@ export class StravaAdapter implements StravaPort {
     }
 
     return (await response.json()) as StravaActivity;
+  }
+
+  async getActivityLaps(accessToken: string, id: number): Promise<StravaLap[]> {
+    const response = await fetch(`${STRAVA_API_BASE}/activities/${id}/laps`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Strava getActivityLaps failed: ${response.status}`);
+    }
+
+    return (await response.json()) as StravaLap[];
+  }
+
+  async getActivityZones(accessToken: string, id: number): Promise<StravaZone[]> {
+    const response = await fetch(`${STRAVA_API_BASE}/activities/${id}/zones`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Strava getActivityZones failed: ${response.status}`);
+    }
+
+    return (await response.json()) as StravaZone[];
   }
 }

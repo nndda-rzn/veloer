@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import type { MaintenanceLogRepository } from '../../../domain/repositories/maintenance/MaintenanceLogRepository.js';
 import type { MaintenanceLog } from '../../../domain/entities/maintenance/MaintenanceLog.js';
+import { AddTransaction } from '../finance/TransactionUseCases.js';
 
 export interface LogMaintenanceInput {
   bike_id: string;
@@ -18,10 +19,13 @@ export interface LogMaintenanceInput {
 
 @injectable()
 export class LogMaintenance {
-  constructor(@inject('MaintenanceLogRepository') private logRepo: MaintenanceLogRepository) {}
+  constructor(
+    @inject('MaintenanceLogRepository') private logRepo: MaintenanceLogRepository,
+    @inject(AddTransaction) private addTransaction: AddTransaction,
+  ) {}
 
-  async execute(input: LogMaintenanceInput): Promise<MaintenanceLog> {
-    return this.logRepo.create({
+  async execute(userId: string, input: LogMaintenanceInput): Promise<MaintenanceLog> {
+    const log = await this.logRepo.create({
       bike_id: input.bike_id,
       component_id: input.component_id ?? null,
       service_date: input.service_date,
@@ -34,6 +38,20 @@ export class LogMaintenance {
       next_service_km: input.next_service_km ?? null,
       next_service_date: input.next_service_date ?? null,
     });
+
+    // Auto-create transaction if cost > 0
+    if (input.cost && input.cost > 0) {
+      await this.addTransaction.execute(userId, {
+        type: 'expense',
+        category: 'maintenance',
+        amount: input.cost,
+        date: input.service_date,
+        description: `[Maintenance] ${input.type}: ${input.description}`,
+        bike_id: input.bike_id,
+      });
+    }
+
+    return log;
   }
 }
 
