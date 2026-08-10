@@ -2,21 +2,21 @@
 
 Daftar lengkap pekerjaan yang **belum selesai** setelah release v2.0.0. Diupdate secara berkala saat progress berjalan.
 
-> **Status terakhir**: v2.0.0 released, 7 modul inti berfungsi, tapi ada integrasi dan fitur training yang masih missing.
+> **Status terakhir**: v2.1.0 released, semua bagian selesai.
 
 ---
 
-## Ringkasan Yang Belum Selesai
+## Ringkasan Penyelesaian
 
-| #   | Bagian                                             | PR Target            | Status  |
-| --- | -------------------------------------------------- | -------------------- | ------- |
-| 1   | Settings Page (server + client)                    | 2 PR                 | Pending |
-| 2   | Goal auto-progress on sync                         | 1 PR                 | Pending |
-| 3   | Auto-create transactions (maintenance + events)    | 1 PR                 | Pending |
-| 4   | Strava training data (cadence, power, laps, zones) | 3 PR                 | Pending |
-| 5   | Update docs status table                           | digabung PR terakhir | Pending |
+| #   | Bagian                                             | PR       | Status |
+| --- | -------------------------------------------------- | -------- | ------ |
+| 1   | Settings Page (server + client)                    | #45, #46 | Done   |
+| 2   | Goal auto-progress on sync                         | #47      | Done   |
+| 3   | Auto-create transactions (maintenance + events)    | #48      | Done   |
+| 4   | Strava training data (cadence, power, laps, zones) | #49-#51  | Done   |
+| 5   | Update docs status table                           | #52      | Done   |
 
-**Total estimasi**: 7-8 PR
+**Total**: 8 PR merged, v2.1.0 released
 
 ---
 
