@@ -33,6 +33,7 @@ import { SupabaseEventRepository } from '../infrastructure/database/repositories
 import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
+import { GetGoals, UpdateGoalProgress } from '../application/use-cases/goals/GoalUseCases.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -64,6 +65,8 @@ container.registerSingleton<EventRepository>('EventRepository', SupabaseEventRep
 
 // Register use cases that are injected as class references
 container.registerSingleton(RefreshStravaToken);
+container.registerSingleton(GetGoals);
+container.registerSingleton(UpdateGoalProgress);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);
