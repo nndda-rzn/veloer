@@ -13,6 +13,7 @@ import { maintenanceRoutes } from '../../interfaces/routes/maintenance.routes.js
 import { financeRoutes } from '../../interfaces/routes/finance.routes.js';
 import { goalRoutes } from '../../interfaces/routes/goal.routes.js';
 import { eventRoutes } from '../../interfaces/routes/event.routes.js';
+import { profileRoutes } from '../../interfaces/routes/profile.routes.js';
 
 export function createServer(): Application {
   const app = express();
@@ -47,6 +48,7 @@ export function createServer(): Application {
   app.use('/api/finance', financeRoutes);
   app.use('/api/goals', goalRoutes);
   app.use('/api/events', eventRoutes);
+  app.use('/api/profile', profileRoutes);
 
   // 404 handler
   app.use(notFoundMiddleware);
