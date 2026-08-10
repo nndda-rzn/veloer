@@ -15,6 +15,17 @@ export interface Activity {
   max_hr: number | null; // bpm
   polyline: string | null;
   bike_id: string | null;
+  avg_cadence: number | null; // RPM
+  max_cadence: number | null; // RPM
+  avg_watts: number | null; // watts
+  max_watts: number | null; // watts
+  weighted_avg_watts: number | null; // normalized power
+  kilojoules: number | null; // energy
+  device_watts: boolean; // true = power meter, false = estimated
+  avg_temp: number | null; // celsius
+  calories: number | null; // kcal
+  elev_high: number | null; // meters
+  elev_low: number | null; // meters
   created_at: string;
   updated_at: string;
 }

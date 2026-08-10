@@ -22,9 +22,40 @@ export interface StravaActivity {
   max_speed: number;
   average_heartrate: number | null;
   max_heartrate: number | null;
+  average_cadence: number | null;
+  max_cadence: number | null;
+  average_watts: number | null;
+  max_watts: number | null;
+  weighted_average_watts: number | null;
+  kilojoules: number | null;
+  device_watts: boolean;
+  average_temp: number | null;
+  calories: number | null;
+  elev_high: number | null;
+  elev_low: number | null;
   map?: {
     summary_polyline: string | null;
   };
+}
+
+export interface StravaLap {
+  id: number;
+  lap_index: number;
+  distance: number;
+  moving_time: number;
+  elapsed_time: number;
+  average_speed: number;
+  max_speed: number;
+  average_heartrate: number | null;
+  max_heartrate: number | null;
+  average_cadence: number | null;
+  average_watts: number | null;
+  lap_type: string | null;
+}
+
+export interface StravaZone {
+  sensor_type: 'heartrate' | 'power';
+  distribution_buckets: { min: number; max: number; time: number }[];
 }
 
 /**
@@ -47,4 +78,6 @@ export interface StravaPort {
     options?: { page?: number; perPage?: number; after?: number },
   ): Promise<StravaActivity[]>;
   getActivityById(accessToken: string, id: number): Promise<StravaActivity>;
+  getActivityLaps(accessToken: string, id: number): Promise<StravaLap[]>;
+  getActivityZones(accessToken: string, id: number): Promise<StravaZone[]>;
 }
