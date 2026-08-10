@@ -1,5 +1,10 @@
 export { BikeCard } from './components/BikeCard';
 export { BikeForm } from './components/BikeForm';
+export { ComponentList } from './components/ComponentList';
+export { ComponentForm } from './components/ComponentForm';
+export { LifespanIndicator } from './components/LifespanIndicator';
 export { useBikes } from './hooks/useBikes';
+export { useComponents } from './hooks/useComponents';
 export { bikeApi } from './api/bike.api';
+export { componentApi } from './api/component.api';
 export type { Bike, Component, BikeFormData, ComponentFormData } from './types/inventory';
