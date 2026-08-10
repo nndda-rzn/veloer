@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import type { ActivityRepository } from '../../../domain/repositories/activity/ActivityRepository.js';
+import type { UserProfileRepository } from '../../../domain/repositories/auth/UserProfileRepository.js';
 import type { StravaPort } from '../../ports/StravaPort.js';
 import { RefreshStravaToken } from '../auth/RefreshStravaToken.js';
 import { GetGoals, UpdateGoalProgress } from '../goals/GoalUseCases.js';
@@ -16,6 +17,7 @@ export interface SyncResult {
 export class SyncStravaActivities {
   constructor(
     @inject('ActivityRepository') private activityRepo: ActivityRepository,
+    @inject('UserProfileRepository') private profileRepo: UserProfileRepository,
     @inject('StravaPort') private stravaPort: StravaPort,
     @inject(RefreshStravaToken) private refreshStravaToken: RefreshStravaToken,
     @inject(GetGoals) private getGoals: GetGoals,
@@ -25,6 +27,10 @@ export class SyncStravaActivities {
   async execute(userId: string): Promise<SyncResult> {
     // Get valid Strava token (refresh if expired)
     const token = await this.refreshStravaToken.execute(userId);
+
+    // Fetch user profile for FTP (needed for TSS computation)
+    const profile = await this.profileRepo.findByUserId(userId);
+    const ftp = profile?.ftp ?? null;
 
     // Fetch activities from Strava (last 30 activities, page 1)
     const stravaActivities = await this.stravaPort.getActivities(token.access_token, {
@@ -48,6 +54,11 @@ export class SyncStravaActivities {
         skipped++;
         continue;
       }
+
+      // Compute TSS from Normalized Power, moving time, and FTP
+      const np = sa.weighted_average_watts || null;
+      const tss =
+        np && ftp && ftp > 0 ? (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100 : null;
 
       toCreate.push({
         user_id: userId,
@@ -76,6 +87,7 @@ export class SyncStravaActivities {
         calories: sa.calories || null,
         elev_high: sa.elev_high || null,
         elev_low: sa.elev_low || null,
+        tss,
       });
     }
 
