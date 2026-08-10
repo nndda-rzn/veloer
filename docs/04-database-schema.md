@@ -139,8 +139,8 @@ CREATE TABLE bikes (
 CREATE INDEX idx_bikes_user_id ON bikes(user_id);
 
 -- Setelah tabel bikes dibuat, update FK di user_profiles
-ALTER TABLE user_profiles 
-  ADD CONSTRAINT fk_user_profiles_default_bike 
+ALTER TABLE user_profiles
+  ADD CONSTRAINT fk_user_profiles_default_bike
   FOREIGN KEY (default_bike_id) REFERENCES bikes(id) ON DELETE SET NULL;
 ```
 
@@ -408,10 +408,10 @@ CREATE OR REPLACE FUNCTION update_bike_km_after_activity()
 RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.bike_id IS NOT NULL THEN
-    UPDATE bikes 
+    UPDATE bikes
     SET current_km = current_km + (NEW.distance / 1000)
     WHERE id = NEW.bike_id;
-    
+
     -- Update komponen aktif di bike tersebut
     UPDATE components
     SET current_km = components.current_km + (NEW.distance / 1000)
@@ -452,14 +452,14 @@ Urutan ini menjaga dependency order: tabel yang dirujuk harus dibuat dulu.
 
 ## Catatan Penting
 
-1. **Satuan**: 
+1. **Satuan**:
    - Distance: meter (dari Strava), ditampilkan sebagai km di UI
    - Moving time: detik (dari Strava)
    - Elevation: meter
    - Speed: m/s (dari Strava), ditampilkan sebagai km/h di UI
    - Currency: IDR (Rupiah), tanpa desimal
 
-2. **`current_km` di bikes & components**: 
+2. **`current_km` di bikes & components**:
    - Di-update via trigger saat aktivitas baru di-insert
    - Jika aktivitas di-delete, trigger perlu handle pengurangan km
 

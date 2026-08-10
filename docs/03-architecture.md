@@ -194,15 +194,12 @@ server/src/
 Wiring dependencies dilakukan di `config/dependencies.ts`:
 
 ```ts
-import { container } from 'tsyringe'
-import { SupabaseUserRepository } from '../infrastructure/database/repositories/auth/SupabaseUserRepository'
-import { UserRepository } from '../domain/repositories/auth/UserRepository'
+import { container } from 'tsyringe';
+import { SupabaseUserRepository } from '../infrastructure/database/repositories/auth/SupabaseUserRepository';
+import { UserRepository } from '../domain/repositories/auth/UserRepository';
 // ... imports lain
 
-container.registerSingleton<UserRepository>(
-  'UserRepository',
-  SupabaseUserRepository
-)
+container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
 // ... registrasi lainnya
 ```
 
@@ -216,7 +213,7 @@ export class HandleStravaCallback {
     @inject('StravaPort') private stravaPort: StravaPort,
     @inject('TokenPort') private tokenPort: TokenPort,
   ) {}
-  
+
   async execute(code: string) { ... }
 }
 ```

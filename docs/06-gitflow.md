@@ -23,20 +23,21 @@ release/* ──→ main (dengan tag) + develop
 
 ### Aturan Branch
 
-| Branch | Dari | Merge Ke | Kapan Dipakai |
-|---|---|---|---|
-| `main` | — | — | Production. Hanya dari `release/*` atau `hotfix/*` |
-| `develop` | `main` | `main` (via release) | Branch utama development |
-| `feature/<scope>-<desc>` | `develop` | `develop` | Fitur baru |
-| `bugfix/<scope>-<desc>` | `develop` | `develop` | Perbaikan bug non-kritis |
-| `hotfix/<scope>-<desc>` | `main` | `main` + `develop` | Perbaikan darurat production |
-| `release/v<versi>` | `develop` | `main` + tag | Persiapan rilis |
+| Branch                   | Dari      | Merge Ke             | Kapan Dipakai                                      |
+| ------------------------ | --------- | -------------------- | -------------------------------------------------- |
+| `main`                   | —         | —                    | Production. Hanya dari `release/*` atau `hotfix/*` |
+| `develop`                | `main`    | `main` (via release) | Branch utama development                           |
+| `feature/<scope>-<desc>` | `develop` | `develop`            | Fitur baru                                         |
+| `bugfix/<scope>-<desc>`  | `develop` | `develop`            | Perbaikan bug non-kritis                           |
+| `hotfix/<scope>-<desc>`  | `main`    | `main` + `develop`   | Perbaikan darurat production                       |
+| `release/v<versi>`       | `develop` | `main` + tag         | Persiapan rilis                                    |
 
 ---
 
 ## Naming Convention
 
 ### Branch
+
 ```
 <type>/<scope>-<deskripsi-singkat>
 
@@ -57,6 +58,7 @@ release/v1.0.0
 ## Conventional Commits
 
 Format:
+
 ```
 <type>(<scope>): <deskripsi>
 
@@ -67,18 +69,18 @@ Format:
 
 ### Type
 
-| Type | Kapan | Contoh |
-|---|---|---|
-| `feat` | Fitur baru | `feat(server): implement Strava OAuth callback` |
-| `fix` | Bug fix | `fix(client): resolve map polyline decode error` |
-| `docs` | Dokumentasi | `docs: add setup guide for Strava` |
-| `style` | Formatting, no logic change | `style(client): format dashboard components` |
-| `refactor` | Refactoring tanpa perubahan perilaku | `refactor(server): extract token refresh logic` |
-| `perf` | Performance improvement | `perf(server): add database index for activities` |
-| `test` | Tambahan/perubahan test | `test(server): add unit tests for bike repository` |
-| `chore` | Maintenance, deps, config | `chore(deps): upgrade recharts to v3.10.1` |
-| `ci` | CI/CD pipeline | `ci: add GitHub Actions workflow for build` |
-| `build` | Build system / dependencies | `build: update vite config for production` |
+| Type       | Kapan                                | Contoh                                             |
+| ---------- | ------------------------------------ | -------------------------------------------------- |
+| `feat`     | Fitur baru                           | `feat(server): implement Strava OAuth callback`    |
+| `fix`      | Bug fix                              | `fix(client): resolve map polyline decode error`   |
+| `docs`     | Dokumentasi                          | `docs: add setup guide for Strava`                 |
+| `style`    | Formatting, no logic change          | `style(client): format dashboard components`       |
+| `refactor` | Refactoring tanpa perubahan perilaku | `refactor(server): extract token refresh logic`    |
+| `perf`     | Performance improvement              | `perf(server): add database index for activities`  |
+| `test`     | Tambahan/perubahan test              | `test(server): add unit tests for bike repository` |
+| `chore`    | Maintenance, deps, config            | `chore(deps): upgrade recharts to v3.10.1`         |
+| `ci`       | CI/CD pipeline                       | `ci: add GitHub Actions workflow for build`        |
+| `build`    | Build system / dependencies          | `build: update vite config for production`         |
 
 ### Scope (per modul)
 
@@ -130,6 +132,7 @@ v2.0.0    ← Breaking changes
 ```
 
 Tag dibuat saat merge release branch ke `main`:
+
 ```bash
 git tag -a v1.0.0 -m "Release v1.0.0: Cycling ERP MVP"
 ```
@@ -224,11 +227,11 @@ git push origin --delete release/v1.0.0
 
 ### Husky Git Hooks
 
-| Hook | Script | Fungsi |
-|---|---|---|
-| `pre-commit` | `npx lint-staged` | Lint file yang di-staged |
+| Hook         | Script                     | Fungsi                               |
+| ------------ | -------------------------- | ------------------------------------ |
+| `pre-commit` | `npx lint-staged`          | Lint file yang di-staged             |
 | `commit-msg` | `npx commitlint --edit $1` | Validasi format Conventional Commits |
-| `pre-push` | `npm run type-check` | TypeScript type-check sebelum push |
+| `pre-push`   | `npm run type-check`       | TypeScript type-check sebelum push   |
 
 ### `lint-staged` config (`package.json`)
 
@@ -254,7 +257,7 @@ module.exports = {
     ],
     'subject-case': [0],
   },
-}
+};
 ```
 
 ### `standard-version` (auto changelog + version bump)
@@ -271,6 +274,7 @@ module.exports = {
 ```
 
 File yang di-generate:
+
 - `CHANGELOG.md` — auto-generated dari Conventional Commits
 - `package.json` — version bump otomatis
 
