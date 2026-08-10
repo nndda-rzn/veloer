@@ -53,6 +53,7 @@ export class HandleStravaCallback {
         default_bike_id: null,
         timezone: 'Asia/Jakarta',
         currency: 'IDR',
+        ftp: null,
       });
     }
 

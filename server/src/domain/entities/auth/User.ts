@@ -24,6 +24,7 @@ export interface UserProfile {
   default_bike_id: string | null;
   timezone: string;
   currency: string;
+  ftp: number | null;
   created_at: string;
   updated_at: string;
 }
