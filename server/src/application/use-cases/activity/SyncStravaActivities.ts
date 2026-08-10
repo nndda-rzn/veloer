@@ -65,6 +65,17 @@ export class SyncStravaActivities {
         max_hr: sa.max_heartrate || null,
         polyline: sa.map?.summary_polyline || null,
         bike_id: null,
+        avg_cadence: sa.average_cadence || null,
+        max_cadence: sa.max_cadence || null,
+        avg_watts: sa.average_watts || null,
+        max_watts: sa.max_watts || null,
+        weighted_avg_watts: sa.weighted_average_watts || null,
+        kilojoules: sa.kilojoules || null,
+        device_watts: sa.device_watts ?? false,
+        avg_temp: sa.average_temp ?? null,
+        calories: sa.calories || null,
+        elev_high: sa.elev_high || null,
+        elev_low: sa.elev_low || null,
       });
     }
 
