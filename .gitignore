@@ -52,3 +52,6 @@ coverage/
 *.local
 .cache/
 .temp/
+
+# Husky internals
+.husky/_/
