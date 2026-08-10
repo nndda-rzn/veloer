@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Layout } from '@/shared/components/layout/Layout';
+import { ProtectedRoute } from '@/features/auth';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ActivitiesPage } from '@/pages/ActivitiesPage';
 import { ActivityDetailPage } from '@/pages/ActivityDetailPage';
@@ -18,17 +19,22 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Layout />,
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'activities', element: <ActivitiesPage /> },
-      { path: 'activities/:id', element: <ActivityDetailPage /> },
-      { path: 'inventory', element: <InventoryPage /> },
-      { path: 'maintenance', element: <MaintenancePage /> },
-      { path: 'finance', element: <FinancePage /> },
-      { path: 'goals', element: <GoalsPage /> },
-      { path: 'events', element: <EventsPage /> },
-      { path: 'settings', element: <SettingsPage /> },
+      {
+        element: <Layout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: 'activities', element: <ActivitiesPage /> },
+          { path: 'activities/:id', element: <ActivityDetailPage /> },
+          { path: 'inventory', element: <InventoryPage /> },
+          { path: 'maintenance', element: <MaintenancePage /> },
+          { path: 'finance', element: <FinancePage /> },
+          { path: 'goals', element: <GoalsPage /> },
+          { path: 'events', element: <EventsPage /> },
+          { path: 'settings', element: <SettingsPage /> },
+        ],
+      },
     ],
   },
   {
