@@ -1,5 +1,12 @@
 import { apiClient } from '@/shared/lib/api-client';
-import type { Activity, ActivityStats, ActivityListFilters, SyncResult } from '../types/activity';
+import type {
+  Activity,
+  ActivityStats,
+  ActivityListFilters,
+  SyncResult,
+  ActivityLap,
+  ActivityZone,
+} from '../types/activity';
 
 export const activityApi = {
   async list(filters?: ActivityListFilters): Promise<Activity[]> {
@@ -28,5 +35,15 @@ export const activityApi = {
 
   async updateBike(id: string, bikeId: string | null): Promise<void> {
     await apiClient.patch(`/api/activities/${id}/bike`, { bikeId });
+  },
+
+  async getLaps(id: string): Promise<ActivityLap[]> {
+    const { data } = await apiClient.get<ActivityLap[]>(`/api/activities/${id}/laps`);
+    return data;
+  },
+
+  async getZones(id: string): Promise<ActivityZone[]> {
+    const { data } = await apiClient.get<ActivityZone[]>(`/api/activities/${id}/zones`);
+    return data;
   },
 };

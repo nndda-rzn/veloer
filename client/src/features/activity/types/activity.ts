@@ -5,24 +5,55 @@ export interface Activity {
   name: string;
   type: string;
   start_date: string;
-  distance: number; // meters
-  moving_time: number; // seconds
-  elapsed_time: number; // seconds
-  total_elevation_gain: number | null; // meters
-  avg_speed: number | null; // m/s
-  max_speed: number | null; // m/s
-  avg_hr: number | null; // bpm
-  max_hr: number | null; // bpm
+  distance: number;
+  moving_time: number;
+  elapsed_time: number;
+  total_elevation_gain: number | null;
+  avg_speed: number | null;
+  max_speed: number | null;
+  avg_hr: number | null;
+  max_hr: number | null;
   polyline: string | null;
   bike_id: string | null;
+  avg_cadence: number | null;
+  max_cadence: number | null;
+  avg_watts: number | null;
+  max_watts: number | null;
+  weighted_avg_watts: number | null;
+  kilojoules: number | null;
+  device_watts: boolean;
+  avg_temp: number | null;
+  calories: number | null;
+  elev_high: number | null;
+  elev_low: number | null;
   created_at: string;
   updated_at: string;
 }
 
+export interface ActivityLap {
+  id: number;
+  lap_index: number;
+  distance: number;
+  moving_time: number;
+  elapsed_time: number;
+  average_speed: number;
+  max_speed: number;
+  average_heartrate: number | null;
+  max_heartrate: number | null;
+  average_cadence: number | null;
+  average_watts: number | null;
+  lap_type: string | null;
+}
+
+export interface ActivityZone {
+  sensor_type: 'heartrate' | 'power';
+  distribution_buckets: { min: number; max: number; time: number }[];
+}
+
 export interface ActivityStats {
-  totalDistance: number; // meters
-  totalMovingTime: number; // seconds
-  totalElevationGain: number; // meters
+  totalDistance: number;
+  totalMovingTime: number;
+  totalElevationGain: number;
   count: number;
 }
 
@@ -38,4 +69,5 @@ export interface SyncResult {
   synced: number;
   skipped: number;
   total: number;
+  goalsUpdated: number;
 }
