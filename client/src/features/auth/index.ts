@@ -1,2 +1,5 @@
-// Auth feature - will be implemented in Fase 3
-// This barrel export establishes the public API for the auth feature
+export { authApi } from './api/auth.api';
+export type { AuthUser } from './api/auth.api';
+export { AuthProvider, useAuthContext } from './context/AuthContext';
+export { useAuth } from './hooks/useAuth';
+export { ProtectedRoute } from './components/ProtectedRoute';

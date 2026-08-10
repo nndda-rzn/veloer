@@ -1,7 +1,7 @@
+import { useAuth } from '@/features/auth';
+
 export function LoginPage() {
-  const handleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/login`;
-  };
+  const { login } = useAuth();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -14,7 +14,7 @@ export function LoginPage() {
         </div>
         <div className="space-y-4">
           <button
-            onClick={handleLogin}
+            onClick={login}
             className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#fc4c02] px-4 py-3 text-sm font-medium text-white hover:bg-[#e04302]"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
