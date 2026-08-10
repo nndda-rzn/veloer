@@ -470,32 +470,139 @@ feat(client/features/activities): add ActivityDetail with map
 
 ---
 
-## Branching Summary
+## Branching Summary (Per Sub-Fitur)
 
-| Fase | Branch                          | Merge Ke           |
-| ---- | ------------------------------- | ------------------ |
-| F0   | `feature/gitflow-setup`         | `develop`          |
-| F1   | `feature/project-setup`         | `develop`          |
-| F2   | `feature/db-schema-mvp`         | `develop`          |
-| F3   | `feature/strava-oauth-auth`     | `develop`          |
-| F4   | `feature/activity-tracking`     | `develop`          |
-| F5   | `feature/inventory-module`      | `develop`          |
-| F6   | `feature/strava-inventory-sync` | `develop`          |
-| F7   | `feature/maintenance-module`    | `develop`          |
-| F8   | `feature/finance-module`        | `develop`          |
-| F9   | `feature/dashboard-mvp`         | `develop`          |
-| F10  | `release/v1.0.0`                | `main` + `develop` |
-| F11  | `feature/goals-module`          | `develop`          |
-| F12  | `feature/events-module`         | `develop`          |
-| F13  | `feature/dashboard-v2`          | `develop`          |
-| F14  | `release/v2.0.0`                | `main` + `develop` |
+> Setiap fase dipecah menjadi multiple feature branch (sangat granular).
+> Setiap PR = 1-5 file, membutuhkan konfirmasi manual sebelum merge.
+
+### Fase 0 & 1 (Selesai)
+
+| Fase | Branch                  | Merge Ke  | Status            |
+| ---- | ----------------------- | --------- | ----------------- |
+| F0   | `feature/gitflow-setup` | `develop` | ✅ Merged (PR #1) |
+| F1   | `feature/project-setup` | `develop` | ✅ Merged (PR #2) |
+
+### Fase 2: Database Schema MVP (9 sub-fitur)
+
+| #   | Branch                          | Isi                                          | Status |
+| --- | ------------------------------- | -------------------------------------------- | ------ |
+| 1   | `feature/db-users-tables`       | users + user_profiles                        | ⏳     |
+| 2   | `feature/db-inventory-tables`   | bikes + components                           | ⏳     |
+| 3   | `feature/db-activity-tables`    | activities                                   | ⏳     |
+| 4   | `feature/db-maintenance-tables` | maintenance_logs + schedules                 | ⏳     |
+| 5   | `feature/db-finance-tables`     | transactions + budgets                       | ⏳     |
+| 6   | `feature/db-goals-tables`       | goals                                        | ⏳     |
+| 7   | `feature/db-events-tables`      | events                                       | ⏳     |
+| 8   | `feature/db-fk-rls-triggers`    | foreign keys, RLS, triggers                  | ⏳     |
+| 9   | `feature/server-domain-layer`   | entities + repo interfaces + Supabase client | ⏳     |
+
+### Fase 3: Auth (5 sub-fitur)
+
+| #   | Branch                         | Isi                                        | Status |
+| --- | ------------------------------ | ------------------------------------------ | ------ |
+| 10  | `feature/server-strava-oauth`  | StravaPort + adapters                      | ⏳     |
+| 11  | `feature/server-jwt-auth`      | TokenPort + JwtAdapter                     | ⏳     |
+| 12  | `feature/server-auth-usecases` | HandleStravaCallback, RefreshToken, Logout | ⏳     |
+| 13  | `feature/server-auth-routes`   | routes + controller + middleware           | ⏳     |
+| 14  | `feature/client-auth-ui`       | AuthContext, LoginForm, ProtectedRoute     | ⏳     |
+
+### Fase 4: Activity Tracking (5 sub-fitur)
+
+| #   | Branch                             | Isi                                 | Status |
+| --- | ---------------------------------- | ----------------------------------- | ------ |
+| 15  | `feature/server-activity-usecases` | SyncStrava, GetActivities, GetStats | ⏳     |
+| 16  | `feature/server-activity-routes`   | routes + controller                 | ⏳     |
+| 17  | `feature/client-activity-list`     | ActivityList + filters + hooks      | ⏳     |
+| 18  | `feature/client-activity-detail`   | ActivityDetail page                 | ⏳     |
+| 19  | `feature/client-map-components`    | ActivityMap, RoutePolyline, decoder | ⏳     |
+
+### Fase 5: Inventory (5 sub-fitur)
+
+| #   | Branch                              | Isi                          | Status |
+| --- | ----------------------------------- | ---------------------------- | ------ |
+| 20  | `feature/server-inventory-usecases` | bike & component use cases   | ⏳     |
+| 21  | `feature/server-inventory-routes`   | routes + controller          | ⏳     |
+| 22  | `feature/client-bike-crud`          | BikeList, BikeForm, BikeCard | ⏳     |
+| 23  | `feature/client-component-crud`     | ComponentList, ComponentForm | ⏳     |
+| 24  | `feature/client-lifespan-indicator` | LifespanIndicator component  | ⏳     |
+
+### Fase 6: Integration (1 sub-fitur)
+
+| #   | Branch                                 | Isi                    | Status |
+| --- | -------------------------------------- | ---------------------- | ------ |
+| 25  | `feature/server-strava-inventory-sync` | auto-update km on sync | ⏳     |
+
+### Fase 7: Maintenance (3 sub-fitur)
+
+| #   | Branch                                | Isi                                          | Status |
+| --- | ------------------------------------- | -------------------------------------------- | ------ |
+| 26  | `feature/server-maintenance-usecases` | LogMaintenance, CheckDue, History            | ⏳     |
+| 27  | `feature/server-maintenance-routes`   | routes + controller                          | ⏳     |
+| 28  | `feature/client-maintenance-ui`       | calendar, log list, due alerts, wear tracker | ⏳     |
+
+### Fase 8: Finance (3 sub-fitur)
+
+| #   | Branch                            | Isi                                    | Status |
+| --- | --------------------------------- | -------------------------------------- | ------ |
+| 29  | `feature/server-finance-usecases` | transactions, budgets, summary         | ⏳     |
+| 30  | `feature/server-finance-routes`   | routes + controller                    | ⏳     |
+| 31  | `feature/client-finance-ui`       | transaction list, budget cards, charts | ⏳     |
+
+### Fase 9: Dashboard (3 sub-fitur)
+
+| #   | Branch                            | Isi                                    | Status |
+| --- | --------------------------------- | -------------------------------------- | ------ |
+| 32  | `feature/client-dashboard-kpi`    | KPI cards + data hook                  | ⏳     |
+| 33  | `feature/client-dashboard-alerts` | maintenance alerts + recent activities | ⏳     |
+| 34  | `feature/client-dashboard-charts` | weekly distance chart + budget summary | ⏳     |
+
+### Fase 10: Polish (4 sub-fitur)
+
+| #   | Branch                          | Isi                            | Status |
+| --- | ------------------------------- | ------------------------------ | ------ |
+| 35  | `feature/client-loading-states` | skeletons + spinners           | ⏳     |
+| 36  | `feature/client-empty-states`   | empty illustrations + messages | ⏳     |
+| 37  | `feature/client-responsive`     | mobile/tablet responsive fixes | ⏳     |
+| 38  | `feature/docs-setup-guide`      | complete README + setup guide  | ⏳     |
+
+### Fase 11: Goals (3 sub-fitur)
+
+| #   | Branch                          | Isi                               | Status |
+| --- | ------------------------------- | --------------------------------- | ------ |
+| 39  | `feature/server-goals-usecases` | Create, UpdateProgress, GetStatus | ⏳     |
+| 40  | `feature/server-goals-routes`   | routes + controller               | ⏳     |
+| 41  | `feature/client-goals-ui`       | GoalList, ProgressRing, analytics | ⏳     |
+
+### Fase 12: Events (3 sub-fitur)
+
+| #   | Branch                           | Isi                             | Status |
+| --- | -------------------------------- | ------------------------------- | ------ |
+| 42  | `feature/server-events-usecases` | Add, Update, GetUpcoming        | ⏳     |
+| 43  | `feature/server-events-routes`   | routes + controller             | ⏳     |
+| 44  | `feature/client-events-ui`       | calendar, list, detail, results | ⏳     |
+
+### Fase 13: Dashboard v2 (2 sub-fitur)
+
+| #   | Branch                            | Isi                    | Status |
+| --- | --------------------------------- | ---------------------- | ------ |
+| 45  | `feature/client-dashboard-goals`  | goal progress rings    | ⏳     |
+| 46  | `feature/client-dashboard-events` | upcoming events widget | ⏳     |
+
+### Fase 14: Release (1 sub-fitur)
+
+| #   | Branch           | Isi                | Status |
+| --- | ---------------- | ------------------ | ------ |
+| 47  | `release/v1.0.0` | final polish + tag | ⏳     |
 
 ---
 
 ## Catatan Eksekusi
 
-1. **Setiap fase = satu PR**: Buat branch, kerjakan, push, PR ke `develop`, review, merge
-2. **Commit berkala**: Jangan akumulasi terlalu banyak per commit. Satu unit kerja = satu commit
+1. **Setiap sub-fitur = satu PR**: Buat branch, kerjakan (1-5 file), push, PR ke `develop`, **tunggu konfirmasi user**, merge
+2. **Commit berkala**: Jika sub-fitur punya multiple file, boleh beberapa commit dalam branch yang sama
 3. **Conventional Commits**: Wajib, karena commitlint akan reject jika tidak sesuai format
-4. **Test setiap fase**: Pastikan tidak break fase sebelumnya sebelum merge
+4. **Test setiap sub-fitur**: Pastikan tidak break fitur sebelumnya sebelum merge
 5. **Update docs jika ada perubahan**: Jika ada deviasi dari rencana, update docs terkait
+6. **Sync develop sebelum mulai fitur baru**: `git checkout develop && git pull origin develop`
+7. **Squash merge**: Selalu squash & merge, hapus branch setelah merge
+8. **Jangan merge tanpa konfirmasi**: Setiap PR harus ditanyakan dulu ke user sebelum di-merge
