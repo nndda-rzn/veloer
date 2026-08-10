@@ -1,4 +1,6 @@
-import { Outlet, NavLink, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { activityApi } from '@/features/activity';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: '📊' },
@@ -12,6 +14,21 @@ const navItems = [
 ];
 
 export function Layout() {
+  const navigate = useNavigate();
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      await activityApi.sync();
+      navigate('/activities');
+    } catch {
+      // Error handled by interceptor
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -54,8 +71,12 @@ export function Layout() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <h1 className="text-lg font-semibold text-gray-900">Your Personal Cycling ERP</h1>
-          <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark">
-            Sync Now
+          <button
+            onClick={() => void handleSync()}
+            disabled={syncing}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
+          >
+            {syncing ? 'Syncing...' : 'Sync Now'}
           </button>
         </header>
         <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
