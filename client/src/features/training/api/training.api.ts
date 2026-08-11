@@ -7,6 +7,7 @@ import type {
   WorkoutRecommendation,
   PlanRetrospective,
   TrainingLoadDataPoint,
+  FitnessAnalysis,
 } from '../types/training';
 
 export const trainingApi = {
@@ -88,6 +89,12 @@ export const trainingApi = {
     const { data } = await apiClient.post<{ missed: number; rescheduled: number }>(
       `/api/training-plans/${planId}/reschedule-missed`,
     );
+    return data;
+  },
+
+  // ---- Fitness Analysis ----
+  async getFitnessAnalysis(): Promise<FitnessAnalysis> {
+    const { data } = await apiClient.get<FitnessAnalysis>('/api/training-plans/fitness-analysis');
     return data;
   },
 

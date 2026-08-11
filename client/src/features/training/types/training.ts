@@ -200,6 +200,20 @@ export interface WorkoutRecommendation {
   metrics: RecommendationMetrics;
 }
 
+export type FitnessAnalysisConfidence = 'high' | 'low' | 'none';
+
+export interface FitnessAnalysis {
+  estimated_ftp: number;
+  ftp_confidence: FitnessAnalysisConfidence;
+  avg_weekly_hours: number;
+  avg_weekly_tss: number;
+  ctl: number;
+  activity_count: number;
+  suggested_template: TemplateKey;
+  suggested_ftp_baseline: number;
+  warnings: string[];
+}
+
 export interface TrainingLoadDataPoint {
   date: string;
   tss: number;
