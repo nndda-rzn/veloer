@@ -1,5 +1,6 @@
 import {
   KpiCard,
+  BikeHero,
   MaintenanceAlerts,
   RecentActivities,
   WeeklyDistanceChart,
@@ -10,6 +11,7 @@ import {
 } from '@/features/dashboard';
 import { UpcomingWorkoutsWidget } from '@/features/training/components/UpcomingWorkoutsWidget';
 import { formatDistance, formatIDR } from '@/shared/lib/utils';
+import { Route, Clock, Bike, Wallet } from 'lucide-react';
 
 export function DashboardPage() {
   const {
@@ -20,6 +22,7 @@ export function DashboardPage() {
     financeSummary,
     activeGoals,
     upcomingEvents,
+    profile,
     loading,
     error,
   } = useDashboardData();
@@ -29,10 +32,13 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-        <p className="mt-1 text-sm text-gray-500">Overview of your cycling activities and gear</p>
-      </div>
+      {/* Hero */}
+      <BikeHero
+        displayName={profile?.display_name ?? null}
+        bikes={bikes}
+        defaultBikeId={profile?.default_bike_id ?? null}
+        activityStats={activityStats}
+      />
 
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
@@ -45,7 +51,8 @@ export function DashboardPage() {
         <KpiCard
           label="Total Distance"
           value={activityStats ? formatDistance(activityStats.totalDistance) : '—'}
-          icon="🚴"
+          icon={<Route className="h-5 w-5" />}
+          iconColor="bg-blue-500"
           trend={`${activityStats?.count ?? 0} activities`}
         />
         <KpiCard
@@ -55,18 +62,21 @@ export function DashboardPage() {
               ? `${Math.floor(activityStats.totalMovingTime / 3600)}h ${Math.floor((activityStats.totalMovingTime % 3600) / 60)}m`
               : '—'
           }
-          icon="⏱️"
+          icon={<Clock className="h-5 w-5" />}
+          iconColor="bg-green-500"
         />
         <KpiCard
           label="Active Bikes"
           value={String(activeBikes)}
-          icon="🚲"
+          icon={<Bike className="h-5 w-5" />}
+          iconColor="bg-purple-500"
           trend={`${bikes.length} total`}
         />
         <KpiCard
           label="Budget Used"
           value={formatIDR(budgetUsed)}
-          icon="💰"
+          icon={<Wallet className="h-5 w-5" />}
+          iconColor="bg-orange-500"
           trend={
             financeSummary
               ? `Balance: ${formatIDR(financeSummary.totalIncome - financeSummary.totalExpense)}`
