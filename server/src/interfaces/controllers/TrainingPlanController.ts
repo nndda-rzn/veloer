@@ -14,6 +14,7 @@ import {
   DeleteWorkout,
 } from '../../application/use-cases/training/WorkoutUseCases.js';
 import { GenerateRecommendation } from '../../application/use-cases/training/GenerateRecommendation.js';
+import { AutoRescheduleMissed } from '../../application/use-cases/training/AutoRescheduleMissed.js';
 
 export class TrainingPlanController {
   // ---- Plans ----
@@ -139,5 +140,18 @@ export class TrainingPlanController {
     const useCase = container.resolve(GenerateRecommendation);
     const recommendation = await useCase.execute(req.user.userId);
     res.json(recommendation);
+  }
+
+  // ---- Auto-reschedule ----
+
+  async rescheduleMissed(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const useCase = container.resolve(AutoRescheduleMissed);
+    const result = await useCase.execute(req.user.userId, String(id));
+    res.json(result);
   }
 }
