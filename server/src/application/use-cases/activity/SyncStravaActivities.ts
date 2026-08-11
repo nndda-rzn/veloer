@@ -27,6 +27,29 @@ export class SyncStravaActivities {
     @inject(UpdateGoalProgress) private updateGoalProgress: UpdateGoalProgress,
   ) {}
 
+  /** Map NP/FTP intensity ratio to a simplified zone label */
+  private intensityZone(ratio: number): string {
+    if (ratio < 0.55) return 'z1';
+    if (ratio < 0.75) return 'z2';
+    if (ratio < 0.87) return 'z3';
+    if (ratio < 0.95) return 'z4';
+    if (ratio < 1.05) return 'z5';
+    return 'z6';
+  }
+
+  /** Return true if the activity zone is compatible with the planned workout type */
+  private zoneMatchesWorkoutType(zone: string, workoutType: string): boolean {
+    const map: Record<string, string[]> = {
+      z1: ['recovery'],
+      z2: ['endurance'],
+      z3: ['tempo'],
+      z4: ['sweet_spot'],
+      z5: ['threshold'],
+      z6: ['vo2max', 'anaerobic', 'interval', 'sprint'],
+    };
+    return map[zone]?.includes(workoutType) ?? false;
+  }
+
   async execute(userId: string): Promise<SyncResult> {
     // Get valid Strava token (refresh if expired)
     const token = await this.refreshStravaToken.execute(userId);
@@ -59,10 +82,27 @@ export class SyncStravaActivities {
         continue;
       }
 
-      // Compute TSS from Normalized Power, moving time, and FTP
+      // Compute TSS:
+      // 1. Power-based TSS if NP and FTP available (most accurate)
+      // 2. hrTSS fallback if HR and LTHR available (HR-only rides)
+      // 3. Estimate LTHR from max_hr if LTHR not set (80% of max HR typical threshold)
+      const lthr = profile?.lthr ?? null;
       const np = sa.weighted_average_watts || null;
-      const tss =
-        np && ftp && ftp > 0 ? (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100 : null;
+      let tss: number | null = null;
+
+      if (np && ftp && ftp > 0) {
+        // Power-based TSS (most accurate)
+        tss = (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100;
+      } else if (sa.average_heartrate && sa.moving_time > 0) {
+        // hrTSS fallback using Coggan formula
+        const avgHr = sa.average_heartrate;
+        const effectiveLthr =
+          lthr ?? (sa.max_heartrate ? Math.round(sa.max_heartrate * 0.88) : null);
+        if (effectiveLthr && effectiveLthr > 0) {
+          const hrif = avgHr / effectiveLthr; // HR Intensity Factor
+          tss = (sa.moving_time / 3600) * hrif * hrif * 100;
+        }
+      }
 
       toCreate.push({
         user_id: userId,
@@ -99,7 +139,7 @@ export class SyncStravaActivities {
       const created = await this.activityRepo.createMany(toCreate);
       synced = toCreate.length;
 
-      // Auto-link created activities to planned workouts (±30 min duration tolerance)
+      // Auto-link created activities to planned workouts using duration + intensity scoring
       for (const activity of created) {
         const actDate = activity.start_date.split('T')[0];
         const plannedWorkouts = await this.planRepo.findWorkoutsByDateRange(
@@ -107,14 +147,41 @@ export class SyncStravaActivities {
           actDate,
           actDate,
         );
-        const match = plannedWorkouts.find(
-          (w) =>
-            w.status === 'planned' &&
-            w.target_duration_minutes != null &&
-            Math.abs(activity.moving_time - w.target_duration_minutes * 60) < 1800,
-        );
-        if (match) {
-          await this.planRepo.updateWorkout(match.id, userId, {
+
+        // Derive intensity zone from NP/FTP ratio (falls back to avg_watts if no NP)
+        const actNp = activity.weighted_avg_watts ?? activity.avg_watts ?? null;
+        const actIntensity = actNp && ftp && ftp > 0 ? actNp / ftp : null;
+        const actZone = actIntensity != null ? this.intensityZone(actIntensity) : null;
+
+        let bestMatch: (typeof plannedWorkouts)[0] | null = null;
+        let bestScore = -1;
+
+        for (const w of plannedWorkouts) {
+          if (w.status !== 'planned' || w.target_duration_minutes == null) continue;
+
+          const durationDiffSec = Math.abs(activity.moving_time - w.target_duration_minutes * 60);
+          if (durationDiffSec >= 1800) continue; // outside ±30 min — skip entirely
+
+          let score = 0;
+
+          // Duration scoring: closer = more points
+          if (durationDiffSec < 900)
+            score += 3; // within ±15 min
+          else score += 1; // within ±30 min
+
+          // Workout type vs intensity zone scoring
+          if (actZone != null && this.zoneMatchesWorkoutType(actZone, w.workout_type)) {
+            score += 3;
+          }
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMatch = w;
+          }
+        }
+
+        if (bestMatch) {
+          await this.planRepo.updateWorkout(bestMatch.id, userId, {
             status: 'completed',
             actual_activity_id: activity.id,
             actual_tss: activity.tss ?? null,

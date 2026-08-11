@@ -39,8 +39,14 @@ export function ActivitiesPage() {
 
       {syncResult && (
         <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-          Sync complete — {syncResult.synced} new, {syncResult.skipped} already synced (total:{' '}
-          {syncResult.total})
+          Sync complete — {syncResult.synced} new, {syncResult.skipped} already synced
+          {syncResult.workoutsLinked > 0 && (
+            <>
+              , {syncResult.workoutsLinked} workout{syncResult.workoutsLinked !== 1 ? 's' : ''}{' '}
+              linked
+            </>
+          )}{' '}
+          (total: {syncResult.total})
         </div>
       )}
 

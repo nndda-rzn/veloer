@@ -28,6 +28,7 @@ export function SettingsPage() {
         timezone: profile.timezone,
         currency: profile.currency,
         ftp: profile.ftp,
+        lthr: profile.lthr,
       });
     }
   }, [profile]);
@@ -201,28 +202,58 @@ export function SettingsPage() {
       {/* Training Settings */}
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h2 className="mb-4 text-sm font-semibold text-gray-700">Training Settings</h2>
-        <div>
-          <label htmlFor="ftp" className={labelClass}>
-            FTP (Functional Threshold Power)
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              id="ftp"
-              type="number"
-              min="0"
-              value={formData.ftp ?? 250}
-              onChange={(e) =>
-                setFormData({ ...formData, ftp: e.target.value ? Number(e.target.value) : null })
-              }
-              className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              disabled={saving}
-            />
-            <span className="text-sm text-gray-500">Watts</span>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="ftp" className={labelClass}>
+              FTP (Functional Threshold Power)
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="ftp"
+                type="number"
+                min="0"
+                value={formData.ftp ?? 250}
+                onChange={(e) =>
+                  setFormData({ ...formData, ftp: e.target.value ? Number(e.target.value) : null })
+                }
+                className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                disabled={saving}
+              />
+              <span className="text-sm text-gray-500">Watts</span>
+            </div>
+            <p className="mt-1 text-xs text-gray-400">
+              Used for TSS and IF calculations. Default: 250W. Set to your tested 20-minute power
+              minus 5%.
+            </p>
           </div>
-          <p className="mt-1 text-xs text-gray-400">
-            Used for TSS and IF calculations. Default: 250W. Set to your tested 20-minute power
-            minus 5%.
-          </p>
+          <div>
+            <label htmlFor="lthr" className={labelClass}>
+              LTHR (Lactate Threshold Heart Rate)
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="lthr"
+                type="number"
+                min="0"
+                max="250"
+                value={formData.lthr ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    lthr: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+                className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                disabled={saving}
+                placeholder="—"
+              />
+              <span className="text-sm text-gray-500">bpm</span>
+            </div>
+            <p className="mt-1 text-xs text-gray-400">
+              Optional. Used as fallback for hrTSS when no power meter data is available. Typically
+              your average HR during a 30-min all-out effort.
+            </p>
+          </div>
         </div>
       </div>
 

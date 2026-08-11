@@ -25,6 +25,7 @@ export interface UserProfile {
   timezone: string;
   currency: string;
   ftp: number | null;
+  lthr: number | null;
   created_at: string;
   updated_at: string;
 }
