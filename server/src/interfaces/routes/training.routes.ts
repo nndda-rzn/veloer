@@ -10,6 +10,11 @@ router.get('/recommendations', authMiddleware, (req, res, next) => {
   void controller.getRecommendation(req, res).catch(next);
 });
 
+// From template
+router.post('/from-template', authMiddleware, (req, res, next) => {
+  void controller.createFromTemplate(req, res).catch(next);
+});
+
 // Plans
 router.get('/', authMiddleware, (req, res, next) => {
   void controller.list(req, res).catch(next);
