@@ -16,6 +16,7 @@ import {
 import { GenerateRecommendation } from '../../application/use-cases/training/GenerateRecommendation.js';
 import { AutoRescheduleMissed } from '../../application/use-cases/training/AutoRescheduleMissed.js';
 import { GetPlanRetrospective } from '../../application/use-cases/training/GetPlanRetrospective.js';
+import { GeneratePlanFromTemplate } from '../../application/use-cases/training/GeneratePlanFromTemplate.js';
 
 export class TrainingPlanController {
   // ---- Plans ----
@@ -171,5 +172,17 @@ export class TrainingPlanController {
       return;
     }
     res.json(result);
+  }
+
+  // ---- Template ----
+
+  async createFromTemplate(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const useCase = container.resolve(GeneratePlanFromTemplate);
+    const plan = await useCase.execute({ ...req.body, userId: req.user.userId });
+    res.status(201).json(plan);
   }
 }

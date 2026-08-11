@@ -44,6 +44,7 @@ import {
 import { GenerateRecommendation } from '../application/use-cases/training/GenerateRecommendation.js';
 import { AutoRescheduleMissed } from '../application/use-cases/training/AutoRescheduleMissed.js';
 import { GetPlanRetrospective } from '../application/use-cases/training/GetPlanRetrospective.js';
+import { GeneratePlanFromTemplate } from '../application/use-cases/training/GeneratePlanFromTemplate.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -87,6 +88,7 @@ container.registerSingleton(GetActivityZones);
 container.registerSingleton(GenerateRecommendation);
 container.registerSingleton(AutoRescheduleMissed);
 container.registerSingleton(GetPlanRetrospective);
+container.registerSingleton(GeneratePlanFromTemplate);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);
