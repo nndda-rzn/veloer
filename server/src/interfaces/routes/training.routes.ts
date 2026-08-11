@@ -10,6 +10,11 @@ router.get('/recommendations', authMiddleware, (req, res, next) => {
   void controller.getRecommendation(req, res).catch(next);
 });
 
+// Load history (CTL/ATL/TSS per day, 42 days)
+router.get('/load-history', authMiddleware, (req, res, next) => {
+  void controller.getLoadHistory(req, res).catch(next);
+});
+
 // From template
 router.post('/from-template', authMiddleware, (req, res, next) => {
   void controller.createFromTemplate(req, res).catch(next);

@@ -8,7 +8,9 @@ import { WorkoutForm } from '@/features/training/components/WorkoutForm';
 import { RecommendationCard } from '@/features/training/components/RecommendationCard';
 import { FormGauge } from '@/features/training/components/FormGauge';
 import { ActivityLinker } from '@/features/training/components/ActivityLinker';
+import { TrainingLoadChart } from '@/features/training/components/TrainingLoadChart';
 import { useRecommendation } from '@/features/training';
+import { useTrainingLoad } from '@/features/training';
 import type {
   TrainingPlan,
   TrainingWorkout,
@@ -38,6 +40,7 @@ export function TrainingPlanDetailPage() {
     reschedule,
   } = useWorkouts(id ?? '');
   const { recommendation, loading: recLoading } = useRecommendation();
+  const { data: loadHistory, loading: loadHistoryLoading } = useTrainingLoad();
 
   useEffect(() => {
     if (!id) return;
@@ -200,6 +203,13 @@ export function TrainingPlanDetailPage() {
           {recLoading && <div className="h-48 animate-pulse rounded-lg bg-gray-100" />}
         </div>
       </div>
+
+      {/* Training Load Chart */}
+      {loadHistoryLoading ? (
+        <div className="h-56 animate-pulse rounded-xl bg-gray-100" />
+      ) : (
+        <TrainingLoadChart data={loadHistory} />
+      )}
 
       {/* Workout detail slide-in */}
       {selectedWorkout && !showLinker && (

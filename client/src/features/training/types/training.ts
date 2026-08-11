@@ -200,6 +200,13 @@ export interface WorkoutRecommendation {
   metrics: RecommendationMetrics;
 }
 
+export interface TrainingLoadDataPoint {
+  date: string;
+  tss: number;
+  ctl: number;
+  atl: number;
+}
+
 export interface WeeklyBreakdown {
   week: string;
   planned_tss: number;

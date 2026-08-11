@@ -6,6 +6,7 @@ import type {
   WorkoutFormData,
   WorkoutRecommendation,
   PlanRetrospective,
+  TrainingLoadDataPoint,
 } from '../types/training';
 
 export const trainingApi = {
@@ -86,6 +87,14 @@ export const trainingApi = {
   async rescheduleMissed(planId: string): Promise<{ missed: number; rescheduled: number }> {
     const { data } = await apiClient.post<{ missed: number; rescheduled: number }>(
       `/api/training-plans/${planId}/reschedule-missed`,
+    );
+    return data;
+  },
+
+  // ---- Load History ----
+  async getLoadHistory(): Promise<TrainingLoadDataPoint[]> {
+    const { data } = await apiClient.get<TrainingLoadDataPoint[]>(
+      '/api/training-plans/load-history',
     );
     return data;
   },
