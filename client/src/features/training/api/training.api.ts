@@ -4,6 +4,8 @@ import type {
   TrainingWorkout,
   TrainingPlanFormData,
   WorkoutFormData,
+  WorkoutRecommendation,
+  PlanRetrospective,
 } from '../types/training';
 
 export const trainingApi = {
@@ -62,5 +64,29 @@ export const trainingApi = {
 
   async deleteWorkout(planId: string, workoutId: string): Promise<void> {
     await apiClient.delete(`/api/training-plans/${planId}/workouts/${workoutId}`);
+  },
+
+  // ---- Recommendation ----
+  async getRecommendation(): Promise<WorkoutRecommendation> {
+    const { data } = await apiClient.get<WorkoutRecommendation>(
+      '/api/training-plans/recommendations',
+    );
+    return data;
+  },
+
+  // ---- Retrospective ----
+  async getRetrospective(planId: string): Promise<PlanRetrospective> {
+    const { data } = await apiClient.get<PlanRetrospective>(
+      `/api/training-plans/${planId}/retrospective`,
+    );
+    return data;
+  },
+
+  // ---- Reschedule missed ----
+  async rescheduleMissed(planId: string): Promise<{ missed: number; rescheduled: number }> {
+    const { data } = await apiClient.post<{ missed: number; rescheduled: number }>(
+      `/api/training-plans/${planId}/reschedule-missed`,
+    );
+    return data;
   },
 };
