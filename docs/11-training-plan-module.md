@@ -443,6 +443,29 @@ npm install -D @types/react-big-calendar
 
 ## Status
 
-| PR      | Status  |
-| ------- | ------- |
-| #53–#74 | Pending |
+| PR  | Status    |
+| --- | --------- |
+| #53 | ✅ Merged |
+| #54 | ✅ Merged |
+| #55 | ✅ Merged |
+| #56 | ✅ Merged |
+| #57 | ✅ Merged |
+| #58 | ✅ Merged |
+| #59 | ✅ Merged |
+| #60 | ✅ Merged |
+| #61 | ✅ Merged |
+| #62 | ✅ Merged |
+| #63 | ✅ Merged |
+| #64 | ✅ Merged |
+| #65 | ✅ Merged |
+| #66 | ✅ Merged |
+| #67 | ✅ Merged |
+| #68 | ✅ Merged |
+| #69 | ✅ Merged |
+| #70 | ✅ Merged |
+| #71 | ✅ Merged |
+| #72 | ✅ Merged |
+| #73 | ✅ Merged |
+| #74 | ✅ Merged |
+
+**v2.5.0 — Training Plan Module Complete** ✅
