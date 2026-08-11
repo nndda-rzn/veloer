@@ -15,6 +15,11 @@ router.get('/load-history', authMiddleware, (req, res, next) => {
   void controller.getLoadHistory(req, res).catch(next);
 });
 
+// Fitness analysis (estimate FTP + suggest template from Strava data)
+router.get('/fitness-analysis', authMiddleware, (req, res, next) => {
+  void controller.getFitnessAnalysis(req, res).catch(next);
+});
+
 // From template
 router.post('/from-template', authMiddleware, (req, res, next) => {
   void controller.createFromTemplate(req, res).catch(next);
