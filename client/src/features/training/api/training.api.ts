@@ -111,6 +111,7 @@ export const trainingApi = {
     template: string;
     start_date: string;
     title?: string;
+    ftp_baseline?: number;
   }): Promise<TrainingPlan> {
     const { data } = await apiClient.post<TrainingPlan>(
       '/api/training-plans/from-template',
