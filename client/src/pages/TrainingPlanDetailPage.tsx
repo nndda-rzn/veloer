@@ -83,6 +83,11 @@ export function TrainingPlanDetailPage() {
     setSelectedWorkout(null);
   };
 
+  const handleLinkActivity = (workout: TrainingWorkout) => {
+    setSelectedWorkout(workout);
+    setShowLinker(true);
+  };
+
   const handleAddRecommendation = async (rec: WorkoutRecommendation) => {
     const today = new Date().toISOString().split('T')[0];
     await createWorkout({
@@ -209,6 +214,7 @@ export function TrainingPlanDetailPage() {
             setSelectedWorkout(null);
           }}
           onDelete={handleDeleteWorkout}
+          onLinkActivity={handleLinkActivity}
         />
       )}
 

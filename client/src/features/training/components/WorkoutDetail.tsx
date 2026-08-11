@@ -10,6 +10,7 @@ interface WorkoutDetailProps {
   onMarkSkipped: (id: string) => Promise<void>;
   onEdit: (workout: TrainingWorkout) => void;
   onDelete: (id: string) => Promise<void>;
+  onLinkActivity: (workout: TrainingWorkout) => void;
 }
 
 const statusBadge: Record<WorkoutStatus, string> = {
@@ -36,6 +37,7 @@ export function WorkoutDetail({
   onMarkSkipped,
   onEdit,
   onDelete,
+  onLinkActivity,
 }: WorkoutDetailProps) {
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
 
@@ -194,6 +196,13 @@ export function WorkoutDetail({
               </button>
             </div>
           )}
+
+          <button
+            onClick={() => onLinkActivity(workout)}
+            className="w-full rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50"
+          >
+            Link Activity
+          </button>
 
           <div className="flex gap-2 border-t border-gray-100 pt-2">
             <button

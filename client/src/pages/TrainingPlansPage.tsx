@@ -38,9 +38,14 @@ export function TrainingPlansPage() {
   };
 
   const handleFromTemplate = async (template: TemplateKey, startDate: string, title?: string) => {
-    await trainingApi.createFromTemplate({ template, start_date: startDate, title });
-    setShowTemplates(false);
-    refetch();
+    try {
+      await trainingApi.createFromTemplate({ template, start_date: startDate, title });
+      setShowTemplates(false);
+      refetch();
+    } catch (err) {
+      console.error('Failed to create plan from template:', err);
+      alert('Failed to create plan from template. Please try again.');
+    }
   };
 
   return (
