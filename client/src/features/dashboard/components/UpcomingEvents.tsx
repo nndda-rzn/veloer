@@ -1,5 +1,8 @@
+import { Link } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
 import type { Event } from '@/features/events';
 import { formatDate } from '@/shared/lib/utils';
+import { Badge, EmptyState } from '@/shared/components/ui';
 
 interface UpcomingEventsProps {
   events: Event[];
@@ -17,32 +20,43 @@ const typeLabels: Record<Event['type'], string> = {
 
 export function UpcomingEvents({ events, loading }: UpcomingEventsProps) {
   if (loading) {
-    return <div className="h-24 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-24 animate-pulse rounded-xl bg-gray-100" />;
   }
 
   if (events.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center">
-        <p className="text-sm text-gray-500">No upcoming events</p>
-      </div>
+      <EmptyState
+        icon={Calendar}
+        title="No upcoming events"
+        description="Add events to track your race calendar."
+      />
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <h4 className="mb-3 text-sm font-semibold text-gray-700">Upcoming Events</h4>
-      <div className="space-y-2">
-        {events.slice(0, 4).map((event) => (
-          <div key={event.id} className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-900">{event.name}</p>
-              <p className="text-xs text-gray-400">
-                {typeLabels[event.type]} • {formatDate(event.date)}
-              </p>
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-700">Upcoming Events</h3>
+        <Link
+          to="/events"
+          className="text-xs font-medium text-primary hover:text-primary-dark hover:underline"
+        >
+          View all →
+        </Link>
+      </div>
+      <div className="space-y-2.5">
+        {events.slice(0, 3).map((event) => (
+          <div key={event.id} className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-gray-900">{event.name}</p>
+              <p className="text-xs text-gray-400">{formatDate(event.date)}</p>
             </div>
-            {event.distance != null && (
-              <span className="text-xs text-gray-500">{event.distance} km</span>
-            )}
+            <div className="flex flex-shrink-0 items-center gap-2">
+              {event.distance != null && (
+                <span className="text-xs text-gray-500">{event.distance} km</span>
+              )}
+              <Badge variant="info">{typeLabels[event.type]}</Badge>
+            </div>
           </div>
         ))}
       </div>

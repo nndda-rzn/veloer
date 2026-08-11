@@ -41,7 +41,7 @@ export function DashboardPage() {
       />
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -51,8 +51,9 @@ export function DashboardPage() {
         <KpiCard
           label="Total Distance"
           value={activityStats ? formatDistance(activityStats.totalDistance) : '—'}
-          icon={<Route className="h-5 w-5" />}
-          iconColor="bg-blue-500"
+          icon={<Route className="h-5 w-5" aria-hidden="true" />}
+          iconBg="bg-blue-50"
+          iconColor="text-blue-500"
           trend={`${activityStats?.count ?? 0} activities`}
         />
         <KpiCard
@@ -62,21 +63,24 @@ export function DashboardPage() {
               ? `${Math.floor(activityStats.totalMovingTime / 3600)}h ${Math.floor((activityStats.totalMovingTime % 3600) / 60)}m`
               : '—'
           }
-          icon={<Clock className="h-5 w-5" />}
-          iconColor="bg-green-500"
+          icon={<Clock className="h-5 w-5" aria-hidden="true" />}
+          iconBg="bg-purple-50"
+          iconColor="text-purple-500"
         />
         <KpiCard
           label="Active Bikes"
           value={String(activeBikes)}
-          icon={<Bike className="h-5 w-5" />}
-          iconColor="bg-purple-500"
+          icon={<Bike className="h-5 w-5" aria-hidden="true" />}
+          iconBg="bg-primary-50"
+          iconColor="text-primary"
           trend={`${bikes.length} total`}
         />
         <KpiCard
           label="Budget Used"
           value={formatIDR(budgetUsed)}
-          icon={<Wallet className="h-5 w-5" />}
-          iconColor="bg-orange-500"
+          icon={<Wallet className="h-5 w-5" aria-hidden="true" />}
+          iconBg="bg-orange-50"
+          iconColor="text-orange-500"
           trend={
             financeSummary
               ? `Balance: ${formatIDR(financeSummary.totalIncome - financeSummary.totalExpense)}`
@@ -91,21 +95,16 @@ export function DashboardPage() {
       {/* Main grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left — 2/3 width */}
-        <div className="space-y-3 lg:col-span-2">
-          <h3 className="text-sm font-semibold text-gray-700">Recent Activities</h3>
+        <div className="space-y-4 lg:col-span-2">
           <RecentActivities activities={recentActivities} loading={loading} />
           <WeeklyDistanceChart stats={activityStats} />
         </div>
 
         {/* Right — 1/3 width */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Goals</h3>
+        <div className="space-y-4">
           <GoalProgress goals={activeGoals} loading={loading} />
-          <h3 className="pt-2 text-sm font-semibold text-gray-700">Events</h3>
           <UpcomingEvents events={upcomingEvents} loading={loading} />
-          <h3 className="pt-2 text-sm font-semibold text-gray-700">Training Plan</h3>
           <UpcomingWorkoutsWidget />
-          <h3 className="pt-2 text-sm font-semibold text-gray-700">Finance</h3>
           <BudgetSummary summary={financeSummary} loading={loading} />
         </div>
       </div>
