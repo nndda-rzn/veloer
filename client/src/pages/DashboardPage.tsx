@@ -8,6 +8,7 @@ import {
   UpcomingEvents,
   useDashboardData,
 } from '@/features/dashboard';
+import { UpcomingWorkoutsWidget } from '@/features/training/components/UpcomingWorkoutsWidget';
 import { formatDistance, formatIDR } from '@/shared/lib/utils';
 
 export function DashboardPage() {
@@ -92,6 +93,8 @@ export function DashboardPage() {
           <GoalProgress goals={activeGoals} loading={loading} />
           <h3 className="pt-2 text-sm font-semibold text-gray-700">Events</h3>
           <UpcomingEvents events={upcomingEvents} loading={loading} />
+          <h3 className="pt-2 text-sm font-semibold text-gray-700">Training Plan</h3>
+          <UpcomingWorkoutsWidget />
           <h3 className="pt-2 text-sm font-semibold text-gray-700">Finance</h3>
           <BudgetSummary summary={financeSummary} loading={loading} />
         </div>
