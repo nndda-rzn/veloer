@@ -119,3 +119,58 @@ export const PLAN_GOAL_TYPE_LABELS: Record<PlanGoalType, string> = {
   gran_fondo: 'Gran Fondo',
   custom: 'Custom',
 };
+
+export interface RecommendationMetrics {
+  ctl: number;
+  atl: number;
+  tsb: number;
+  weekly_tss: number;
+  weekly_hours: number;
+  days_since_last_ride: number;
+  consecutive_days: number;
+}
+
+export interface WorkoutRecommendation {
+  workout_type: WorkoutType;
+  title: string;
+  description: string;
+  reason: string;
+  target_duration_minutes: number;
+  target_tss: number;
+  target_avg_power: number | null;
+  target_avg_hr: number | null;
+  intervals?: {
+    count: number;
+    duration_seconds: number;
+    power_pct_ftp: number;
+    rest_seconds: number;
+    rest_pct_ftp: number;
+  };
+  metrics: RecommendationMetrics;
+}
+
+export interface WeeklyBreakdown {
+  week: string;
+  planned_tss: number;
+  actual_tss: number;
+  completed: number;
+  total: number;
+}
+
+export interface PlanRetrospective {
+  plan: TrainingPlan;
+  summary: {
+    total_workouts: number;
+    completed: number;
+    skipped: number;
+    missed: number;
+    completion_rate: number;
+    planned_tss_total: number;
+    actual_tss_total: number;
+    tss_compliance: number;
+    planned_hours_total: number;
+    actual_hours_total: number;
+    ftp_change: number | null;
+  };
+  weekly_breakdown: WeeklyBreakdown[];
+}
