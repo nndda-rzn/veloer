@@ -17,6 +17,7 @@ import { GenerateRecommendation } from '../../application/use-cases/training/Gen
 import { AutoRescheduleMissed } from '../../application/use-cases/training/AutoRescheduleMissed.js';
 import { GetPlanRetrospective } from '../../application/use-cases/training/GetPlanRetrospective.js';
 import { GeneratePlanFromTemplate } from '../../application/use-cases/training/GeneratePlanFromTemplate.js';
+import { GetTrainingLoadHistory } from '../../application/use-cases/training/GetTrainingLoadHistory.js';
 
 export class TrainingPlanController {
   // ---- Plans ----
@@ -171,6 +172,18 @@ export class TrainingPlanController {
       res.status(404).json({ error: 'Not Found', message: 'Training plan not found' });
       return;
     }
+    res.json(result);
+  }
+
+  // ---- Load History ----
+
+  async getLoadHistory(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const useCase = container.resolve(GetTrainingLoadHistory);
+    const result = await useCase.execute(req.user.userId);
     res.json(result);
   }
 
