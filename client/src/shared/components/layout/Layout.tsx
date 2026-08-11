@@ -1,17 +1,31 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { activityApi } from '@/features/activity';
+import {
+  LayoutDashboard,
+  Bike,
+  Wrench,
+  Wallet,
+  Target,
+  Calendar,
+  ClipboardList,
+  Settings,
+  User,
+  Menu,
+  RefreshCw,
+  type LucideIcon,
+} from 'lucide-react';
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: '📊' },
-  { to: '/activities', label: 'Activities', icon: '🚴' },
-  { to: '/inventory', label: 'Bikes & Gear', icon: '🚲' },
-  { to: '/maintenance', label: 'Maintenance', icon: '🔧' },
-  { to: '/finance', label: 'Finance', icon: '💰' },
-  { to: '/goals', label: 'Goals', icon: '🎯' },
-  { to: '/events', label: 'Events', icon: '📅' },
-  { to: '/training-plans', label: 'Training Plans', icon: '📋' },
-  { to: '/settings', label: 'Settings', icon: '⚙️' },
+const navItems: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/activities', label: 'Activities', icon: Bike },
+  { to: '/inventory', label: 'Bikes & Gear', icon: Bike },
+  { to: '/maintenance', label: 'Maintenance', icon: Wrench },
+  { to: '/finance', label: 'Finance', icon: Wallet },
+  { to: '/goals', label: 'Goals', icon: Target },
+  { to: '/events', label: 'Events', icon: Calendar },
+  { to: '/training-plans', label: 'Training Plans', icon: ClipboardList },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Layout() {
@@ -48,28 +62,31 @@ export function Layout() {
         }`}
       >
         <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
-          <span className="text-2xl">🚴</span>
+          <img src="/logo.png" alt="Veloer" className="h-8 w-auto" />
           <span className="text-xl font-bold text-primary">Veloer</span>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`
-              }
-            >
-              <span className="text-lg">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'border-l-2 border-primary bg-primary-50 text-primary-700'
+                      : 'border-l-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`
+                }
+              >
+                <Icon className="h-5 w-5" />
+                {item.label}
+              </NavLink>
+            );
+          })}
         </nav>
         <div className="border-t border-gray-200 p-4">
           <Link
@@ -77,8 +94,8 @@ export function Layout() {
             onClick={() => setSidebarOpen(false)}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
           >
-            <span className="text-lg">👤</span>
-            Settings
+            <User className="h-5 w-5" />
+            Profile
           </Link>
         </div>
       </aside>
@@ -92,24 +109,15 @@ export function Layout() {
               className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
               aria-label="Open menu"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              <Menu className="h-5 w-5" />
             </button>
-            <h1 className="text-base font-semibold text-gray-900 md:text-lg">
-              Your Personal Cycling ERP
-            </h1>
           </div>
           <button
             onClick={() => void handleSync()}
             disabled={syncing}
-            className="rounded-lg bg-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-dark disabled:opacity-50 md:px-4 md:text-sm"
+            className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-dark disabled:opacity-50 md:px-4 md:text-sm"
           >
+            <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
             {syncing ? 'Syncing...' : 'Sync Now'}
           </button>
         </header>
