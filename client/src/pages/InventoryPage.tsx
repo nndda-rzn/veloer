@@ -8,6 +8,8 @@ import {
   useComponents,
 } from '@/features/inventory';
 import type { Bike, BikeFormData, Component, ComponentFormData } from '@/features/inventory';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { Bike as BikeIcon } from 'lucide-react';
 
 export function InventoryPage() {
   const { bikes, loading, error, createBike, updateBike, deleteBike } = useBikes();
@@ -73,21 +75,21 @@ export function InventoryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Bikes &amp; Gear</h2>
-          <p className="mt-1 text-sm text-gray-500">Manage your bikes and components</p>
-        </div>
-        <button
-          onClick={handleAddBike}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark"
-        >
-          Add Bike
-        </button>
-      </div>
+      <PageHeader
+        title="Bikes & Gear"
+        description="Manage your bikes and components"
+        action={
+          <button
+            onClick={handleAddBike}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            Add Bike
+          </button>
+        }
+      />
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -100,13 +102,12 @@ export function InventoryPage() {
           ))}
         </div>
       ) : bikes.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <span className="text-4xl">🚲</span>
-          <p className="mt-2 text-sm font-medium text-gray-900">No bikes yet</p>
-          <p className="mt-1 text-sm text-gray-500">
-            Add your first bike to start tracking components and maintenance.
-          </p>
-        </div>
+        <EmptyState
+          icon={BikeIcon}
+          title="No bikes yet"
+          description="Add your first bike to start tracking components and maintenance."
+          action={{ label: 'Add Bike', onClick: handleAddBike }}
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {bikes.map((bike) => (
@@ -189,62 +190,33 @@ export function InventoryPage() {
 
       {/* Delete Bike Confirmation */}
       {deletingBike && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-gray-900">Delete Bike</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Are you sure you want to delete &ldquo;{deletingBike.name}&rdquo;? This action cannot
-              be undone.
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={() => setDeletingBike(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
-                  await deleteBike(deletingBike.id);
-                  if (selectedBike?.id === deletingBike.id) setSelectedBike(null);
-                  setDeletingBike(null);
-                }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Delete Bike"
+          description={`Are you sure you want to delete "${deletingBike.name}"? This action cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={async () => {
+            await deleteBike(deletingBike.id);
+            if (selectedBike?.id === deletingBike.id) setSelectedBike(null);
+            setDeletingBike(null);
+          }}
+          onCancel={() => setDeletingBike(null)}
+        />
       )}
 
       {/* Delete Component Confirmation */}
       {deletingComponent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-gray-900">Delete Component</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Are you sure you want to delete &ldquo;{deletingComponent.name}&rdquo;?
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={() => setDeletingComponent(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
-                  await deleteComponent(deletingComponent.id);
-                  setDeletingComponent(null);
-                }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Delete Component"
+          description={`Are you sure you want to delete "${deletingComponent.name}"?`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={async () => {
+            await deleteComponent(deletingComponent.id);
+            setDeletingComponent(null);
+          }}
+          onCancel={() => setDeletingComponent(null)}
+        />
       )}
     </div>
   );
