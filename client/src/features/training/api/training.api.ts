@@ -7,6 +7,7 @@ import type {
   WorkoutRecommendation,
   PlanRetrospective,
   TrainingLoadDataPoint,
+  FitnessAnalysis,
 } from '../types/training';
 
 export const trainingApi = {
@@ -91,6 +92,12 @@ export const trainingApi = {
     return data;
   },
 
+  // ---- Fitness Analysis ----
+  async getFitnessAnalysis(): Promise<FitnessAnalysis> {
+    const { data } = await apiClient.get<FitnessAnalysis>('/api/training-plans/fitness-analysis');
+    return data;
+  },
+
   // ---- Load History ----
   async getLoadHistory(): Promise<TrainingLoadDataPoint[]> {
     const { data } = await apiClient.get<TrainingLoadDataPoint[]>(
@@ -104,6 +111,7 @@ export const trainingApi = {
     template: string;
     start_date: string;
     title?: string;
+    ftp_baseline?: number;
   }): Promise<TrainingPlan> {
     const { data } = await apiClient.post<TrainingPlan>(
       '/api/training-plans/from-template',
