@@ -62,57 +62,55 @@ export function BikeHero({ displayName, bikes, defaultBikeId, activityStats }: B
   const totalKm = selectedBike.current_km;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-900 to-primary-700 p-6 md:p-8">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        {/* Left — greeting + bike info + stats */}
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-white md:text-3xl">
-            {getGreeting()}, {displayName ?? 'there'}!
-          </h2>
-          <p className="mt-2 text-sm text-primary-200">
-            {bikeTypeLabels[selectedBike.type]} • {selectedBike.brand ?? 'Unknown'}{' '}
-            {selectedBike.model ?? ''}
-          </p>
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-primary-900 to-primary-800 p-6 md:p-10">
+      {/* Bike image — large, centered/right as background */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center md:justify-end">
+        <img
+          src={bikeImage}
+          alt={selectedBike.name}
+          className="h-full max-h-[300px] w-auto object-contain opacity-90 drop-shadow-2xl md:mr-8"
+        />
+      </div>
 
-          <div className="mt-4 flex gap-4">
-            <div className="rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <p className="text-xs text-primary-200">Total Distance</p>
-              <p className="text-lg font-bold text-white">{formatDistance(totalKm * 1000)}</p>
-            </div>
-            <div className="rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <p className="text-xs text-primary-200">Total Rides</p>
-              <p className="text-lg font-bold text-white">{totalRides}</p>
-            </div>
+      {/* Foreground content */}
+      <div className="relative z-10 flex flex-col gap-2 md:max-w-md">
+        <h2 className="text-2xl font-bold text-white md:text-3xl">
+          {getGreeting()}, {displayName ?? 'there'}!
+        </h2>
+        <p className="text-sm text-primary-200">
+          {bikeTypeLabels[selectedBike.type]} • {selectedBike.brand ?? 'Unknown'}{' '}
+          {selectedBike.model ?? ''}
+        </p>
+
+        <div className="mt-4 flex gap-4">
+          <div className="rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
+            <p className="text-xs text-primary-200">Total Distance</p>
+            <p className="text-lg font-bold text-white">{formatDistance(totalKm * 1000)}</p>
           </div>
-
-          {/* Bike switcher */}
-          {activeBikes.length > 1 && (
-            <div className="mt-4 flex gap-2">
-              {activeBikes.map((bike) => (
-                <button
-                  key={bike.id}
-                  onClick={() => setSelectedBikeId(bike.id)}
-                  className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
-                    bike.id === selectedBike.id
-                      ? 'bg-white text-primary-900'
-                      : 'bg-white/10 text-white hover:bg-white/20'
-                  }`}
-                >
-                  {bike.name}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
+            <p className="text-xs text-primary-200">Total Rides</p>
+            <p className="text-lg font-bold text-white">{totalRides}</p>
+          </div>
         </div>
 
-        {/* Right — bike image */}
-        <div className="flex-shrink-0">
-          <img
-            src={bikeImage}
-            alt={selectedBike.name}
-            className="h-32 w-auto object-contain drop-shadow-2xl md:h-48"
-          />
-        </div>
+        {/* Bike switcher */}
+        {activeBikes.length > 1 && (
+          <div className="mt-4 flex gap-2">
+            {activeBikes.map((bike) => (
+              <button
+                key={bike.id}
+                onClick={() => setSelectedBikeId(bike.id)}
+                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
+                  bike.id === selectedBike.id
+                    ? 'bg-white text-primary-900'
+                    : 'bg-white/10 text-white hover:bg-white/20'
+                }`}
+              >
+                {bike.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
