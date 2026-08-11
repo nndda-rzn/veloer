@@ -3,6 +3,12 @@ import { useProfile } from '@/features/settings';
 import { useBikes } from '@/features/inventory';
 import { useAuth } from '@/features/auth';
 import type { ProfileFormData } from '@/features/settings';
+import { PageHeader, Badge } from '@/shared/components/ui';
+import { CheckCircle2 } from 'lucide-react';
+
+const inputClass =
+  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
+const labelClass = 'mb-1 block text-sm font-medium text-gray-700';
 
 export function SettingsPage() {
   const { profile, loading, error, saving, save } = useProfile();
@@ -32,17 +38,15 @@ export function SettingsPage() {
     setTimeout(() => setSavedMsg(false), 3000);
   };
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     await logout();
   };
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-        </div>
-        <div className="h-64 animate-pulse rounded-lg bg-gray-100" />
+        <PageHeader title="Settings" />
+        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
       </div>
     );
   }
@@ -50,8 +54,8 @@ export function SettingsPage() {
   if (error) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <PageHeader title="Settings" />
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       </div>
@@ -60,36 +64,39 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-        <p className="mt-1 text-sm text-gray-500">Manage your account and preferences</p>
-      </div>
+      <PageHeader title="Settings" description="Manage your account and preferences" />
 
       {/* Strava Connection */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Strava Connection</h3>
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">Strava Connection</h2>
         <div className="flex items-center gap-4">
           {profile?.avatar_url && (
-            <img src={profile.avatar_url} alt="Avatar" className="h-12 w-12 rounded-full" />
+            <img
+              src={profile.avatar_url}
+              alt="Strava avatar"
+              width={48}
+              height={48}
+              className="h-12 w-12 rounded-full object-cover"
+            />
           )}
           <div>
             <p className="text-sm font-medium text-gray-900">
-              {profile?.display_name || 'Connected'}
+              {profile?.display_name ?? 'Connected'}
             </p>
-            <p className="text-xs text-gray-500">Strava ID: {user?.stravaId ?? '—'} • Connected</p>
+            <p className="text-xs text-gray-500">Strava ID: {user?.stravaId ?? '—'}</p>
           </div>
-          <span className="ml-auto inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
-            Connected
-          </span>
+          <div className="ml-auto">
+            <Badge variant="success">Connected</Badge>
+          </div>
         </div>
       </div>
 
       {/* Profile */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="mb-4 text-sm font-semibold text-gray-700">Profile</h3>
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <h2 className="mb-4 text-sm font-semibold text-gray-700">Profile</h2>
         <div className="space-y-4">
           <div>
-            <label htmlFor="display_name" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="display_name" className={labelClass}>
               Display Name
             </label>
             <input
@@ -97,11 +104,12 @@ export function SettingsPage() {
               type="text"
               value={formData.display_name ?? ''}
               onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             />
           </div>
           <div>
-            <label htmlFor="avatar_url" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="avatar_url" className={labelClass}>
               Avatar URL
             </label>
             <input
@@ -109,21 +117,19 @@ export function SettingsPage() {
               type="text"
               value={formData.avatar_url ?? ''}
               onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             />
           </div>
         </div>
       </div>
 
       {/* Preferences */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="mb-4 text-sm font-semibold text-gray-700">Preferences</h3>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <h2 className="mb-4 text-sm font-semibold text-gray-700">Preferences</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="preferred_units"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="preferred_units" className={labelClass}>
               Units
             </label>
             <select
@@ -135,14 +141,15 @@ export function SettingsPage() {
                   preferred_units: e.target.value as 'metric' | 'imperial',
                 })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             >
               <option value="metric">Metric (km, m)</option>
               <option value="imperial">Imperial (mi, ft)</option>
             </select>
           </div>
           <div>
-            <label htmlFor="currency" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="currency" className={labelClass}>
               Currency
             </label>
             <input
@@ -150,11 +157,12 @@ export function SettingsPage() {
               type="text"
               value={formData.currency ?? 'IDR'}
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             />
           </div>
           <div>
-            <label htmlFor="timezone" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="timezone" className={labelClass}>
               Timezone
             </label>
             <input
@@ -162,14 +170,12 @@ export function SettingsPage() {
               type="text"
               value={formData.timezone ?? 'Asia/Jakarta'}
               onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             />
           </div>
           <div>
-            <label
-              htmlFor="default_bike_id"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="default_bike_id" className={labelClass}>
               Default Bike
             </label>
             <select
@@ -178,7 +184,8 @@ export function SettingsPage() {
               onChange={(e) =>
                 setFormData({ ...formData, default_bike_id: e.target.value || null })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className={inputClass}
+              disabled={saving}
             >
               <option value="">— None —</option>
               {bikes.map((bike) => (
@@ -192,10 +199,10 @@ export function SettingsPage() {
       </div>
 
       {/* Training Settings */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h3 className="mb-4 text-sm font-semibold text-gray-700">Training Settings</h3>
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <h2 className="mb-4 text-sm font-semibold text-gray-700">Training Settings</h2>
         <div>
-          <label htmlFor="ftp" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="ftp" className={labelClass}>
             FTP (Functional Threshold Power)
           </label>
           <div className="flex items-center gap-2">
@@ -207,32 +214,50 @@ export function SettingsPage() {
               onChange={(e) =>
                 setFormData({ ...formData, ftp: e.target.value ? Number(e.target.value) : null })
               }
-              className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              disabled={saving}
             />
             <span className="text-sm text-gray-500">Watts</span>
           </div>
           <p className="mt-1 text-xs text-gray-400">
-            Used for Training Stress Score (TSS) and Intensity Factor (IF) calculations. Default:
-            250W. Set to your tested 20-minute power minus 5%.
+            Used for TSS and IF calculations. Default: 250W. Set to your tested 20-minute power
+            minus 5%.
           </p>
         </div>
       </div>
 
-      {/* Save + Logout */}
-      <div className="flex items-center justify-between">
+      {/* Save */}
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => void handleSave()}
+              disabled={saving}
+              className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+            {savedMsg && (
+              <span className="flex items-center gap-1.5 text-sm font-medium text-green-600">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                Saved
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="rounded-xl border border-red-200 bg-white p-5">
+        <h2 className="mb-1 text-sm font-semibold text-red-700">Danger Zone</h2>
+        <p className="mb-4 text-xs text-gray-500">
+          Signing out will end your session. You can sign back in with Strava anytime.
+        </p>
         <button
-          onClick={() => void handleSave()}
-          disabled={saving}
-          className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
+          onClick={() => void handleSignOut()}
+          className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2"
         >
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
-        {savedMsg && <span className="text-sm text-green-600">Saved successfully!</span>}
-        <button
-          onClick={() => void handleLogout()}
-          className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-        >
-          Logout
+          Sign out
         </button>
       </div>
     </div>
