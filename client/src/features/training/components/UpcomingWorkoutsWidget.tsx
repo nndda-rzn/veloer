@@ -15,8 +15,9 @@ export function UpcomingWorkoutsWidget() {
       .then(async (plans) => {
         const activePlans = plans.filter((p) => p.status === 'active');
         if (activePlans.length === 0) return [];
-        // Fetch workouts from first active plan (most recent)
-        return trainingApi.listWorkouts(activePlans[0].id);
+        // Fetch workouts from all active plans and merge
+        const results = await Promise.all(activePlans.map((p) => trainingApi.listWorkouts(p.id)));
+        return results.flat();
       })
       .then((workouts) => {
         const today = new Date().toISOString().split('T')[0];

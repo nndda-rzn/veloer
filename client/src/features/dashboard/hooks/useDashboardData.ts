@@ -5,12 +5,14 @@ import { maintenanceApi } from '@/features/maintenance';
 import { financeApi } from '@/features/finance';
 import { goalApi } from '@/features/goals';
 import { eventApi } from '@/features/events';
+import { settingsApi } from '@/features/settings';
 import type { ActivityStats } from '@/features/activity';
 import type { Bike } from '@/features/inventory';
 import type { MaintenanceSchedule } from '@/features/maintenance';
 import type { FinanceSummary } from '@/features/finance';
 import type { Goal } from '@/features/goals';
 import type { Event } from '@/features/events';
+import type { UserProfile } from '@/features/settings';
 
 export interface DashboardData {
   activityStats: ActivityStats | null;
@@ -26,6 +28,7 @@ export interface DashboardData {
   financeSummary: FinanceSummary | null;
   activeGoals: Goal[];
   upcomingEvents: Event[];
+  profile: UserProfile | null;
   loading: boolean;
   error: string | null;
 }
@@ -40,6 +43,7 @@ export function useDashboardData(): DashboardData {
   const [financeSummary, setFinanceSummary] = useState<FinanceSummary | null>(null);
   const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,8 +56,9 @@ export function useDashboardData(): DashboardData {
       financeApi.getSummary(),
       goalApi.list(true),
       eventApi.list(true),
+      settingsApi.getProfile(),
     ])
-      .then(([stats, activities, bikeList, due, finance, goals, events]) => {
+      .then(([stats, activities, bikeList, due, finance, goals, events, userProfile]) => {
         setActivityStats(stats);
         setRecentActivities(activities);
         setBikes(bikeList);
@@ -61,6 +66,7 @@ export function useDashboardData(): DashboardData {
         setFinanceSummary(finance);
         setActiveGoals(goals);
         setUpcomingEvents(events);
+        setProfile(userProfile);
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load dashboard'))
       .finally(() => setLoading(false));
@@ -74,6 +80,7 @@ export function useDashboardData(): DashboardData {
     financeSummary,
     activeGoals,
     upcomingEvents,
+    profile,
     loading,
     error,
   };

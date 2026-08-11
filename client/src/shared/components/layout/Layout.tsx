@@ -1,21 +1,47 @@
 import { useState } from 'react';
-import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { activityApi } from '@/features/activity';
+import {
+  LayoutDashboard,
+  Bike,
+  Package,
+  Wrench,
+  Wallet,
+  Target,
+  Calendar,
+  ClipboardList,
+  Settings,
+  User,
+  Menu,
+  RefreshCw,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: '📊' },
-  { to: '/activities', label: 'Activities', icon: '🚴' },
-  { to: '/inventory', label: 'Bikes & Gear', icon: '🚲' },
-  { to: '/maintenance', label: 'Maintenance', icon: '🔧' },
-  { to: '/finance', label: 'Finance', icon: '💰' },
-  { to: '/goals', label: 'Goals', icon: '🎯' },
-  { to: '/events', label: 'Events', icon: '📅' },
-  { to: '/training-plans', label: 'Training Plans', icon: '📋' },
-  { to: '/settings', label: 'Settings', icon: '⚙️' },
+const navItems: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/activities', label: 'Activities', icon: Bike },
+  { to: '/inventory', label: 'Bikes & Gear', icon: Package },
+  { to: '/maintenance', label: 'Maintenance', icon: Wrench },
+  { to: '/finance', label: 'Finance', icon: Wallet },
+  { to: '/goals', label: 'Goals', icon: Target },
+  { to: '/events', label: 'Events', icon: Calendar },
+  { to: '/training-plans', label: 'Training Plans', icon: ClipboardList },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
+
+function usePageTitle(): string {
+  const location = useLocation();
+  const match = navItems.find((item) => {
+    if (item.to === '/') return location.pathname === '/';
+    return location.pathname.startsWith(item.to);
+  });
+  return match?.label ?? 'Veloer';
+}
 
 export function Layout() {
   const navigate = useNavigate();
+  const pageTitle = usePageTitle();
   const [syncing, setSyncing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -35,50 +61,71 @@ export function Layout() {
     <div className="flex h-screen overflow-hidden">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+        <button
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-label="Close menu"
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r-2 border-gray-100 bg-white transition-transform md:static md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
-          <span className="text-2xl">🚴</span>
-          <span className="text-xl font-bold text-primary">Veloer</span>
+        {/* Sidebar header */}
+        <div className="flex h-16 items-center justify-between border-b-2 border-gray-100 px-5">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src="/logo.png" alt="Veloer" className="h-8 w-auto" />
+            <span className="text-lg font-bold text-gray-900">Veloer</span>
+          </Link>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden"
+            aria-label="Close sidebar"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`
-              }
-            >
-              <span className="text-lg">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Main navigation">
+          <ul className="space-y-0.5">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    end={item.to === '/'}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'border-l-[3px] border-primary bg-primary-50 pl-[9px] text-primary-700'
+                          : 'border-l-[3px] border-transparent pl-[9px] text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`
+                    }
+                  >
+                    <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                    {item.label}
+                  </NavLink>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
-        <div className="border-t border-gray-200 p-4">
+
+        {/* Sidebar footer */}
+        <div className="border-t-2 border-gray-100 px-3 py-3">
           <Link
             to="/settings"
             onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           >
-            <span className="text-lg">👤</span>
-            Settings
+            <User className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+            Profile & Settings
           </Link>
         </div>
       </aside>
@@ -89,27 +136,19 @@ export function Layout() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
+              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 md:hidden"
               aria-label="Open menu"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              <Menu className="h-5 w-5" />
             </button>
-            <h1 className="text-base font-semibold text-gray-900 md:text-lg">
-              Your Personal Cycling ERP
-            </h1>
+            <span className="text-sm font-semibold text-gray-700 md:text-base">{pageTitle}</span>
           </div>
           <button
             onClick={() => void handleSync()}
             disabled={syncing}
-            className="rounded-lg bg-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-dark disabled:opacity-50 md:px-4 md:text-sm"
+            className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:px-4 md:text-sm"
           >
+            <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden="true" />
             {syncing ? 'Syncing...' : 'Sync Now'}
           </button>
         </header>

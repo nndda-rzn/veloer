@@ -7,6 +7,8 @@ import { TemplateLibrary } from '@/features/training/components/TemplateLibrary'
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
 import { settingsApi } from '@/features/settings';
 import { useEffect, useRef } from 'react';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { ClipboardList } from 'lucide-react';
 
 export function TrainingPlansPage() {
   const navigate = useNavigate();
@@ -32,73 +34,74 @@ export function TrainingPlansPage() {
     setShowForm(false);
   };
 
+  const [deletingPlan, setDeletingPlan] = useState<TrainingPlan | null>(null);
+
   const handleDelete = async (plan: TrainingPlan) => {
-    if (!confirm(`Delete "${plan.title}"? This will remove all workouts in this plan.`)) return;
-    await deletePlan(plan.id);
+    setDeletingPlan(plan);
+  };
+
+  const confirmDelete = async () => {
+    if (deletingPlan) {
+      await deletePlan(deletingPlan.id);
+      setDeletingPlan(null);
+    }
   };
 
   const handleFromTemplate = async (template: TemplateKey, startDate: string, title?: string) => {
-    await trainingApi.createFromTemplate({ template, start_date: startDate, title });
-    setShowTemplates(false);
-    refetch();
+    try {
+      await trainingApi.createFromTemplate({ template, start_date: startDate, title });
+      setShowTemplates(false);
+      refetch();
+    } catch (err) {
+      console.error('Failed to create plan from template:', err);
+      alert('Failed to create plan from template. Please try again.');
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">Training Plans</h1>
-          <p className="text-sm text-gray-500">Plan and schedule your cycling training</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowTemplates(true)}
-            className="rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50"
-          >
-            From Template
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark"
-          >
-            + New Plan
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Training Plans"
+        description="Plan and schedule your cycling training"
+        action={
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              From Template
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              New Plan
+            </button>
+          </div>
+        }
+      />
 
       {loading && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-100" />
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
           ))}
         </div>
       )}
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       )}
 
       {!loading && !error && plans.length === 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
-          <p className="text-sm text-gray-500">No training plans yet.</p>
-          <div className="mt-3 flex justify-center gap-3">
-            <button
-              onClick={() => setShowTemplates(true)}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Start from template
-            </button>
-            <span className="text-gray-300">|</span>
-            <button
-              onClick={() => setShowForm(true)}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Create custom plan
-            </button>
-          </div>
-        </div>
+        <EmptyState
+          icon={ClipboardList}
+          title="No training plans yet"
+          description="Start from a template or create a custom plan."
+          action={{ label: 'Browse Templates', onClick: () => setShowTemplates(true) }}
+        />
       )}
 
       {!loading && plans.length > 0 && (
@@ -127,6 +130,17 @@ export function TrainingPlansPage() {
           defaultFtp={defaultFtp}
           onSelect={handleFromTemplate}
           onCancel={() => setShowTemplates(false)}
+        />
+      )}
+
+      {deletingPlan && (
+        <ConfirmDialog
+          title="Delete Plan"
+          description={`Delete "${deletingPlan.title}"? This will remove all workouts in this plan.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => void confirmDelete()}
+          onCancel={() => setDeletingPlan(null)}
         />
       )}
     </div>

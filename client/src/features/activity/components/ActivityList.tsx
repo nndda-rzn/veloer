@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom';
 import type { Activity } from '../types/activity';
-import { formatDistance, formatDuration, formatSpeed, formatDate } from '@/shared/lib/utils';
+import {
+  formatDistance,
+  formatDuration,
+  formatSpeed,
+  formatDate,
+  formatActivityType,
+} from '@/shared/lib/utils';
+import { Badge } from '@/shared/components/ui';
+import { Bike } from 'lucide-react';
+import { EmptyState } from '@/shared/components/ui';
 
 interface ActivityListProps {
   activities: Activity[];
@@ -10,9 +19,9 @@ interface ActivityListProps {
 export function ActivityList({ activities, loading }: ActivityListProps) {
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-14 animate-pulse rounded-xl bg-gray-100" />
         ))}
       </div>
     );
@@ -20,71 +29,70 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
 
   if (activities.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <span className="text-4xl">🚴</span>
-        <p className="mt-2 text-sm font-medium text-gray-900">No activities yet</p>
-        <p className="mt-1 text-sm text-gray-500">
-          Sync from Strava to see your cycling activities here.
-        </p>
-      </div>
+      <EmptyState
+        icon={Bike}
+        title="No activities yet"
+        description="Sync from Strava to see your cycling activities here."
+      />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <table className="min-w-full divide-y divide-gray-100">
+        <caption className="sr-only">List of cycling activities</caption>
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
               Date
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Name
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              Activity
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
               Distance
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
               Duration
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
               Avg Speed
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Elev
+            <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+              Elevation
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-100">
           {activities.map((activity) => (
-            <tr key={activity.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+            <tr key={activity.id} className="transition-colors hover:bg-gray-50">
+              <td className="whitespace-nowrap px-4 py-3 text-xs text-gray-400">
                 {formatDate(activity.start_date)}
               </td>
-              <td className="px-6 py-4">
-                <Link
-                  to={`/activities/${activity.id}`}
-                  className="text-sm font-medium text-primary hover:text-primary-dark"
-                >
-                  {activity.name}
-                </Link>
-                <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                  {activity.type}
-                </span>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/activities/${activity.id}`}
+                    className="text-sm font-medium text-gray-900 hover:text-primary"
+                  >
+                    {activity.name}
+                  </Link>
+                  <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
+                </div>
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium text-gray-900">
+              <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-semibold text-gray-900">
                 {formatDistance(activity.distance)}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
+              <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500">
                 {formatDuration(activity.moving_time)}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
-                {activity.avg_speed ? formatSpeed(activity.avg_speed) : '-'}
+              <td className="hidden whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 md:table-cell">
+                {activity.avg_speed ? formatSpeed(activity.avg_speed) : '—'}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
+              <td className="hidden whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 md:table-cell">
                 {activity.total_elevation_gain != null
                   ? `${activity.total_elevation_gain.toFixed(0)} m`
-                  : '-'}
+                  : '—'}
               </td>
             </tr>
           ))}

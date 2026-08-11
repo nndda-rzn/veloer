@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 import type { TrainingWorkout, WorkoutStatus } from '../types/training';
 import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
-import { formatDate } from '@/shared/lib/utils';
+import { formatDate, formatEnumLabel } from '@/shared/lib/utils';
 
 interface WorkoutDetailProps {
   workout: TrainingWorkout;
@@ -10,6 +12,7 @@ interface WorkoutDetailProps {
   onMarkSkipped: (id: string) => Promise<void>;
   onEdit: (workout: TrainingWorkout) => void;
   onDelete: (id: string) => Promise<void>;
+  onLinkActivity: (workout: TrainingWorkout) => void;
 }
 
 const statusBadge: Record<WorkoutStatus, string> = {
@@ -36,13 +39,27 @@ export function WorkoutDetail({
   onMarkSkipped,
   onEdit,
   onDelete,
+  onLinkActivity,
 }: WorkoutDetailProps) {
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/30" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
+      <button
+        className="absolute inset-0 w-full cursor-default"
+        onClick={onClose}
+        aria-label="Close workout detail"
+      />
       <div
-        className="h-full w-full max-w-sm overflow-y-auto bg-white shadow-xl"
+        className="relative h-full w-full max-w-sm overflow-y-auto bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -60,16 +77,16 @@ export function WorkoutDetail({
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
               aria-label="Close"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
           <span
             className={`mt-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge[workout.status]}`}
           >
-            {workout.status}
+            {formatEnumLabel(workout.status)}
           </span>
         </div>
 
@@ -194,6 +211,13 @@ export function WorkoutDetail({
               </button>
             </div>
           )}
+
+          <button
+            onClick={() => onLinkActivity(workout)}
+            className="w-full rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50"
+          >
+            Link Activity
+          </button>
 
           <div className="flex gap-2 border-t border-gray-100 pt-2">
             <button

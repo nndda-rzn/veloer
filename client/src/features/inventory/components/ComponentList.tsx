@@ -1,6 +1,8 @@
 import type { Component } from '../types/inventory';
 import { formatDate } from '@/shared/lib/utils';
 import { LifespanIndicator } from './LifespanIndicator';
+import { Badge, EmptyState } from '@/shared/components/ui';
+import { Wrench } from 'lucide-react';
 
 interface ComponentListProps {
   components: Component[];
@@ -18,18 +20,18 @@ const categoryLabels: Record<Component['category'], string> = {
   other: 'Other',
 };
 
-const statusColors: Record<Component['status'], string> = {
-  active: 'bg-green-100 text-green-700',
-  replaced: 'bg-gray-100 text-gray-600',
-  failed: 'bg-red-100 text-red-700',
+const statusVariant: Record<Component['status'], 'success' | 'neutral' | 'danger'> = {
+  active: 'success',
+  replaced: 'neutral',
+  failed: 'danger',
 };
 
 export function ComponentList({ components, loading, onEdit, onDelete }: ComponentListProps) {
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-100" />
         ))}
       </div>
     );
@@ -37,59 +39,66 @@ export function ComponentList({ components, loading, onEdit, onDelete }: Compone
 
   if (components.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-        <p className="text-sm text-gray-500">No components added yet.</p>
-      </div>
+      <EmptyState
+        icon={Wrench}
+        title="No components yet"
+        description="Add components to track lifespan and maintenance."
+      />
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {components.map((component) => (
-        <div key={component.id} className="rounded-lg border border-gray-200 bg-white p-4">
+        <div
+          key={component.id}
+          className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+        >
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-medium text-gray-900">{component.name}</h4>
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${statusColors[component.status]}`}
-                >
-                  {component.status}
-                </span>
+                <h4 className="text-sm font-semibold text-gray-900">{component.name}</h4>
+                <Badge variant={statusVariant[component.status]}>
+                  {component.status.charAt(0).toUpperCase() + component.status.slice(1)}
+                </Badge>
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="mt-0.5 text-xs text-gray-500">
                 {categoryLabels[component.category]}
                 {component.brand ? ` • ${component.brand} ${component.model ?? ''}` : ''}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => onEdit(component)}
-                className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(component)}
-                className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                className="rounded-lg border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2"
               >
                 Delete
               </button>
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-4 text-sm">
+          <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
                 Installed
               </p>
-              <p className="font-medium text-gray-900">{formatDate(component.install_date)}</p>
+              <p className="mt-0.5 text-sm font-medium text-gray-900">
+                {formatDate(component.install_date)}
+              </p>
             </div>
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
                 Current KM
               </p>
-              <p className="font-medium text-gray-900">{component.current_km.toFixed(0)} km</p>
+              <p className="mt-0.5 text-sm font-medium text-gray-900">
+                {component.current_km.toFixed(0)} km
+              </p>
             </div>
             <div>
               <LifespanIndicator

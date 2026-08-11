@@ -32,6 +32,17 @@ body {
   @apply bg-gray-50 text-gray-900 font-sans antialiased;
 }
 
+/* Global focus-visible ring */
+:focus-visible {
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
+}
+
+/* Override for elements that manage focus themselves */
+[data-focus-ring='none']:focus-visible {
+  outline: none;
+}
+
 /* Leaflet map container */
 .leaflet-container {
   width: 100%;
@@ -41,18 +52,24 @@ body {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  @apply bg-gray-200 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  @apply bg-gray-300;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
 }

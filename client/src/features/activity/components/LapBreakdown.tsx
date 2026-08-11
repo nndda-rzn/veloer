@@ -64,7 +64,7 @@ export function LapBreakdown({ activityId }: LapBreakdownProps) {
         <tbody className="divide-y divide-gray-200">
           {laps.map((lap) => (
             <tr key={lap.id} className="hover:bg-gray-50">
-              <td className="px-3 py-2 text-sm text-gray-500">{lap.lap_index}</td>
+              <td className="px-3 py-2 text-sm text-gray-500">{lap.lap_index + 1}</td>
               <td className="px-3 py-2 text-right text-sm text-gray-900">
                 {formatDistance(lap.distance)}
               </td>

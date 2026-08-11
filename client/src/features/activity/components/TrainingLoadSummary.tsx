@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Activity } from '../types/activity';
 
 interface TrainingLoadSummaryProps {
@@ -35,7 +36,8 @@ export function TrainingLoadSummary({ activity, ftp }: TrainingLoadSummaryProps)
     {
       label: 'IF',
       value: ifValue != null ? ifValue.toFixed(2) : '-',
-      hint: ftp ? `(FTP: ${ftp}W)` : '(Set FTP in Settings)',
+      hint: ftp ? `(FTP: ${ftp}W)` : null,
+      hintLink: ftp ? null : { to: '/settings', label: 'Set FTP in Settings' },
     },
     {
       label: 'TSS',
@@ -58,6 +60,11 @@ export function TrainingLoadSummary({ activity, ftp }: TrainingLoadSummaryProps)
           <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{m.label}</p>
           <p className="mt-1 text-lg font-bold text-gray-900">{m.value}</p>
           {m.hint && <p className="text-xs text-gray-400">{m.hint}</p>}
+          {'hintLink' in m && m.hintLink && (
+            <Link to={m.hintLink.to} className="text-xs text-primary hover:underline">
+              {m.hintLink.label}
+            </Link>
+          )}
         </div>
       ))}
     </div>

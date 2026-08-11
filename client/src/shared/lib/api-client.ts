@@ -13,8 +13,13 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Redirect to login on unauthorized
-      window.location.href = '/login';
+      // Don't redirect if already on login page or if it's an auth check request
+      const isOnLogin = window.location.pathname === '/login';
+      const isAuthCheck = error.config?.url?.includes('/auth/me');
+
+      if (!isOnLogin && !isAuthCheck) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   },
