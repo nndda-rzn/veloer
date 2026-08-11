@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import type { ActivityRepository } from '../../../domain/repositories/activity/ActivityRepository.js';
 import type { UserProfileRepository } from '../../../domain/repositories/auth/UserProfileRepository.js';
+import type { TrainingPlanRepository } from '../../../domain/repositories/training/TrainingPlanRepository.js';
 import type { StravaPort } from '../../ports/StravaPort.js';
 import { RefreshStravaToken } from '../auth/RefreshStravaToken.js';
 import { GetGoals, UpdateGoalProgress } from '../goals/GoalUseCases.js';
@@ -11,6 +12,7 @@ export interface SyncResult {
   skipped: number;
   total: number;
   goalsUpdated: number;
+  workoutsLinked: number;
 }
 
 @injectable()
@@ -18,6 +20,7 @@ export class SyncStravaActivities {
   constructor(
     @inject('ActivityRepository') private activityRepo: ActivityRepository,
     @inject('UserProfileRepository') private profileRepo: UserProfileRepository,
+    @inject('TrainingPlanRepository') private planRepo: TrainingPlanRepository,
     @inject('StravaPort') private stravaPort: StravaPort,
     @inject(RefreshStravaToken) private refreshStravaToken: RefreshStravaToken,
     @inject(GetGoals) private getGoals: GetGoals,
@@ -45,6 +48,7 @@ export class SyncStravaActivities {
 
     let synced = 0;
     let skipped = 0;
+    let workoutsLinked = 0;
     const toCreate: Omit<Activity, 'id' | 'created_at' | 'updated_at'>[] = [];
 
     for (const sa of rideActivities) {
@@ -92,8 +96,34 @@ export class SyncStravaActivities {
     }
 
     if (toCreate.length > 0) {
-      await this.activityRepo.createMany(toCreate);
+      const created = await this.activityRepo.createMany(toCreate);
       synced = toCreate.length;
+
+      // Auto-link created activities to planned workouts (±30 min duration tolerance)
+      for (const activity of created) {
+        const actDate = activity.start_date.split('T')[0];
+        const plannedWorkouts = await this.planRepo.findWorkoutsByDateRange(
+          userId,
+          actDate,
+          actDate,
+        );
+        const match = plannedWorkouts.find(
+          (w) =>
+            w.status === 'planned' &&
+            w.target_duration_minutes != null &&
+            Math.abs(activity.moving_time - w.target_duration_minutes * 60) < 1800,
+        );
+        if (match) {
+          await this.planRepo.updateWorkout(match.id, userId, {
+            status: 'completed',
+            actual_activity_id: activity.id,
+            actual_tss: activity.tss ?? null,
+            actual_duration_minutes: Math.round(activity.moving_time / 60),
+            completed_at: new Date().toISOString(),
+          });
+          workoutsLinked++;
+        }
+      }
     }
 
     // Auto-update goal progress for newly synced activities
@@ -132,6 +162,7 @@ export class SyncStravaActivities {
       skipped,
       total: rideActivities.length,
       goalsUpdated,
+      workoutsLinked,
     };
   }
 }
