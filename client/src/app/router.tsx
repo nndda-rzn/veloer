@@ -11,6 +11,7 @@ import { GoalsPage } from '@/pages/GoalsPage';
 import { EventsPage } from '@/pages/EventsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { TrainingPlansPage } from '@/pages/TrainingPlansPage';
+import { TrainingPlanDetailPage } from '@/pages/TrainingPlanDetailPage';
 import { LoginPage } from '@/pages/LoginPage';
 
 const router = createBrowserRouter([
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
           { path: 'events', element: <EventsPage /> },
           { path: 'settings', element: <SettingsPage /> },
           { path: 'training-plans', element: <TrainingPlansPage /> },
+          { path: 'training-plans/:id', element: <TrainingPlanDetailPage /> },
         ],
       },
     ],
