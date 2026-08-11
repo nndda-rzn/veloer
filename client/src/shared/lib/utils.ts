@@ -74,6 +74,22 @@ export function lifespanPercentage(currentKm: number, expectedLifespanKm: number
 }
 
 /**
+ * Format activity type from camelCase to readable
+ * 'VirtualRide' -> 'Virtual Ride', 'Ride' -> 'Ride'
+ */
+export function formatActivityType(type: string): string {
+  return type.replace(/([A-Z])/g, ' $1').trim();
+}
+
+/**
+ * Format enum label from snake_case to Title Case
+ * 'bike_parts' -> 'Bike Parts', 'planned' -> 'Planned'
+ */
+export function formatEnumLabel(value: string): string {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
  * Get lifespan status color
  */
 export function lifespanStatus(percentage: number): 'good' | 'warning' | 'danger' | 'overdue' {
