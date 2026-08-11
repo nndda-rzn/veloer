@@ -82,10 +82,27 @@ export class SyncStravaActivities {
         continue;
       }
 
-      // Compute TSS from Normalized Power, moving time, and FTP
+      // Compute TSS:
+      // 1. Power-based TSS if NP and FTP available (most accurate)
+      // 2. hrTSS fallback if HR and LTHR available (HR-only rides)
+      // 3. Estimate LTHR from max_hr if LTHR not set (80% of max HR typical threshold)
+      const lthr = profile?.lthr ?? null;
       const np = sa.weighted_average_watts || null;
-      const tss =
-        np && ftp && ftp > 0 ? (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100 : null;
+      let tss: number | null = null;
+
+      if (np && ftp && ftp > 0) {
+        // Power-based TSS (most accurate)
+        tss = (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100;
+      } else if (sa.average_heartrate && sa.moving_time > 0) {
+        // hrTSS fallback using Coggan formula
+        const avgHr = sa.average_heartrate;
+        const effectiveLthr =
+          lthr ?? (sa.max_heartrate ? Math.round(sa.max_heartrate * 0.88) : null);
+        if (effectiveLthr && effectiveLthr > 0) {
+          const hrif = avgHr / effectiveLthr; // HR Intensity Factor
+          tss = (sa.moving_time / 3600) * hrif * hrif * 100;
+        }
+      }
 
       toCreate.push({
         user_id: userId,

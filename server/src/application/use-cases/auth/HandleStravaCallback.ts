@@ -54,6 +54,7 @@ export class HandleStravaCallback {
         timezone: 'Asia/Jakarta',
         currency: 'IDR',
         ftp: null,
+        lthr: null,
       });
     }
 
