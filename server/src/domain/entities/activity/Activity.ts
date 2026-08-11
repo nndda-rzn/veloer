@@ -26,6 +26,7 @@ export interface Activity {
   calories: number | null; // kcal
   elev_high: number | null; // meters
   elev_low: number | null; // meters
+  tss: number | null; // Training Stress Score (computed from NP, moving_time, FTP)
   created_at: string;
   updated_at: string;
 }

@@ -10,6 +10,9 @@ import { FinancePage } from '@/pages/FinancePage';
 import { GoalsPage } from '@/pages/GoalsPage';
 import { EventsPage } from '@/pages/EventsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { TrainingPlansPage } from '@/pages/TrainingPlansPage';
+import { TrainingPlanDetailPage } from '@/pages/TrainingPlanDetailPage';
+import { PlanRetrospectivePage } from '@/pages/PlanRetrospectivePage';
 import { LoginPage } from '@/pages/LoginPage';
 
 const router = createBrowserRouter([
@@ -33,6 +36,9 @@ const router = createBrowserRouter([
           { path: 'goals', element: <GoalsPage /> },
           { path: 'events', element: <EventsPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'training-plans', element: <TrainingPlansPage /> },
+          { path: 'training-plans/:id', element: <TrainingPlanDetailPage /> },
+          { path: 'training-plans/:id/retrospective', element: <PlanRetrospectivePage /> },
         ],
       },
     ],

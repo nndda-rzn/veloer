@@ -26,35 +26,38 @@ Semua modul saling terhubung. Contoh: aktivitas 50km hari ini otomatis update ja
 
 Dokumentasi lengkap ada di folder [`docs/`](./docs). Baca secara berurutan untuk memahami keseluruhan sistem:
 
-| #   | Dokumen                                                     | Isi                                                                 |
-| --- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| 01  | [Overview](./docs/01-overview.md)                           | Visi, konsep ERP, daftar modul, relasi antar modul                  |
-| 02  | [Tech Stack](./docs/02-tech-stack.md)                       | Versi package terkunci, alasan pemilihan, kompatibilitas            |
-| 03  | [Architecture](./docs/03-architecture.md)                   | Clean Architecture backend, feature-based frontend, struktur folder |
-| 04  | [Database Schema](./docs/04-database-schema.md)             | 13 tabel, relasi, RLS, migration SQL                                |
-| 05  | [Modules](./docs/05-modules.md)                             | Detail 7 modul ERP, fitur, integrasi antar modul                    |
-| 06  | [GitFlow](./docs/06-gitflow.md)                             | Branch strategy, Conventional Commits, Husky, CI/CD                 |
-| 07  | [Setup Guide](./docs/07-setup-guide.md)                     | Strava Developer, Supabase, install, run dev                        |
-| 08  | [Deployment](./docs/08-deployment.md)                       | Vercel, Railway/Render, environment variables                       |
-| 09  | [Implementation Phases](./docs/09-implementation-phases.md) | 14 fase implementasi bertahap, branching plan                       |
+| #   | Dokumen                                                        | Isi                                                                 |
+| --- | -------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 01  | [Overview](./docs/01-overview.md)                              | Visi, konsep ERP, daftar modul, relasi antar modul                  |
+| 02  | [Tech Stack](./docs/02-tech-stack.md)                          | Versi package terkunci, alasan pemilihan, kompatibilitas            |
+| 03  | [Architecture](./docs/03-architecture.md)                      | Clean Architecture backend, feature-based frontend, struktur folder |
+| 04  | [Database Schema](./docs/04-database-schema.md)                | 13 tabel, relasi, RLS, migration SQL                                |
+| 05  | [Modules](./docs/05-modules.md)                                | Detail 7 modul ERP, fitur, integrasi antar modul                    |
+| 06  | [GitFlow](./docs/06-gitflow.md)                                | Branch strategy, Conventional Commits, Husky, CI/CD                 |
+| 07  | [Setup Guide](./docs/07-setup-guide.md)                        | Strava Developer, Supabase, install, run dev                        |
+| 08  | [Deployment](./docs/08-deployment.md)                          | Vercel, Railway/Render, environment variables                       |
+| 09  | [Implementation Phases](./docs/09-implementation-phases.md)    | 14 fase implementasi bertahap, branching plan                       |
+| 10  | [Phase 2 Completion Plan](./docs/10-phase2-completion-plan.md) | Goals, Events, Dashboard v2, Settings, Training data (Done)         |
+| 11  | [Training Plan Module](./docs/11-training-plan-module.md)      | Training Plan module design: v2.2.0–v2.5.0 roadmap & PR breakdown   |
 
 ---
 
 ## Status Project
 
-**v2.1.0 — All Modules Complete**
+**v2.5.0 — Training Plan Module Complete**
 
-| Modul       | Fitur                                                                      | Status |
-| ----------- | -------------------------------------------------------------------------- | ------ |
-| Activity    | Strava sync, list + filters, detail + map, bike linker, laps, zones        | ✅     |
-| Inventory   | Bike CRUD, Component CRUD, Lifespan indicator                              | ✅     |
-| Maintenance | Log CRUD, Due alerts, Schedule management, auto-create transactions        | ✅     |
-| Finance     | Transaction CRUD, Budget, Recharts pie chart, IDR, auto-create from events | ✅     |
-| Dashboard   | KPI cards, Alerts, Recent activities, Goals, Events, Charts                | ✅     |
-| Goals       | Goal CRUD, Progress rings, auto-progress on sync                           | ✅     |
-| Events      | Event CRUD, 6 types, upcoming filter                                       | ✅     |
-| Settings    | Profile, preferences, FTP setting, logout                                  | ✅     |
-| Training    | Cadence, power, calories, lap breakdown, zone chart, TSS/IF analysis       | ✅     |
+| Modul          | Fitur                                                                                  | Status |
+| -------------- | -------------------------------------------------------------------------------------- | ------ |
+| Activity       | Strava sync, list + filters, detail + map, bike linker, laps, zones, TSS computation   | ✅     |
+| Inventory      | Bike CRUD, Component CRUD, Lifespan indicator                                          | ✅     |
+| Maintenance    | Log CRUD, Due alerts, Schedule management, auto-create transactions                    | ✅     |
+| Finance        | Transaction CRUD, Budget, Recharts pie chart, IDR, auto-create from events             | ✅     |
+| Dashboard      | KPI cards, Alerts, Recent activities, Goals, Events, Upcoming workouts widget          | ✅     |
+| Goals          | Goal CRUD, Progress rings, auto-progress on sync                                       | ✅     |
+| Events         | Event CRUD, 6 types, upcoming filter                                                   | ✅     |
+| Settings       | Profile, preferences, FTP setting, logout                                              | ✅     |
+| Training Data  | Cadence, power, calories, lap breakdown, zone chart, TSS/IF analysis                   | ✅     |
+| Training Plans | Plan CRUD, workout calendar, recommendation engine (CTL/ATL/TSB), auto-link, templates | ✅     |
 
 ---
 
