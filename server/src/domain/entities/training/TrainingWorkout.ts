@@ -58,4 +58,5 @@ export type TrainingWorkoutCreateData = Omit<
   | 'rescheduled_from'
 > & {
   status?: WorkoutStatus;
+  rescheduled_from?: string | null;
 };

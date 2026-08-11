@@ -40,5 +40,8 @@ router.patch('/:planId/workouts/:id', authMiddleware, (req, res, next) => {
 router.delete('/:planId/workouts/:id', authMiddleware, (req, res, next) => {
   void controller.deleteWorkout(req, res).catch(next);
 });
+router.post('/:id/reschedule-missed', authMiddleware, (req, res, next) => {
+  void controller.rescheduleMissed(req, res).catch(next);
+});
 
 export const trainingPlanRoutes = router;
