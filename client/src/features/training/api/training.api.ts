@@ -89,4 +89,17 @@ export const trainingApi = {
     );
     return data;
   },
+
+  // ---- From template ----
+  async createFromTemplate(params: {
+    template: string;
+    start_date: string;
+    title?: string;
+  }): Promise<TrainingPlan> {
+    const { data } = await apiClient.post<TrainingPlan>(
+      '/api/training-plans/from-template',
+      params,
+    );
+    return data;
+  },
 };
