@@ -71,4 +71,5 @@ export interface SyncResult {
   skipped: number;
   total: number;
   goalsUpdated: number;
+  workoutsLinked: number;
 }
