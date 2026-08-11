@@ -1,4 +1,5 @@
 export { KpiCard } from './components/KpiCard';
+export { BikeHero } from './components/BikeHero';
 export { MaintenanceAlerts } from './components/MaintenanceAlerts';
 export { RecentActivities } from './components/RecentActivities';
 export { WeeklyDistanceChart } from './components/WeeklyDistanceChart';
