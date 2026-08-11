@@ -4,19 +4,28 @@ import { usePlans, trainingApi } from '@/features/training';
 import { TrainingPlanCard } from '@/features/training/components/TrainingPlanCard';
 import { TrainingPlanForm } from '@/features/training/components/TrainingPlanForm';
 import { TemplateLibrary } from '@/features/training/components/TemplateLibrary';
+import { SmartPlanModal } from '@/features/training/components/SmartPlanModal';
+import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
 import { settingsApi } from '@/features/settings';
 import { useEffect, useRef } from 'react';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
-import { ClipboardList } from 'lucide-react';
+import { ClipboardList, Sparkles } from 'lucide-react';
 
 export function TrainingPlansPage() {
   const navigate = useNavigate();
   const { plans, loading, error, createPlan, deletePlan, refetch } = usePlans();
   const [showForm, setShowForm] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showSmartPlan, setShowSmartPlan] = useState(false);
   const [defaultFtp, setDefaultFtp] = useState(250);
   const ftpFetched = useRef(false);
+  const {
+    analysis,
+    loading: analysisLoading,
+    error: analysisError,
+    analyze,
+  } = useFitnessAnalysis();
 
   useEffect(() => {
     if (ftpFetched.current) return;
@@ -58,6 +67,27 @@ export function TrainingPlansPage() {
     }
   };
 
+  const handleOpenSmartPlan = async () => {
+    await analyze();
+    setShowSmartPlan(true);
+  };
+
+  const handleSmartPlanConfirm = async (
+    template: TemplateKey,
+    startDate: string,
+    ftpBaseline: number,
+    title?: string,
+  ) => {
+    await trainingApi.createFromTemplate({
+      template,
+      start_date: startDate,
+      title,
+      ftp_baseline: ftpBaseline,
+    });
+    setShowSmartPlan(false);
+    refetch();
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -65,6 +95,14 @@ export function TrainingPlansPage() {
         description="Plan and schedule your cycling training"
         action={
           <div className="flex gap-2">
+            <button
+              onClick={() => void handleOpenSmartPlan()}
+              disabled={analysisLoading}
+              className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              {analysisLoading ? 'Analyzing...' : 'Smart Plan'}
+            </button>
             <button
               onClick={() => setShowTemplates(true)}
               className="rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -131,6 +169,21 @@ export function TrainingPlansPage() {
           onSelect={handleFromTemplate}
           onCancel={() => setShowTemplates(false)}
         />
+      )}
+
+      {showSmartPlan && analysis && (
+        <SmartPlanModal
+          analysis={analysis}
+          defaultFtp={defaultFtp}
+          onConfirm={handleSmartPlanConfirm}
+          onCancel={() => setShowSmartPlan(false)}
+        />
+      )}
+
+      {analysisError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          Failed to analyze Strava data: {analysisError}
+        </div>
       )}
 
       {deletingPlan && (
