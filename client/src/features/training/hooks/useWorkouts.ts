@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { trainingApi } from '../api/training.api';
-import type { TrainingWorkout, WorkoutFormData } from '../types/training';
+import type { TrainingWorkout, WorkoutFormData, WorkoutStatus } from '../types/training';
 
 interface UseWorkoutsReturn {
   workouts: TrainingWorkout[];
@@ -10,6 +10,9 @@ interface UseWorkoutsReturn {
   createWorkout: (data: WorkoutFormData) => Promise<TrainingWorkout>;
   updateWorkout: (workoutId: string, data: Partial<WorkoutFormData>) => Promise<void>;
   deleteWorkout: (workoutId: string) => Promise<void>;
+  markStatus: (workoutId: string, status: WorkoutStatus) => Promise<void>;
+  linkActivity: (workoutId: string, activityId: string) => Promise<void>;
+  reschedule: () => Promise<void>;
 }
 
 export function useWorkouts(planId: string): UseWorkoutsReturn {
@@ -55,5 +58,44 @@ export function useWorkouts(planId: string): UseWorkoutsReturn {
     [planId],
   );
 
-  return { workouts, loading, error, refetch, createWorkout, updateWorkout, deleteWorkout };
+  const markStatus = useCallback(
+    async (workoutId: string, status: WorkoutStatus): Promise<void> => {
+      await trainingApi.updateWorkout(planId, workoutId, {
+        status,
+        ...(status === 'completed' ? { completed_at: new Date().toISOString() } : {}),
+      } as Partial<WorkoutFormData>);
+      setRefetchFlag((f) => f + 1);
+    },
+    [planId],
+  );
+
+  const linkActivity = useCallback(
+    async (workoutId: string, activityId: string): Promise<void> => {
+      await trainingApi.updateWorkout(planId, workoutId, {
+        actual_activity_id: activityId,
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+      } as Partial<WorkoutFormData>);
+      setRefetchFlag((f) => f + 1);
+    },
+    [planId],
+  );
+
+  const reschedule = useCallback(async (): Promise<void> => {
+    await trainingApi.rescheduleMissed(planId);
+    setRefetchFlag((f) => f + 1);
+  }, [planId]);
+
+  return {
+    workouts,
+    loading,
+    error,
+    refetch,
+    createWorkout,
+    updateWorkout,
+    deleteWorkout,
+    markStatus,
+    linkActivity,
+    reschedule,
+  };
 }
