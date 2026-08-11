@@ -43,5 +43,8 @@ router.delete('/:planId/workouts/:id', authMiddleware, (req, res, next) => {
 router.post('/:id/reschedule-missed', authMiddleware, (req, res, next) => {
   void controller.rescheduleMissed(req, res).catch(next);
 });
+router.get('/:id/retrospective', authMiddleware, (req, res, next) => {
+  void controller.getRetrospective(req, res).catch(next);
+});
 
 export const trainingPlanRoutes = router;

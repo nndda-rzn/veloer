@@ -15,6 +15,7 @@ import {
 } from '../../application/use-cases/training/WorkoutUseCases.js';
 import { GenerateRecommendation } from '../../application/use-cases/training/GenerateRecommendation.js';
 import { AutoRescheduleMissed } from '../../application/use-cases/training/AutoRescheduleMissed.js';
+import { GetPlanRetrospective } from '../../application/use-cases/training/GetPlanRetrospective.js';
 
 export class TrainingPlanController {
   // ---- Plans ----
@@ -152,6 +153,23 @@ export class TrainingPlanController {
     const { id } = req.params;
     const useCase = container.resolve(AutoRescheduleMissed);
     const result = await useCase.execute(req.user.userId, String(id));
+    res.json(result);
+  }
+
+  // ---- Retrospective ----
+
+  async getRetrospective(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const useCase = container.resolve(GetPlanRetrospective);
+    const result = await useCase.execute(String(id), req.user.userId);
+    if (!result) {
+      res.status(404).json({ error: 'Not Found', message: 'Training plan not found' });
+      return;
+    }
     res.json(result);
   }
 }
