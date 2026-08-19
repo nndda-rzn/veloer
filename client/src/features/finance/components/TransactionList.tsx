@@ -1,5 +1,7 @@
 import type { Transaction } from '../types/finance';
 import { formatIDR, formatDate } from '@/shared/lib/utils';
+import { Badge, EmptyState, Button } from '@/shared/components/ui';
+import { Receipt } from 'lucide-react';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -28,15 +30,17 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
 
   if (transactions.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-        <p className="text-sm text-gray-500">No transactions yet.</p>
-      </div>
+      <EmptyState
+        icon={Receipt}
+        title="No transactions yet"
+        description="Add your first transaction to track your cycling finances."
+      />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <table className="min-w-full divide-y divide-gray-100">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -54,7 +58,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
             <th className="px-4 py-3"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-100">
           {transactions.map((tx) => (
             <tr key={tx.id} className="hover:bg-gray-50">
               <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
@@ -64,9 +68,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
                 {tx.description || tx.merchant || '—'}
               </td>
               <td className="px-4 py-3">
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                  {categoryLabels[tx.category]}
-                </span>
+                <Badge>{categoryLabels[tx.category]}</Badge>
               </td>
               <td
                 className={`whitespace-nowrap px-4 py-3 text-right text-sm font-medium ${
@@ -77,12 +79,14 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
                 {formatIDR(tx.amount)}
               </td>
               <td className="px-4 py-3 text-right">
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onDelete(tx)}
-                  className="text-xs text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:bg-red-50 hover:text-red-700"
                 >
                   Delete
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

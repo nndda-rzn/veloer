@@ -40,9 +40,9 @@ export function SummaryCards({ summary, loading }: SummaryCardsProps) {
   return (
     <div className="grid grid-cols-3 gap-4">
       {cards.map((card) => (
-        <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-4">
+        <div key={card.label} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{card.label}</p>
-          <p className={`mt-1 text-xl font-bold ${card.color}`}>{card.value}</p>
+          <p className={`mt-1 text-2xl font-bold ${card.color}`}>{card.value}</p>
         </div>
       ))}
     </div>
