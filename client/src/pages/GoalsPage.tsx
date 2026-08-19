@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { GoalCard, GoalForm, useGoals } from '@/features/goals';
 import type { Goal, GoalFormData } from '@/features/goals';
-import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
 import { Target } from 'lucide-react';
 
 export function GoalsPage() {
@@ -26,21 +26,10 @@ export function GoalsPage() {
       <PageHeader
         title="Goals"
         description="Your cycling goals and training progress"
-        action={
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-          >
-            Create Goal
-          </button>
-        }
+        action={<Button onClick={() => setShowForm(true)}>Create Goal</Button>}
       />
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <Alert variant="error">{error}</Alert>}
 
       {loading ? (
         <div className="space-y-2">
