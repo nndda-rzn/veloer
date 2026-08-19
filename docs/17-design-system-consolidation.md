@@ -331,18 +331,20 @@ Release v3.0.0
 
 ## Status
 
-| PR   | Deskripsi                                                     | Status     |
-| ---- | ------------------------------------------------------------- | ---------- |
-| #108 | Shared components inti (Button, Modal, Alert, Skeleton, Card) | ⬜ Pending |
-| #109 | Tabs + standarisasi EmptyState/Badge/ConfirmDialog            | ⬜ Pending |
-| #110 | Standarisasi global (Layout, form, skeleton, overlay)         | ⬜ Pending |
-| #111 | Activities + ActivityDetail                                   | ⬜ Pending |
-| #112 | Finance + Events                                              | ⬜ Pending |
-| #113 | Goals + Maintenance                                           | ⬜ Pending |
-| #114 | Training Plans                                                | ⬜ Pending |
-| #115 | Dashboard + Settings                                          | ⬜ Pending |
-| #116 | Inventory redesign (dense table)                              | ⬜ Pending |
-| #117 | Login + polish akhir                                          | ⬜ Pending |
+| PR   | Deskripsi                                                     | Status    |
+| ---- | ------------------------------------------------------------- | --------- |
+| #108 | Shared components inti (Button, Modal, Alert, Skeleton, Card) | ✅ Merged |
+| #109 | Tabs + standarisasi EmptyState/Badge/ConfirmDialog            | ✅ Merged |
+| #110 | Standarisasi global (Layout, form, skeleton, overlay)         | ✅ Merged |
+| #111 | Activities + ActivityDetail                                   | ✅ Merged |
+| #112 | Finance + Events                                              | ✅ Merged |
+| #113 | Goals + Maintenance                                           | ✅ Merged |
+| #114 | Training Plans                                                | ✅ Merged |
+| #115 | Dashboard + Settings                                          | ✅ Merged |
+| #116 | Inventory redesign (dense table)                              | ✅ Merged |
+| #117 | Login + polish akhir                                          | ✅ Merged |
+
+Semua PR selesai di v3.0.0. Seluruh 10 kriteria Definition of Done terverifikasi clean.
 
 ---
 
