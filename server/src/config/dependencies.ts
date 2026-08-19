@@ -20,6 +20,7 @@ import type { EventRepository } from '../domain/repositories/events/EventReposit
 import type { TrainingPlanRepository } from '../domain/repositories/training/TrainingPlanRepository.js';
 import type { StravaPort } from '../application/ports/StravaPort.js';
 import type { TokenPort } from '../application/ports/TokenPort.js';
+import type { StoragePort } from '../application/ports/StoragePort.js';
 import { SupabaseUserRepository } from '../infrastructure/database/repositories/auth/SupabaseUserRepository.js';
 import { SupabaseUserProfileRepository } from '../infrastructure/database/repositories/auth/SupabaseUserProfileRepository.js';
 import { SupabaseActivityRepository } from '../infrastructure/database/repositories/activity/SupabaseActivityRepository.js';
@@ -33,6 +34,7 @@ import { SupabaseGoalRepository } from '../infrastructure/database/repositories/
 import { SupabaseEventRepository } from '../infrastructure/database/repositories/events/SupabaseEventRepository.js';
 import { SupabaseTrainingPlanRepository } from '../infrastructure/database/repositories/training/SupabaseTrainingPlanRepository.js';
 import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
+import { SupabaseStorage } from '../infrastructure/storage/SupabaseStorage.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
 import { GetGoals, UpdateGoalProgress } from '../application/use-cases/goals/GoalUseCases.js';
@@ -93,5 +95,6 @@ container.registerSingleton(GeneratePlanFromTemplate);
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);
 container.registerSingleton<TokenPort>('TokenPort', JwtTokenAdapter);
+container.registerSingleton<StoragePort>('StoragePort', SupabaseStorage);
 
 export { container };
