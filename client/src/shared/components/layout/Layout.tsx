@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { activityApi } from '@/features/activity';
 import { Menu, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { SidebarContent, navItems } from '@/components/layout/sidebar';
 
 function usePageTitle(): string {
@@ -52,13 +52,15 @@ export function Layout() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 flex-shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
           <div className="flex items-center gap-3">
-            <SheetTrigger
-              render={
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu" />
-              }
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              aria-label="Open menu"
+              onClick={() => setMobileOpen(true)}
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
-            </SheetTrigger>
+            </Button>
             <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
               <Link to="/" className="font-medium text-gray-400 hover:text-primary">
                 Veloer
