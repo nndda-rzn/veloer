@@ -16,7 +16,7 @@ export function DueAlerts() {
   }, []);
 
   if (loading) {
-    return <div className="h-20 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-20 animate-pulse rounded-xl bg-gray-100" />;
   }
 
   if (dueSchedules.length === 0) {

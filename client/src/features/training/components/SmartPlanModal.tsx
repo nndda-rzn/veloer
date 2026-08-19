@@ -182,7 +182,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
           {/* FTP + Start Date + Title */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
                 FTP Baseline (W)
               </label>
               <input
@@ -197,7 +197,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
               </p>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Start Date</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
               <input
                 type="date"
                 value={startDate}
@@ -208,7 +208,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-600">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Plan Title (optional)
             </label>
             <input

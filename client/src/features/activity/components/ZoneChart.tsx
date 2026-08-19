@@ -44,7 +44,7 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
   }, [activityId]);
 
   if (loading) {
-    return <div className="h-48 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-48 animate-pulse rounded-xl bg-gray-100" />;
   }
 
   if (error || zones.length === 0) {

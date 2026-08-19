@@ -111,7 +111,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
             </h3>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-600">Start Date</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
                 <input
                   type="date"
                   value={startDate}
@@ -120,7 +120,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-600">
+                <label className="mb-1 block text-sm font-medium text-gray-700">
                   Custom Title (optional)
                 </label>
                 <input

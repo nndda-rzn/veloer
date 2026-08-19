@@ -59,7 +59,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <h3 className="mb-4 text-lg font-bold text-gray-900">Create Goal</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +73,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
               value={formData.title ?? ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="e.g., Ride 500km this month"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -86,7 +86,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 id="type"
                 value={formData.type}
                 onChange={(e) => handleTypeChange(e.target.value as GoalFormData['type'])}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {goalTypes.map((t) => (
                   <option key={t.value} value={t.value}>
@@ -105,7 +105,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, period: e.target.value as GoalFormData['period'] })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {periods.map((p) => (
                   <option key={p.value} value={p.value}>
@@ -131,7 +131,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 min="1"
                 value={formData.target_value || ''}
                 onChange={(e) => setFormData({ ...formData, target_value: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -143,7 +143,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 type="text"
                 value={formData.unit}
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -159,7 +159,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 required
                 value={formData.start_date}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -172,7 +172,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
                 required
                 value={formData.end_date}
                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -186,7 +186,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
               rows={2}
               value={formData.description ?? ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 

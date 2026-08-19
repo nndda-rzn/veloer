@@ -70,7 +70,7 @@ export function MaintenancePage() {
           {/* Bike selector */}
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <label htmlFor="bikeSelect" className="mb-1 block text-xs font-medium text-gray-600">
+              <label htmlFor="bikeSelect" className="mb-1 block text-sm font-medium text-gray-700">
                 Select Bike
               </label>
               <select
