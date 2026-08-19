@@ -238,15 +238,17 @@ Release v2.10.0
 
 ## Status
 
-| PR           | Deskripsi                                         | Status         |
-| ------------ | ------------------------------------------------- | -------------- |
-| Setup manual | Buat bucket `bike-photos` + policies di dashboard | ⬜ User action |
-| #102         | Server: multer + upload endpoint                  | ⬜ Pending     |
-| #103         | Migration 017: storage policies                   | ⬜ Pending     |
-| #104         | Client: BikeForm photo upload + preview           | ⬜ Pending     |
-| #105         | Client: BikeCard render foto + fallback           | ⬜ Pending     |
-| #106         | Client: maintenance alert indicator               | ⬜ Pending     |
-| #107         | Client: layout sidebar detail panel               | ⬜ Pending     |
+| PR           | Deskripsi                                         | Status    |
+| ------------ | ------------------------------------------------- | --------- |
+| Setup manual | Buat bucket `bike-photos` + policies di dashboard | ✅ Done   |
+| #102         | Server: multer + upload endpoint                  | ✅ Merged |
+| #103         | Migration 017: storage policies                   | ✅ Merged |
+| #104         | Client: BikeForm photo upload + preview           | ✅ Merged |
+| #105         | Client: BikeCard render foto + fallback           | ✅ Merged |
+| #106         | Client: maintenance alert indicator               | ✅ Merged |
+| #107         | Client: layout sidebar detail panel               | ✅ Merged |
+
+Semua perbaikan selesai di v2.10.0.
 
 ---
 
