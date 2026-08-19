@@ -25,4 +25,17 @@ export const bikeApi = {
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/api/bikes/${id}`);
   },
+
+  async uploadPhoto(id: string, file: File): Promise<{ photo_url: string }> {
+    const formData = new FormData();
+    formData.append('photo', file);
+    const { data } = await apiClient.post<{ photo_url: string }>(
+      `/api/bikes/${id}/photo`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
+    );
+    return data;
+  },
 };

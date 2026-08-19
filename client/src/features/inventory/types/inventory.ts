@@ -13,6 +13,7 @@ export interface Bike {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  maintenance_alert_count?: number;
 }
 
 export interface Component {
@@ -39,6 +40,7 @@ export interface BikeFormData {
   type: Bike['type'];
   purchase_date?: string | null;
   purchase_price?: number | null;
+  photo_url?: string | null;
   notes?: string | null;
 }
 

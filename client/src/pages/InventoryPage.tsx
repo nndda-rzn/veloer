@@ -8,8 +8,9 @@ import {
   useComponents,
 } from '@/features/inventory';
 import type { Bike, BikeFormData, Component, ComponentFormData } from '@/features/inventory';
-import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
-import { Bike as BikeIcon } from 'lucide-react';
+import { PageHeader, EmptyState, ConfirmDialog, Badge } from '@/shared/components/ui';
+import { Bike as BikeIcon, Plus } from 'lucide-react';
+import { formatIDR, formatDate } from '@/shared/lib/utils';
 
 export function InventoryPage() {
   const { bikes, loading, error, createBike, updateBike, deleteBike } = useBikes();
@@ -36,17 +37,16 @@ export function InventoryPage() {
     setEditingBike(null);
     setShowBikeForm(true);
   };
-
   const handleEditBike = (bike: Bike) => {
     setEditingBike(bike);
     setShowBikeForm(true);
   };
-
   const handleBikeSubmit = async (data: BikeFormData) => {
     if (editingBike) {
       await updateBike(editingBike.id, data);
     } else {
-      await createBike(data);
+      const created = await createBike(data);
+      setSelectedBike(created);
     }
     setShowBikeForm(false);
     setEditingBike(null);
@@ -57,12 +57,10 @@ export function InventoryPage() {
     setEditingComponent(null);
     setShowComponentForm(true);
   };
-
   const handleEditComponent = (component: Component) => {
     setEditingComponent(component);
     setShowComponentForm(true);
   };
-
   const handleComponentSubmit = async (data: ComponentFormData) => {
     if (editingComponent) {
       await updateComponent(editingComponent.id, data);
@@ -73,6 +71,28 @@ export function InventoryPage() {
     setEditingComponent(null);
   };
 
+  const handleSelectBike = (bike: Bike) => {
+    if (selectedBike?.id === bike.id) {
+      setSelectedBike(null);
+    } else {
+      setSelectedBike(bike);
+    }
+  };
+
+  const typeLabels: Record<Bike['type'], string> = {
+    road: 'Road Bike',
+    mtb: 'Mountain Bike',
+    gravel: 'Gravel Bike',
+    hybrid: 'Hybrid Bike',
+    folding: 'Folding Bike',
+    other: 'Other',
+  };
+
+  const typeFallbackImages: Partial<Record<Bike['type'], string>> = {
+    road: '/road-bike.png',
+    mtb: '/mountain-bike.png',
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -81,8 +101,9 @@ export function InventoryPage() {
         action={
           <button
             onClick={handleAddBike}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
+            <Plus className="h-4 w-4" aria-hidden="true" />
             Add Bike
           </button>
         }
@@ -94,74 +115,150 @@ export function InventoryPage() {
         </div>
       )}
 
-      {/* Bike Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-lg bg-gray-100" />
-          ))}
-        </div>
-      ) : bikes.length === 0 ? (
-        <EmptyState
-          icon={BikeIcon}
-          title="No bikes yet"
-          description="Add your first bike to start tracking components and maintenance."
-          action={{ label: 'Add Bike', onClick: handleAddBike }}
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {bikes.map((bike) => (
-            <div key={bike.id}>
-              <div className={selectedBike?.id === bike.id ? 'rounded-lg ring-2 ring-primary' : ''}>
-                <BikeCard
-                  bike={bike}
-                  onEdit={handleEditBike}
-                  onDelete={(b) => setDeletingBike(b)}
-                />
-              </div>
-              <button
-                onClick={() => setSelectedBike(bike)}
-                className="mt-2 w-full rounded-lg border border-gray-200 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
-              >
-                {selectedBike?.id === bike.id ? 'Hide Components' : 'View Components'}
-              </button>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Bike grid — left 2/3 */}
+        <div className="lg:col-span-2">
+          {loading ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-64 animate-pulse rounded-xl bg-gray-100" />
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Component Section */}
-      {selectedBike && (
-        <div className="rounded-lg border border-gray-200 bg-white p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Components: {selectedBike.name}</h3>
-              <p className="text-sm text-gray-500">
-                {selectedBike.current_km.toFixed(0)} km on the bike
-              </p>
-            </div>
-            <button
-              onClick={handleAddComponent}
-              className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-dark"
-            >
-              Add Component
-            </button>
-          </div>
-
-          {componentsError && (
-            <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {componentsError}
+          ) : bikes.length === 0 ? (
+            <EmptyState
+              icon={BikeIcon}
+              title="No bikes yet"
+              description="Add your first bike to start tracking components and maintenance."
+              action={{ label: 'Add Bike', onClick: handleAddBike }}
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {bikes.map((bike) => (
+                <div
+                  key={bike.id}
+                  className={`cursor-pointer rounded-xl transition-shadow ${
+                    selectedBike?.id === bike.id
+                      ? 'ring-2 ring-primary ring-offset-2'
+                      : 'hover:shadow-md'
+                  }`}
+                  onClick={() => handleSelectBike(bike)}
+                >
+                  <BikeCard bike={bike} onEdit={handleEditBike} onDelete={setDeletingBike} />
+                </div>
+              ))}
             </div>
           )}
-
-          <ComponentList
-            components={components}
-            loading={componentsLoading}
-            onEdit={handleEditComponent}
-            onDelete={(c) => setDeletingComponent(c)}
-          />
         </div>
-      )}
+
+        {/* Detail panel — right 1/3 */}
+        <div className="lg:col-span-1">
+          {selectedBike ? (
+            <div className="sticky top-6 rounded-xl border border-gray-200 bg-white shadow-sm">
+              {/* Detail header */}
+              <div className="relative aspect-video w-full overflow-hidden rounded-t-xl bg-gray-100">
+                {selectedBike.photo_url ? (
+                  <img
+                    src={selectedBike.photo_url}
+                    alt={selectedBike.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : typeFallbackImages[selectedBike.type] ? (
+                  <img
+                    src={typeFallbackImages[selectedBike.type]}
+                    alt={`${typeLabels[selectedBike.type]} placeholder`}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <BikeIcon className="h-12 w-12 text-gray-300" aria-hidden="true" />
+                  </div>
+                )}
+                <div className="absolute left-2 top-2">
+                  <Badge variant="success">
+                    {selectedBike.status.charAt(0).toUpperCase() + selectedBike.status.slice(1)}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="mb-3">
+                  <h3 className="text-lg font-bold text-gray-900">{selectedBike.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {selectedBike.brand ?? '—'} {selectedBike.model ?? ''}
+                  </p>
+                </div>
+
+                <div className="mb-4 grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                      Type
+                    </p>
+                    <p className="mt-0.5 font-medium text-gray-900">
+                      {typeLabels[selectedBike.type]}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                      Current KM
+                    </p>
+                    <p className="mt-0.5 font-medium text-gray-900">
+                      {selectedBike.current_km.toFixed(0)} km
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                      Purchase Date
+                    </p>
+                    <p className="mt-0.5 font-medium text-gray-900">
+                      {selectedBike.purchase_date ? formatDate(selectedBike.purchase_date) : '—'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                      Purchase Price
+                    </p>
+                    <p className="mt-0.5 font-medium text-gray-900">
+                      {selectedBike.purchase_price != null
+                        ? formatIDR(selectedBike.purchase_price)
+                        : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Components */}
+                <div className="mb-3 flex items-center justify-between border-t border-gray-100 pt-4">
+                  <h4 className="text-sm font-semibold text-gray-700">Components</h4>
+                  <button
+                    onClick={handleAddComponent}
+                    className="flex items-center gap-1 rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  >
+                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                    Add
+                  </button>
+                </div>
+
+                {componentsError && (
+                  <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                    {componentsError}
+                  </div>
+                )}
+
+                <ComponentList
+                  components={components}
+                  loading={componentsLoading}
+                  onEdit={handleEditComponent}
+                  onDelete={(c) => setDeletingComponent(c)}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 text-center">
+              <BikeIcon className="mb-2 h-8 w-8 text-gray-300" aria-hidden="true" />
+              <p className="text-sm text-gray-500">Select a bike to view its components</p>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Bike Form Modal */}
       {showBikeForm && (
