@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -123,7 +124,9 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="min-w-52">
-            <DropdownMenuLabel>Account</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => (window.location.href = '/settings')}>
               <User aria-hidden="true" />
