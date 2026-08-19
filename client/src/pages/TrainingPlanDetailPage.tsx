@@ -11,6 +11,7 @@ import { ActivityLinker } from '@/features/training/components/ActivityLinker';
 import { TrainingLoadChart } from '@/features/training/components/TrainingLoadChart';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
+import { ConfirmDialog, Button } from '@/shared/components/ui';
 import type {
   TrainingPlan,
   TrainingWorkout,
@@ -28,6 +29,7 @@ export function TrainingPlanDetailPage() {
   const [formDate, setFormDate] = useState('');
   const [editWorkout, setEditWorkout] = useState<TrainingWorkout | null>(null);
   const [showLinker, setShowLinker] = useState(false);
+  const [deletingWorkout, setDeletingWorkout] = useState<TrainingWorkout | null>(null);
 
   const {
     workouts,
@@ -71,8 +73,8 @@ export function TrainingPlanDetailPage() {
   };
 
   const handleDeleteWorkout = async (workoutId: string) => {
-    if (!confirm('Delete this workout?')) return;
     await deleteWorkout(workoutId);
+    setDeletingWorkout(null);
     setSelectedWorkout(null);
   };
 
@@ -151,15 +153,12 @@ export function TrainingPlanDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => reschedule()}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-            >
+            <Button variant="secondary" onClick={() => reschedule()}>
               Reschedule Missed
-            </button>
+            </Button>
             <Link
               to={`/training-plans/${plan.id}/retrospective`}
-              className="rounded-lg border border-primary px-3 py-1.5 text-sm text-primary hover:bg-primary-50"
+              className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Retrospective
             </Link>
@@ -223,8 +222,20 @@ export function TrainingPlanDetailPage() {
             setShowForm(true);
             setSelectedWorkout(null);
           }}
-          onDelete={handleDeleteWorkout}
+          onDelete={(w) => setDeletingWorkout(w)}
           onLinkActivity={handleLinkActivity}
+        />
+      )}
+
+      {/* Delete workout confirm */}
+      {deletingWorkout && (
+        <ConfirmDialog
+          title="Delete Workout"
+          description={`Delete "${deletingWorkout.title}"? This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => void handleDeleteWorkout(deletingWorkout.id)}
+          onCancel={() => setDeletingWorkout(null)}
         />
       )}
 
