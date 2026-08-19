@@ -70,12 +70,12 @@ export function Layout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r-2 border-gray-100 bg-white transition-transform md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-gray-100 bg-white transition-transform md:static md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Sidebar header */}
-        <div className="flex h-16 items-center justify-between border-b-2 border-gray-100 px-5">
+        <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5">
           <Link to="/" className="flex items-center gap-2.5">
             <img src="/logo.png" alt="Veloer" className="h-8 w-auto" />
             <span className="text-lg font-bold text-gray-900">Veloer</span>
@@ -118,7 +118,7 @@ export function Layout() {
         </nav>
 
         {/* Sidebar footer */}
-        <div className="border-t-2 border-gray-100 px-3 py-3">
+        <div className="border-t border-gray-100 px-3 py-3">
           <Link
             to="/settings"
             onClick={() => setSidebarOpen(false)}

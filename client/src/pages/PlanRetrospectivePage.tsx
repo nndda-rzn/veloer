@@ -21,21 +21,21 @@ export function PlanRetrospectivePage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-        <div className="h-32 animate-pulse rounded-lg bg-gray-100" />
-        <div className="h-64 animate-pulse rounded-lg bg-gray-100" />
+      <div className="space-y-6">
+        <div className="h-8 w-48 animate-pulse rounded-xl bg-gray-200" />
+        <div className="h-32 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Link to="/training-plans" className="text-sm text-primary hover:underline">
           &larr; Training Plans
         </Link>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       </div>

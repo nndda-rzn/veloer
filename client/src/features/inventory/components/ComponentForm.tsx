@@ -48,7 +48,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <h3 className="mb-4 text-lg font-bold text-gray-900">
           {component ? 'Edit Component' : 'Add Component'}
@@ -64,7 +64,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -78,7 +78,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value as Component['category'] })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               {categories.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -98,7 +98,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 type="text"
                 value={formData.brand ?? ''}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -110,7 +110,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 type="text"
                 value={formData.model ?? ''}
                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -129,7 +129,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 required
                 value={formData.install_date}
                 onChange={(e) => setFormData({ ...formData, install_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -142,7 +142,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 min="0"
                 value={formData.install_km}
                 onChange={(e) => setFormData({ ...formData, install_km: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -165,7 +165,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                   expected_lifespan_km: e.target.value ? Number(e.target.value) : null,
                 })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 

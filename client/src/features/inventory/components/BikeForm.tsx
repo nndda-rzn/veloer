@@ -101,7 +101,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
   const displayImage = previewUrl ?? formData.photo_url ?? null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <h3 className="mb-4 text-lg font-bold text-gray-900">{bike ? 'Edit Bike' : 'Add Bike'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -170,7 +170,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -184,7 +184,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 type="text"
                 value={formData.brand ?? ''}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -196,7 +196,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 type="text"
                 value={formData.model ?? ''}
                 onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -209,7 +209,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
               id="type"
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value as Bike['type'] })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               {bikeTypes.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -232,7 +232,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 type="date"
                 value={formData.purchase_date ?? ''}
                 onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -253,7 +253,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                     purchase_price: e.target.value ? Number(e.target.value) : null,
                   })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -267,7 +267,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
               rows={2}
               value={formData.notes ?? ''}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 

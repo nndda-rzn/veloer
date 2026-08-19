@@ -42,7 +42,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <h3 className="mb-4 text-lg font-bold text-gray-900">Add Transaction</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,7 +57,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value as 'income' | 'expense' })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
@@ -76,7 +76,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                     category: e.target.value as TransactionFormData['category'],
                   })
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {categories.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -99,7 +99,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                 min="0"
                 value={formData.amount || ''}
                 onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -112,7 +112,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                 required
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -126,7 +126,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
               type="text"
               value={formData.description ?? ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -140,7 +140,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                 type="text"
                 value={formData.merchant ?? ''}
                 onChange={(e) => setFormData({ ...formData, merchant: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div>
@@ -155,7 +155,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
                 type="text"
                 value={formData.payment_method ?? ''}
                 onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>

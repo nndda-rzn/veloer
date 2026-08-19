@@ -113,7 +113,7 @@ export function TrainingPlanDetailPage() {
     return (
       <div className="space-y-6">
         <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-        <div className="h-96 animate-pulse rounded-lg bg-gray-100" />
+        <div className="h-96 animate-pulse rounded-xl bg-gray-100" />
       </div>
     );
   }
@@ -171,7 +171,7 @@ export function TrainingPlanDetailPage() {
         {/* Calendar — 2/3 width */}
         <div className="lg:col-span-2">
           {workoutsLoading ? (
-            <div className="h-96 animate-pulse rounded-lg bg-gray-100" />
+            <div className="h-96 animate-pulse rounded-xl bg-gray-100" />
           ) : (
             <WorkoutCalendar
               workouts={workouts}
@@ -200,7 +200,7 @@ export function TrainingPlanDetailPage() {
             />
           )}
 
-          {recLoading && <div className="h-48 animate-pulse rounded-lg bg-gray-100" />}
+          {recLoading && <div className="h-48 animate-pulse rounded-xl bg-gray-100" />}
         </div>
       </div>
 

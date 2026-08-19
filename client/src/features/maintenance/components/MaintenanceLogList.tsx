@@ -28,7 +28,7 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
         ))}
       </div>
     );

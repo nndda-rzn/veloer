@@ -29,8 +29,8 @@ export function ActivityDetailPage() {
     return (
       <div className="space-y-6">
         <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-        <div className="h-32 animate-pulse rounded-lg bg-gray-100" />
-        <div className="h-64 animate-pulse rounded-lg bg-gray-100" />
+        <div className="h-32 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function ActivityDetailPage() {
         <Link to="/activities" className="text-sm text-primary hover:text-primary-dark">
           &larr; Back to Activities
         </Link>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       </div>
