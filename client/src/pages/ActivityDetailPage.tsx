@@ -10,6 +10,7 @@ import {
   useActivityDetail,
 } from '@/features/activity';
 import { settingsApi } from '@/features/settings';
+import { Tabs, Alert } from '@/shared/components/ui';
 import type { UserProfile } from '@/features/settings';
 
 export function ActivityDetailPage() {
@@ -41,9 +42,7 @@ export function ActivityDetailPage() {
         <Link to="/activities" className="text-sm text-primary hover:text-primary-dark">
           &larr; Back to Activities
         </Link>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="error">{error}</Alert>
       </div>
     );
   }
@@ -54,7 +53,7 @@ export function ActivityDetailPage() {
         <Link to="/activities" className="text-sm text-primary hover:text-primary-dark">
           &larr; Back to Activities
         </Link>
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
+        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
           <p className="text-sm text-gray-500">Activity not found.</p>
         </div>
       </div>
@@ -72,28 +71,14 @@ export function ActivityDetailPage() {
       <ActivityDetail activity={activity} />
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200">
-        <button
-          onClick={() => setTab('overview')}
-          className={`pb-2 text-sm font-medium ${
-            tab === 'overview'
-              ? 'border-b-2 border-primary text-primary'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setTab('training')}
-          className={`pb-2 text-sm font-medium ${
-            tab === 'training'
-              ? 'border-b-2 border-primary text-primary'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Training
-        </button>
-      </div>
+      <Tabs
+        tabs={[
+          { id: 'overview', label: 'Overview' },
+          { id: 'training', label: 'Training' },
+        ]}
+        active={tab}
+        onChange={(id) => setTab(id as 'overview' | 'training')}
+      />
 
       {tab === 'overview' && (
         <>
@@ -102,7 +87,7 @@ export function ActivityDetailPage() {
             <ActivityMap encodedPolyline={activity.polyline} />
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
             <h4 className="mb-3 text-sm font-semibold text-gray-700">Bike Assignment</h4>
             <ActivityBikeLinker
               activityId={activity.id}

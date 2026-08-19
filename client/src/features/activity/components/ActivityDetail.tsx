@@ -1,5 +1,6 @@
 import type { Activity } from '../types/activity';
 import { formatDistance, formatDuration, formatSpeed, formatDateTime } from '@/shared/lib/utils';
+import { Badge, Card } from '@/shared/components/ui';
 
 interface ActivityDetailProps {
   activity: Activity;
@@ -40,21 +41,19 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
       <div>
         <div className="flex items-center gap-3">
           <h3 className="text-xl font-bold text-gray-900">{activity.name}</h3>
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600">
-            {activity.type}
-          </span>
+          <Badge>{activity.type}</Badge>
         </div>
         <p className="mt-1 text-sm text-gray-500">{formatDateTime(activity.start_date)}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {items.map((item) => (
-          <div key={item.label} className="rounded-lg border border-gray-200 bg-white p-3">
+          <Card key={item.label} padding="sm">
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               {item.label}
             </p>
             <p className="mt-1 text-lg font-bold text-gray-900">{item.value}</p>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
