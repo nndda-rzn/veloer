@@ -3,12 +3,9 @@ import { useProfile } from '@/features/settings';
 import { useBikes } from '@/features/inventory';
 import { useAuth } from '@/features/auth';
 import type { ProfileFormData } from '@/features/settings';
-import { PageHeader, Badge } from '@/shared/components/ui';
+import { PageHeader, Badge, Button, Alert } from '@/shared/components/ui';
+import { inputClass, labelClass } from '@/shared/lib/ui';
 import { CheckCircle2 } from 'lucide-react';
-
-const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
-const labelClass = 'mb-1 block text-sm font-medium text-gray-700';
 
 export function SettingsPage() {
   const { profile, loading, error, saving, save } = useProfile();
@@ -56,9 +53,7 @@ export function SettingsPage() {
     return (
       <div className="space-y-6">
         <PageHeader title="Settings" />
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
+        <Alert variant="error">{error}</Alert>
       </div>
     );
   }
@@ -261,13 +256,9 @@ export function SettingsPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => void handleSave()}
-              disabled={saving}
-              className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            <Button onClick={() => void handleSave()} loading={saving}>
               {saving ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
             {savedMsg && (
               <span className="flex items-center gap-1.5 text-sm font-medium text-green-600">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
@@ -284,12 +275,13 @@ export function SettingsPage() {
         <p className="mb-4 text-xs text-gray-500">
           Signing out will end your session. You can sign back in with Strava anytime.
         </p>
-        <button
+        <Button
+          variant="danger"
           onClick={() => void handleSignOut()}
-          className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2"
+          className="bg-transparent text-red-600 hover:bg-red-50 focus-visible:ring-red-400"
         >
           Sign out
-        </button>
+        </Button>
       </div>
     </div>
   );

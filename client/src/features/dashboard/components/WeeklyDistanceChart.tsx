@@ -49,7 +49,7 @@ export function WeeklyDistanceChart({ stats }: ActivitySummaryCardProps) {
               <div className={`w-fit rounded-lg p-2 ${item.bg}`}>
                 <Icon className={`h-4 w-4 ${item.color}`} aria-hidden="true" />
               </div>
-              <p className="text-xl font-bold text-gray-900">{item.value}</p>
+              <p className="text-2xl font-bold text-gray-900">{item.value}</p>
               <p className="text-xs text-gray-500">{item.label}</p>
             </div>
           );
