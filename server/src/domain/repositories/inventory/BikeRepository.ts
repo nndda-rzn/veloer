@@ -7,6 +7,7 @@ export interface BikeRepository {
   update(id: string, data: Partial<Bike>): Promise<Bike | null>;
   delete(id: string): Promise<void>;
   updateCurrentKm(id: string, additionalKm: number): Promise<void>;
+  findMaintenanceAlertCounts(bikeIds: string[]): Promise<Record<string, number>>;
 }
 
 export interface ComponentRepository {
