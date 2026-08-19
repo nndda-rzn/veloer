@@ -232,7 +232,7 @@ export function BikeTable({
                       {components.length === 0 ? (
                         <p className="text-sm text-gray-400">No components for this bike yet.</p>
                       ) : (
-                        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                           <table className="min-w-full divide-y divide-gray-100">
                             <thead className="bg-gray-50">
                               <tr>

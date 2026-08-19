@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
-          <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
+          <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
             <span className="text-4xl">😵</span>
             <h1 className="mt-4 text-xl font-bold text-gray-900">Something went wrong</h1>
             <p className="mt-2 text-sm text-gray-500">

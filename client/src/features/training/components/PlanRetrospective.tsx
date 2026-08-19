@@ -34,7 +34,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
   return (
     <div className="space-y-6">
       {/* Plan header */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 bg-white p-4">
         <h2 className="text-lg font-bold text-gray-900">{plan.title}</h2>
         <p className="text-sm text-gray-500">
           {plan.start_date} — {plan.end_date} • FTP baseline: {plan.ftp_baseline}W
@@ -71,7 +71,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
             color: summary.missed > 0 ? 'text-gray-500' : undefined,
           },
         ].map((s) => (
-          <div key={s.label} className="rounded-lg border border-gray-200 bg-white p-3">
+          <div key={s.label} className="rounded-xl border border-gray-200 bg-white p-3">
             <p className="text-xs uppercase tracking-wider text-gray-400">{s.label}</p>
             <p className={`mt-1 text-xl font-bold ${s.color ?? 'text-gray-900'}`}>{s.value}</p>
           </div>
@@ -80,7 +80,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Completion donut */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
           <h3 className="mb-3 text-sm font-semibold text-gray-700">Workout Status</h3>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
@@ -104,7 +104,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
         </div>
 
         {/* Weekly TSS compliance */}
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
           <h3 className="mb-3 text-sm font-semibold text-gray-700">
             Weekly TSS: Planned vs Actual
           </h3>
@@ -123,7 +123,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
       </div>
 
       {/* Weekly breakdown table */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>

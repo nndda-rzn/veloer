@@ -24,14 +24,14 @@ interface TrainingLoadChartProps {
 export function TrainingLoadChart({ data }: TrainingLoadChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-lg border border-gray-200 bg-white">
+      <div className="flex h-48 items-center justify-center rounded-xl border border-gray-200 bg-white">
         <p className="text-sm text-gray-400">No training data available</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
       <h3 className="mb-3 text-sm font-semibold text-gray-700">Training Load (8 weeks)</h3>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart data={data}>

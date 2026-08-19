@@ -11,7 +11,7 @@ export function RecommendationCard({ recommendation: rec, onAddToPlan }: Recomme
   const { metrics } = rec;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
           <span

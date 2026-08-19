@@ -25,7 +25,7 @@ export function FormGauge({ tsb, ctl, atl }: FormGaugeProps) {
     tsb <= -20 ? '#ef4444' : tsb <= -5 ? '#f97316' : tsb <= 10 ? '#eab308' : '#22c55e';
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700">Form (TSB)</h3>
         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${bg} ${color}`}>
