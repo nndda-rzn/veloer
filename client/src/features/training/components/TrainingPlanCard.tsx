@@ -1,6 +1,7 @@
 import type { TrainingPlan } from '../types/training';
 import { PLAN_GOAL_TYPE_LABELS } from '../types/training';
 import { formatDate } from '@/shared/lib/utils';
+import { Badge, Card, Button } from '@/shared/components/ui';
 
 interface TrainingPlanCardProps {
   plan: TrainingPlan;
@@ -10,10 +11,10 @@ interface TrainingPlanCardProps {
   onDelete: (plan: TrainingPlan) => void;
 }
 
-const statusColors: Record<TrainingPlan['status'], string> = {
-  active: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
-  archived: 'bg-gray-100 text-gray-600',
+const statusVariants: Record<TrainingPlan['status'], 'info' | 'success' | 'neutral'> = {
+  active: 'info',
+  completed: 'success',
+  archived: 'neutral',
 };
 
 export function TrainingPlanCard({
@@ -26,19 +27,15 @@ export function TrainingPlanCard({
   const progressPct = workoutCount > 0 ? Math.round((completedCount / workoutCount) * 100) : 0;
 
   return (
-    <div
-      className="cursor-pointer rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
+    <Card
+      className="cursor-pointer transition-shadow hover:shadow-md"
       onClick={() => onClick(plan)}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-gray-900">{plan.title}</h3>
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[plan.status]}`}
-            >
-              {plan.status}
-            </span>
+            <Badge variant={statusVariants[plan.status]}>{plan.status}</Badge>
           </div>
           <p className="mt-0.5 text-sm text-gray-500">
             {PLAN_GOAL_TYPE_LABELS[plan.goal_type]} • FTP {plan.ftp_baseline}W
@@ -50,15 +47,16 @@ export function TrainingPlanCard({
             <p className="mt-1 text-xs italic text-gray-400">{plan.description}</p>
           )}
         </div>
-        <button
+        <Button
+          variant="danger"
+          size="sm"
           onClick={(e) => {
             e.stopPropagation();
             onDelete(plan);
           }}
-          className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
         >
           Delete
-        </button>
+        </Button>
       </div>
 
       {/* Progress bar */}
@@ -76,6 +74,6 @@ export function TrainingPlanCard({
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
