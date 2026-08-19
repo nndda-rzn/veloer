@@ -56,4 +56,30 @@ export class SupabaseBikeRepository implements BikeRepository {
     });
     if (error) throw new Error(`Failed to update bike km: ${error.message}`);
   }
+
+  async findMaintenanceAlertCounts(bikeIds: string[]): Promise<Record<string, number>> {
+    if (bikeIds.length === 0) return {};
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('components')
+      .select('bike_id, current_km, expected_lifespan_km, status')
+      .in('bike_id', bikeIds);
+
+    if (error) throw new Error(`Failed to fetch component alerts: ${error.message}`);
+
+    const counts: Record<string, number> = {};
+    for (const c of data || []) {
+      // Alert if: failed status, or lifespan usage >= 90%
+      const isFailed = c.status === 'failed';
+      const isLifespanCritical =
+        c.expected_lifespan_km && c.expected_lifespan_km > 0
+          ? c.current_km / c.expected_lifespan_km >= 0.9
+          : false;
+
+      if (isFailed || isLifespanCritical) {
+        counts[c.bike_id] = (counts[c.bike_id] ?? 0) + 1;
+      }
+    }
+    return counts;
+  }
 }

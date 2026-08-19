@@ -1,7 +1,7 @@
 import type { Bike } from '../types/inventory';
 import { formatIDR, formatDate } from '@/shared/lib/utils';
 import { Badge } from '@/shared/components/ui';
-import { Bike as BikeIcon } from 'lucide-react';
+import { Bike as BikeIcon, Wrench } from 'lucide-react';
 
 interface BikeCardProps {
   bike: Bike;
@@ -60,6 +60,19 @@ export function BikeCard({ bike, onEdit, onDelete }: BikeCardProps) {
             {bike.status.charAt(0).toUpperCase() + bike.status.slice(1)}
           </Badge>
         </div>
+
+        {/* Maintenance alert badge */}
+        {(bike.maintenance_alert_count ?? 0) > 0 && (
+          <div className="absolute left-2 top-2">
+            <span
+              className="flex items-center gap-1 rounded-full bg-orange-500 px-2 py-0.5 text-xs font-medium text-white shadow-sm"
+              title={`${bike.maintenance_alert_count} component${bike.maintenance_alert_count !== 1 ? 's' : ''} need attention`}
+            >
+              <Wrench className="h-3 w-3" aria-hidden="true" />
+              {bike.maintenance_alert_count}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}

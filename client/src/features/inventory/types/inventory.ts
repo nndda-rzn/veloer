@@ -13,6 +13,7 @@ export interface Bike {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  maintenance_alert_count?: number;
 }
 
 export interface Component {

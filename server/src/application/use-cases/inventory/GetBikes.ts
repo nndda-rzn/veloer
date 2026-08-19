@@ -6,9 +6,21 @@ import type { Bike } from '../../../domain/entities/inventory/Bike.js';
 export class GetBikes {
   constructor(@inject('BikeRepository') private bikeRepo: BikeRepository) {}
 
-  async execute(userId: string): Promise<Bike[]> {
-    return this.bikeRepo.findByUserId(userId);
+  async execute(userId: string): Promise<BikeWithAlerts[]> {
+    const bikes = await this.bikeRepo.findByUserId(userId);
+    if (bikes.length === 0) return [];
+
+    const alertCounts = await this.bikeRepo.findMaintenanceAlertCounts(bikes.map((b) => b.id));
+
+    return bikes.map((bike) => ({
+      ...bike,
+      maintenance_alert_count: alertCounts[bike.id] ?? 0,
+    }));
   }
+}
+
+export interface BikeWithAlerts extends Bike {
+  maintenance_alert_count: number;
 }
 
 @injectable()
