@@ -1,7 +1,11 @@
 import { useState, useRef } from 'react';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import { bikeApi } from '../api/bike.api';
-import { Modal, Button } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import type { Bike, BikeFormData } from '../types/inventory';
 
 interface BikeFormProps {
@@ -18,6 +22,9 @@ const bikeTypes: { value: Bike['type']; label: string }[] = [
   { value: 'folding', label: 'Folding' },
   { value: 'other', label: 'Other' },
 ];
+
+const selectClass =
+  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
   const [formData, setFormData] = useState<BikeFormData>({
@@ -102,180 +109,162 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
   const displayImage = previewUrl ?? formData.photo_url ?? null;
 
   return (
-    <Modal open onClose={onCancel} title={bike ? 'Edit Bike' : 'Add Bike'}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Photo upload */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Bike Photo</label>
-          {displayImage ? (
-            <div className="relative overflow-hidden rounded-lg border border-gray-200">
-              <img
-                src={displayImage}
-                alt={formData.name || 'Bike'}
-                className="aspect-video w-full object-cover"
-              />
-              {bike && (
-                <button
-                  type="button"
-                  onClick={handleClearPhoto}
-                  className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
-                  aria-label="Remove photo"
-                >
-                  <X className="h-4 w-4" aria-hidden="true" />
-                </button>
-              )}
-              <label className="absolute bottom-2 right-2 cursor-pointer rounded-lg bg-black/60 px-2 py-1 text-xs font-medium text-white hover:bg-black/80">
-                Change
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{bike ? 'Edit Bike' : 'Add Bike'}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Photo upload */}
+          <div className="space-y-1.5">
+            <Label>Bike Photo</Label>
+            {displayImage ? (
+              <div className="relative overflow-hidden rounded-lg border border-gray-200">
+                <img
+                  src={displayImage}
+                  alt={formData.name || 'Bike'}
+                  className="aspect-video w-full object-cover"
+                />
+                {bike && (
+                  <button
+                    type="button"
+                    onClick={handleClearPhoto}
+                    className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+                    aria-label="Remove photo"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
+                <label className="absolute bottom-2 right-2 cursor-pointer rounded-lg bg-black/60 px-2 py-1 text-xs font-medium text-white hover:bg-black/80">
+                  Change
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => void handleFileSelect(e)}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            ) : (
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 text-center hover:border-primary hover:bg-primary-50">
+                {uploading ? (
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
+                ) : (
+                  <ImagePlus className="h-6 w-6 text-gray-400" aria-hidden="true" />
+                )}
+                <span className="text-sm text-gray-500">
+                  {uploading ? 'Uploading…' : bike ? 'Upload a photo' : 'Add photo after saving'}
+                </span>
+                <span className="text-xs text-gray-400">JPG, PNG or WebP — max 5 MB</span>
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   onChange={(e) => void handleFileSelect(e)}
                   className="hidden"
+                  disabled={!bike || uploading}
                 />
               </label>
-            </div>
-          ) : (
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 text-center hover:border-primary hover:bg-primary-50">
-              {uploading ? (
-                <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
-              ) : (
-                <ImagePlus className="h-6 w-6 text-gray-400" aria-hidden="true" />
-              )}
-              <span className="text-sm text-gray-500">
-                {uploading ? 'Uploading...' : bike ? 'Upload a photo' : 'Add photo after saving'}
-              </span>
-              <span className="text-xs text-gray-400">JPG, PNG or WebP — max 5 MB</span>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={(e) => void handleFileSelect(e)}
-                className="hidden"
-                disabled={!bike || uploading}
+            )}
+            {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="brand">Brand</Label>
+              <Input
+                id="brand"
+                type="text"
+                value={formData.brand ?? ''}
+                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
               />
-            </label>
-          )}
-          {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-            Name *
-          </label>
-          <input
-            id="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="brand" className="mb-1 block text-sm font-medium text-gray-700">
-              Brand
-            </label>
-            <input
-              id="brand"
-              type="text"
-              value={formData.brand ?? ''}
-              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="model">Model</Label>
+              <Input
+                id="model"
+                type="text"
+                value={formData.model ?? ''}
+                onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="model" className="mb-1 block text-sm font-medium text-gray-700">
-              Model
-            </label>
-            <input
-              id="model"
-              type="text"
-              value={formData.model ?? ''}
-              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-        </div>
 
-        <div>
-          <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
-            Type *
-          </label>
-          <select
-            id="type"
-            value={formData.type}
-            onChange={(e) => setFormData({ ...formData, type: e.target.value as Bike['type'] })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          >
-            {bikeTypes.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="purchase_date" className="mb-1 block text-sm font-medium text-gray-700">
-              Purchase Date
-            </label>
-            <input
-              id="purchase_date"
-              type="date"
-              value={formData.purchase_date ?? ''}
-              onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="purchase_price"
-              className="mb-1 block text-sm font-medium text-gray-700"
+          <div className="space-y-1.5">
+            <Label htmlFor="type">Type *</Label>
+            <select
+              id="type"
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value as Bike['type'] })}
+              className={selectClass}
             >
-              Purchase Price (IDR)
-            </label>
-            <input
-              id="purchase_price"
-              type="number"
-              min="0"
-              value={formData.purchase_price ?? ''}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  purchase_price: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              {bikeTypes.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="purchase_date">Purchase Date</Label>
+              <Input
+                id="purchase_date"
+                type="date"
+                value={formData.purchase_date ?? ''}
+                onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="purchase_price">Purchase Price (IDR)</Label>
+              <Input
+                id="purchase_price"
+                type="number"
+                min="0"
+                value={formData.purchase_price ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    purchase_price: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              rows={2}
+              value={formData.notes ?? ''}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             />
           </div>
-        </div>
 
-        <div>
-          <label htmlFor="notes" className="mb-1 block text-sm font-medium text-gray-700">
-            Notes
-          </label>
-          <textarea
-            id="notes"
-            rows={2}
-            value={formData.notes ?? ''}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={saving}>
-            {saving ? 'Saving...' : bike ? 'Update' : 'Add'}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="secondary" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={saving}>
+              {saving ? 'Saving…' : bike ? 'Update' : 'Add'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

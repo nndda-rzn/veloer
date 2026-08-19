@@ -1,7 +1,9 @@
 import type { Component } from '../types/inventory';
 import { formatDate } from '@/shared/lib/utils';
 import { LifespanIndicator } from './LifespanIndicator';
-import { Badge, EmptyState } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/shared/components/ui';
 import { Wrench } from 'lucide-react';
 
 interface ComponentListProps {
@@ -68,18 +70,17 @@ export function ComponentList({ components, loading, onEdit, onDelete }: Compone
               </p>
             </div>
             <div className="flex gap-1.5">
-              <button
-                onClick={() => onEdit(component)}
-                className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
-              >
+              <Button variant="outline" size="sm" onClick={() => onEdit(component)}>
                 Edit
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-600 hover:bg-red-50 hover:text-red-700"
                 onClick={() => onDelete(component)}
-                className="rounded-lg border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
 

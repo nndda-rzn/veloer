@@ -1,4 +1,3 @@
-export { BikeCard } from './components/BikeCard';
 export { BikeTable } from './components/BikeTable';
 export { BikeForm } from './components/BikeForm';
 export { ComponentList } from './components/ComponentList';

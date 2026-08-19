@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X } from 'lucide-react';
 import type { TrainingWorkout, WorkoutStatus } from '../types/training';
 import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
 import { formatDate, formatEnumLabel } from '@/shared/lib/utils';
-import { Badge, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 
 interface WorkoutDetailProps {
   workout: TrainingWorkout;
@@ -44,25 +44,11 @@ export function WorkoutDetail({
 }: WorkoutDetailProps) {
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
-
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
-      <button
-        className="absolute inset-0 w-full cursor-default"
-        onClick={onClose}
-        aria-label="Close workout detail"
-      />
-      <div
-        className="relative h-full w-full max-w-sm overflow-y-auto bg-white shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Sheet open onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="right" className="w-full max-w-sm p-0">
+        <SheetTitle className="sr-only">{workout.title}</SheetTitle>
+        <SheetDescription className="sr-only">Workout detail</SheetDescription>
         {/* Header */}
         <div className="p-4" style={{ borderBottom: `3px solid ${color}` }}>
           <div className="flex items-start justify-between">
@@ -76,20 +62,7 @@ export function WorkoutDetail({
               <h2 className="mt-1 text-lg font-bold text-gray-900">{workout.title}</h2>
               <p className="text-sm text-gray-500">{formatDate(workout.scheduled_date)}</p>
             </div>
-            <button
-              onClick={onClose}
-              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
-              aria-label="Close"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </button>
           </div>
-          <span
-            className="mt-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium text-white"
-            style={{ backgroundColor: color }}
-          >
-            {WORKOUT_TYPE_LABELS[workout.workout_type]}
-          </span>
           <Badge variant={statusVariants[workout.status]}>{formatEnumLabel(workout.status)}</Badge>
         </div>
 
@@ -201,7 +174,7 @@ export function WorkoutDetail({
           {workout.status === 'planned' && (
             <div className="flex flex-col gap-2">
               <Button
-                variant="primary"
+                variant="default"
                 onClick={() => onMarkComplete(workout.id)}
                 className="bg-green-600 hover:bg-green-700 focus-visible:ring-green-500"
               >
@@ -230,7 +203,7 @@ export function WorkoutDetail({
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

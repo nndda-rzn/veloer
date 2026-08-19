@@ -11,7 +11,24 @@ import { ActivityLinker } from '@/features/training/components/ActivityLinker';
 import { TrainingLoadChart } from '@/features/training/components/TrainingLoadChart';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
-import { ConfirmDialog, Button } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import type {
   TrainingPlan,
   TrainingWorkout,
@@ -229,21 +246,35 @@ export function TrainingPlanDetailPage() {
 
       {/* Delete workout confirm */}
       {deletingWorkout && (
-        <ConfirmDialog
-          title="Delete Workout"
-          description={`Delete "${deletingWorkout.title}"? This cannot be undone.`}
-          confirmLabel="Delete"
-          variant="danger"
-          onConfirm={() => void handleDeleteWorkout(deletingWorkout.id)}
-          onCancel={() => setDeletingWorkout(null)}
-        />
+        <AlertDialog open onOpenChange={(open) => !open && setDeletingWorkout(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Workout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Delete &quot;{deletingWorkout.title}&quot;? This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                variant="danger"
+                onClick={() => void handleDeleteWorkout(deletingWorkout.id)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
 
       {/* Activity linker */}
       {selectedWorkout && showLinker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="mb-3 text-base font-semibold text-gray-900">Link Strava Activity</h2>
+        <Dialog open onOpenChange={(open) => !open && setShowLinker(false)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Link Strava Activity</DialogTitle>
+              <DialogDescription>Connect a ride from Strava to this workout.</DialogDescription>
+            </DialogHeader>
             <ActivityLinker
               workoutId={selectedWorkout.id}
               planId={id ?? ''}
@@ -255,14 +286,8 @@ export function TrainingPlanDetailPage() {
                 setSelectedWorkout(null);
               }}
             />
-            <button
-              onClick={() => setShowLinker(false)}
-              className="mt-3 w-full text-sm text-gray-500 hover:text-gray-700"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Workout form */}

@@ -1,7 +1,19 @@
 import { useState } from 'react';
 import { GoalCard, GoalForm, useGoals } from '@/features/goals';
 import type { Goal, GoalFormData } from '@/features/goals';
-import { PageHeader, EmptyState, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
+import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Target } from 'lucide-react';
 
 export function GoalsPage() {
@@ -55,14 +67,22 @@ export function GoalsPage() {
       {showForm && <GoalForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
 
       {deletingGoal && (
-        <ConfirmDialog
-          title="Delete Goal"
-          description="Are you sure you want to delete this goal? This action cannot be undone."
-          confirmLabel="Delete"
-          variant="danger"
-          onConfirm={() => void confirmDelete()}
-          onCancel={() => setDeletingGoal(null)}
-        />
+        <AlertDialog open onOpenChange={(open) => !open && setDeletingGoal(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Goal</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this goal? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

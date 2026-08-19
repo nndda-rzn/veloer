@@ -4,7 +4,9 @@ import {
   ActivityStatsBar,
   useActivities,
 } from '@/features/activity';
-import { PageHeader, Button, Alert } from '@/shared/components/ui';
+import { PageHeader } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 import { RefreshCw } from 'lucide-react';
 
 export function ActivitiesPage() {
@@ -27,10 +29,14 @@ export function ActivitiesPage() {
         }
       />
 
-      {error && <Alert variant="error">{error}</Alert>}
+      {error && (
+        <Alert variant="error" live="assertive">
+          {error}
+        </Alert>
+      )}
 
       {syncResult && (
-        <Alert variant="success">
+        <Alert variant="success" live="polite">
           Sync complete — {syncResult.synced} new, {syncResult.skipped} already synced
           {syncResult.workoutsLinked > 0 && (
             <>

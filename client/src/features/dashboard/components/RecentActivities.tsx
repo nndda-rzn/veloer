@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { formatDistance, formatDate, formatActivityType } from '@/shared/lib/utils';
-import { Badge } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Bike } from 'lucide-react';
 import { EmptyState } from '@/shared/components/ui';
 
@@ -31,7 +32,7 @@ export function RecentActivities({ activities, loading }: RecentActivitiesProps)
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <Card>
       <ul className="divide-y divide-gray-100">
         {activities.map((activity) => (
           <li
@@ -64,6 +65,6 @@ export function RecentActivities({ activities, loading }: RecentActivitiesProps)
           View all activities →
         </Link>
       </div>
-    </div>
+    </Card>
   );
 }

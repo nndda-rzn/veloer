@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import type { TrainingPlan, TrainingPlanFormData, PlanGoalType } from '../types/training';
 import { PLAN_GOAL_TYPE_LABELS } from '../types/training';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface TrainingPlanFormProps {
   plan?: TrainingPlan;
@@ -10,6 +21,9 @@ interface TrainingPlanFormProps {
 }
 
 const goalTypes: PlanGoalType[] = ['ftp', 'endurance', 'century', 'gran_fondo', 'custom'];
+
+const selectClass =
+  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function TrainingPlanForm({
   plan,
@@ -54,32 +68,34 @@ export function TrainingPlanForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {plan ? 'Edit Training Plan' : 'New Training Plan'}
-        </h2>
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{plan ? 'Edit Training Plan' : 'New Training Plan'}</DialogTitle>
+          <DialogDescription>Set up a training plan with FTP-based targets.</DialogDescription>
+        </DialogHeader>
 
-        {error && <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Title</label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="plan-title">Title</Label>
+            <Input
+              id="plan-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. FTP Builder 6 Weeks"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
             />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Goal Type</label>
+          <div className="space-y-1.5">
+            <Label htmlFor="goal-type">Goal Type</Label>
             <select
+              id="goal-type"
               value={goalType}
               onChange={(e) => setGoalType(e.target.value as PlanGoalType)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              className={selectClass}
             >
               {goalTypes.map((type) => (
                 <option key={type} value={type}>
@@ -90,74 +106,62 @@ export function TrainingPlanForm({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="plan-start">Start Date</Label>
+              <Input
+                id="plan-start"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">End Date</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="plan-end">End Date</Label>
+              <Input
+                id="plan-end"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              FTP Baseline (watts)
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="plan-ftp">FTP Baseline (watts)</Label>
+            <Input
+              id="plan-ftp"
               type="number"
               min={50}
               max={600}
               value={ftpBaseline}
               onChange={(e) => setFtpBaseline(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
             />
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="text-xs text-gray-400">
               Your FTP at the start of this plan. Used for TSS targets.
             </p>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Description (optional)
-            </label>
-            <textarea
+          <div className="space-y-1.5">
+            <Label htmlFor="plan-desc">Description (optional)</Label>
+            <Textarea
+              id="plan-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               placeholder="What do you want to achieve?"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
             />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
+            <Button type="button" variant="secondary" onClick={onCancel}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
-            >
-              {submitting ? 'Saving...' : plan ? 'Save Changes' : 'Create Plan'}
-            </button>
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {submitting ? 'Saving…' : plan ? 'Save Changes' : 'Create Plan'}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

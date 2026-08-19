@@ -1,7 +1,9 @@
 import type { TrainingPlan } from '../types/training';
 import { PLAN_GOAL_TYPE_LABELS } from '../types/training';
 import { formatDate } from '@/shared/lib/utils';
-import { Badge, Card, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface TrainingPlanCardProps {
   plan: TrainingPlan;

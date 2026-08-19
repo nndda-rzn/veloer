@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Wrench, Bike as BikeIcon } from 'lucide-react';
 import type { Bike, Component } from '../types/inventory';
 import { formatIDR } from '@/shared/lib/utils';
-import { Badge, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface BikeTableProps {
   bikes: Bike[];

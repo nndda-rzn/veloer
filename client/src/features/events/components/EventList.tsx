@@ -1,6 +1,9 @@
 import type { Event } from '../types/event';
 import { formatDate, formatIDR } from '@/shared/lib/utils';
-import { Badge, Card, EmptyState, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/shared/components/ui';
 import { CalendarDays } from 'lucide-react';
 
 interface EventListProps {
@@ -54,7 +57,7 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
     <div className="space-y-3">
       {events.map((event) => (
         <Card key={event.id}>
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h4 className="font-semibold text-gray-900">{event.name}</h4>
@@ -64,10 +67,12 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
                 {typeLabels[event.type]} • {formatDate(event.date)}
               </p>
               {event.location && <p className="text-xs text-gray-400">📍 {event.location}</p>}
-              <div className="mt-1 flex gap-4 text-xs text-gray-500">
-                {event.distance != null && <span>{event.distance} km</span>}
+              <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
+                {event.distance != null && (
+                  <span className="tabular-nums">{event.distance} km</span>
+                )}
                 {event.registration_fee != null && (
-                  <span>Fee: {formatIDR(event.registration_fee)}</span>
+                  <span className="tabular-nums">Fee: {formatIDR(event.registration_fee)}</span>
                 )}
                 {event.result && <span>Result: {event.result}</span>}
               </div>

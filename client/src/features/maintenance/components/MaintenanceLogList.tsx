@@ -1,6 +1,9 @@
 import type { MaintenanceLog } from '../types/maintenance';
 import { formatDate, formatIDR } from '@/shared/lib/utils';
-import { Badge, Card, EmptyState, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/shared/components/ui';
 import { Wrench } from 'lucide-react';
 
 interface MaintenanceLogListProps {
@@ -53,16 +56,20 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
     <div className="space-y-3">
       {logs.map((log) => (
         <Card key={log.id}>
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <Badge variant={typeVariants[log.type]}>{typeLabels[log.type]}</Badge>
                 <span className="text-xs text-gray-400">{formatDate(log.service_date)}</span>
-                <span className="text-xs text-gray-400">{log.service_km.toFixed(0)} km</span>
+                <span className="text-xs tabular-nums text-gray-400">
+                  {log.service_km.toFixed(0)} km
+                </span>
               </div>
               <p className="mt-1 text-sm text-gray-900">{log.description}</p>
-              <div className="mt-1 flex gap-4 text-xs text-gray-500">
-                {log.cost != null && <span>Cost: {formatIDR(log.cost)}</span>}
+              <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
+                {log.cost != null && (
+                  <span className="tabular-nums">Cost: {formatIDR(log.cost)}</span>
+                )}
                 <span>By: {log.performed_by === 'self' ? 'Self' : (log.shop_name ?? 'Shop')}</span>
                 {log.next_service_date && <span>Next: {formatDate(log.next_service_date)}</span>}
               </div>

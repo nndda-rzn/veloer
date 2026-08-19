@@ -9,7 +9,19 @@ import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
 import { settingsApi } from '@/features/settings';
 import { useEffect, useRef } from 'react';
-import { PageHeader, EmptyState, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
+import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ClipboardList, Sparkles } from 'lucide-react';
 
 export function TrainingPlansPage() {
@@ -177,20 +189,26 @@ export function TrainingPlansPage() {
       )}
 
       {analysisError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          Failed to analyze Strava data: {analysisError}
-        </div>
+        <Alert variant="error">Failed to analyze Strava data: {analysisError}</Alert>
       )}
 
       {deletingPlan && (
-        <ConfirmDialog
-          title="Delete Plan"
-          description={`Delete "${deletingPlan.title}"? This will remove all workouts in this plan.`}
-          confirmLabel="Delete"
-          variant="danger"
-          onConfirm={() => void confirmDelete()}
-          onCancel={() => setDeletingPlan(null)}
-        />
+        <AlertDialog open onOpenChange={(open) => !open && setDeletingPlan(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Plan</AlertDialogTitle>
+              <AlertDialogDescription>
+                Delete &quot;{deletingPlan.title}&quot;? This will remove all workouts in this plan.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );
