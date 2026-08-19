@@ -4,6 +4,7 @@ import { AddBike } from '../../application/use-cases/inventory/AddBike.js';
 import { UpdateBike } from '../../application/use-cases/inventory/UpdateBike.js';
 import { DeleteBike } from '../../application/use-cases/inventory/DeleteBike.js';
 import { GetBikes, GetBikeById } from '../../application/use-cases/inventory/GetBikes.js';
+import { UploadBikePhoto } from '../../application/use-cases/inventory/UploadBikePhoto.js';
 import { AddComponent } from '../../application/use-cases/inventory/AddComponent.js';
 import {
   GetComponents,
@@ -77,6 +78,40 @@ export class InventoryController {
       return;
     }
     res.status(204).send();
+  }
+
+  async uploadBikePhoto(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const file = req.file;
+    if (!file) {
+      res.status(400).json({ error: 'Bad Request', message: 'No file uploaded' });
+      return;
+    }
+    const uploadBikePhoto = container.resolve(UploadBikePhoto);
+    try {
+      const result = await uploadBikePhoto.execute(String(id), req.user.userId, {
+        buffer: file.buffer,
+        mimetype: file.mimetype,
+      });
+      res.json(result);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      if (message === 'NOT_FOUND') {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      if (message === 'INVALID_FILE_TYPE') {
+        res
+          .status(400)
+          .json({ error: 'Bad Request', message: 'Only JPG, PNG, and WebP images are allowed' });
+        return;
+      }
+      res.status(500).json({ error: 'Internal Server Error', message });
+    }
   }
 
   // --- COMPONENTS ---
