@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { GoalFormData } from '../types/goal';
-import { Modal, Button } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface GoalFormProps {
   onSubmit: (data: GoalFormData) => Promise<void>;
@@ -20,6 +24,9 @@ const periods: { value: GoalFormData['period']; label: string }[] = [
   { value: 'yearly', label: 'Yearly' },
   { value: 'custom', label: 'Custom' },
 ];
+
+const selectClass =
+  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 function getDateOffset(days: number): string {
   const d = new Date();
@@ -60,141 +67,124 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
   };
 
   return (
-    <Modal open onClose={onCancel} title="Create Goal">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="mb-1 block text-sm font-medium text-gray-700">
-            Title
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={formData.title ?? ''}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="e.g., Ride 500km this month"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
-              Type *
-            </label>
-            <select
-              id="type"
-              value={formData.type}
-              onChange={(e) => handleTypeChange(e.target.value as GoalFormData['type'])}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {goalTypes.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="period" className="mb-1 block text-sm font-medium text-gray-700">
-              Period *
-            </label>
-            <select
-              id="period"
-              value={formData.period}
-              onChange={(e) =>
-                setFormData({ ...formData, period: e.target.value as GoalFormData['period'] })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {periods.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="target_value" className="mb-1 block text-sm font-medium text-gray-700">
-              Target *
-            </label>
-            <input
-              id="target_value"
-              type="number"
-              required
-              min="1"
-              value={formData.target_value || ''}
-              onChange={(e) => setFormData({ ...formData, target_value: Number(e.target.value) })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label htmlFor="unit" className="mb-1 block text-sm font-medium text-gray-700">
-              Unit
-            </label>
-            <input
-              id="unit"
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Goal</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
               type="text"
-              value={formData.unit}
-              onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={formData.title ?? ''}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="e.g., Ride 500km this month"
             />
           </div>
-        </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="start_date" className="mb-1 block text-sm font-medium text-gray-700">
-              Start Date *
-            </label>
-            <input
-              id="start_date"
-              type="date"
-              required
-              value={formData.start_date}
-              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="type">Type *</Label>
+              <select
+                id="type"
+                value={formData.type}
+                onChange={(e) => handleTypeChange(e.target.value as GoalFormData['type'])}
+                className={selectClass}
+              >
+                {goalTypes.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="period">Period *</Label>
+              <select
+                id="period"
+                value={formData.period}
+                onChange={(e) =>
+                  setFormData({ ...formData, period: e.target.value as GoalFormData['period'] })
+                }
+                className={selectClass}
+              >
+                {periods.map((p) => (
+                  <option key={p.value} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="target_value">Target *</Label>
+              <Input
+                id="target_value"
+                type="number"
+                required
+                min="1"
+                value={formData.target_value || ''}
+                onChange={(e) => setFormData({ ...formData, target_value: Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="unit">Unit</Label>
+              <Input
+                id="unit"
+                type="text"
+                value={formData.unit}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="start_date">Start Date *</Label>
+              <Input
+                id="start_date"
+                type="date"
+                required
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="end_date">End Date *</Label>
+              <Input
+                id="end_date"
+                type="date"
+                required
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              rows={2}
+              value={formData.description ?? ''}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
-          <div>
-            <label htmlFor="end_date" className="mb-1 block text-sm font-medium text-gray-700">
-              End Date *
-            </label>
-            <input
-              id="end_date"
-              type="date"
-              required
-              value={formData.end_date}
-              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="secondary" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={saving}>
+              {saving ? 'Saving…' : 'Create'}
+            </Button>
           </div>
-        </div>
-
-        <div>
-          <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <textarea
-            id="description"
-            rows={2}
-            value={formData.description ?? ''}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={saving}>
-            {saving ? 'Saving...' : 'Create'}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

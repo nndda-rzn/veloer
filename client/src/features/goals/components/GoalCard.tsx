@@ -1,7 +1,9 @@
 import type { Goal } from '../types/goal';
 import { ProgressRing } from './ProgressRing';
 import { formatDate } from '@/shared/lib/utils';
-import { Badge, Card, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface GoalCardProps {
   goal: Goal;
@@ -22,10 +24,10 @@ const periodLabels: Record<Goal['period'], string> = {
   custom: 'Custom',
 };
 
-const statusVariants: Record<Goal['status'], 'info' | 'success' | 'danger' | 'neutral'> = {
+const statusVariants: Record<Goal['status'], 'info' | 'success' | 'destructive' | 'neutral'> = {
   active: 'info',
   completed: 'success',
-  failed: 'danger',
+  failed: 'destructive',
   cancelled: 'neutral',
 };
 
@@ -56,7 +58,7 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
           <p className="mt-1 text-xs italic text-gray-400">{goal.description}</p>
         )}
       </div>
-      <Button variant="danger" size="sm" onClick={() => onDelete(goal)}>
+      <Button variant="destructive" size="sm" onClick={() => onDelete(goal)}>
         Delete
       </Button>
     </Card>

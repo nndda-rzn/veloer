@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { MaintenanceLogFormData } from '../types/maintenance';
-import { Modal, Button } from '@/shared/components/ui';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface MaintenanceFormProps {
   bikeId: string;
@@ -16,6 +20,9 @@ const logTypes: { value: MaintenanceLogFormData['type']; label: string }[] = [
   { value: 'cleaning', label: 'Cleaning' },
   { value: 'tuning', label: 'Tuning' },
 ];
+
+const selectClass =
+  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: MaintenanceFormProps) {
   const [formData, setFormData] = useState<MaintenanceLogFormData>({
@@ -49,174 +56,148 @@ export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: Maint
   };
 
   return (
-    <Modal open onClose={onCancel} title="Log Maintenance">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="service_date" className="mb-1 block text-sm font-medium text-gray-700">
-              Service Date *
-            </label>
-            <input
-              id="service_date"
-              type="date"
-              required
-              value={formData.service_date}
-              onChange={(e) => setFormData({ ...formData, service_date: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Log Maintenance</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="service_date">Service Date *</Label>
+              <Input
+                id="service_date"
+                type="date"
+                required
+                value={formData.service_date}
+                onChange={(e) => setFormData({ ...formData, service_date: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="service_km">Service KM *</Label>
+              <Input
+                id="service_km"
+                type="number"
+                required
+                min="0"
+                value={formData.service_km}
+                onChange={(e) => setFormData({ ...formData, service_km: Number(e.target.value) })}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="service_km" className="mb-1 block text-sm font-medium text-gray-700">
-              Service KM *
-            </label>
-            <input
-              id="service_km"
-              type="number"
-              required
-              min="0"
-              value={formData.service_km}
-              onChange={(e) => setFormData({ ...formData, service_km: Number(e.target.value) })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-        </div>
 
-        <div>
-          <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
-            Type *
-          </label>
-          <select
-            id="type"
-            value={formData.type}
-            onChange={(e) =>
-              setFormData({ ...formData, type: e.target.value as MaintenanceLogFormData['type'] })
-            }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          >
-            {logTypes.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
-            Description *
-          </label>
-          <textarea
-            id="description"
-            required
-            rows={2}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="cost" className="mb-1 block text-sm font-medium text-gray-700">
-              Cost (IDR)
-            </label>
-            <input
-              id="cost"
-              type="number"
-              min="0"
-              value={formData.cost ?? ''}
-              onChange={(e) =>
-                setFormData({ ...formData, cost: e.target.value ? Number(e.target.value) : null })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label htmlFor="performed_by" className="mb-1 block text-sm font-medium text-gray-700">
-              Performed By
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="type">Type *</Label>
             <select
-              id="performed_by"
-              value={formData.performed_by}
+              id="type"
+              value={formData.type}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  performed_by: e.target.value as 'self' | 'shop',
-                })
+                setFormData({ ...formData, type: e.target.value as MaintenanceLogFormData['type'] })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className={selectClass}
             >
-              <option value="self">Self</option>
-              <option value="shop">Shop</option>
+              {logTypes.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
             </select>
           </div>
-        </div>
 
-        {formData.performed_by === 'shop' && (
-          <div>
-            <label htmlFor="shop_name" className="mb-1 block text-sm font-medium text-gray-700">
-              Shop Name
-            </label>
-            <input
-              id="shop_name"
-              type="text"
-              value={formData.shop_name ?? ''}
-              onChange={(e) => setFormData({ ...formData, shop_name: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          <div className="space-y-1.5">
+            <Label htmlFor="description">Description *</Label>
+            <Textarea
+              id="description"
+              required
+              rows={2}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
-        )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label
-              htmlFor="next_service_km"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Next Service (km)
-            </label>
-            <input
-              id="next_service_km"
-              type="number"
-              min="0"
-              value={formData.next_service_km ?? ''}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  next_service_km: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="cost">Cost (IDR)</Label>
+              <Input
+                id="cost"
+                type="number"
+                min="0"
+                value={formData.cost ?? ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, cost: e.target.value ? Number(e.target.value) : null })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="performed_by">Performed By</Label>
+              <select
+                id="performed_by"
+                value={formData.performed_by}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    performed_by: e.target.value as 'self' | 'shop',
+                  })
+                }
+                className={selectClass}
+              >
+                <option value="self">Self</option>
+                <option value="shop">Shop</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label
-              htmlFor="next_service_date"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Next Service Date
-            </label>
-            <input
-              id="next_service_date"
-              type="date"
-              value={formData.next_service_date ?? ''}
-              onChange={(e) =>
-                setFormData({ ...formData, next_service_date: e.target.value || null })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={saving}>
-            {saving ? 'Saving...' : 'Log'}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+          {formData.performed_by === 'shop' && (
+            <div className="space-y-1.5">
+              <Label htmlFor="shop_name">Shop Name</Label>
+              <Input
+                id="shop_name"
+                type="text"
+                value={formData.shop_name ?? ''}
+                onChange={(e) => setFormData({ ...formData, shop_name: e.target.value })}
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="next_service_km">Next Service (km)</Label>
+              <Input
+                id="next_service_km"
+                type="number"
+                min="0"
+                value={formData.next_service_km ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    next_service_km: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="next_service_date">Next Service Date</Label>
+              <Input
+                id="next_service_date"
+                type="date"
+                value={formData.next_service_date ?? ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, next_service_date: e.target.value || null })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="secondary" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={saving}>
+              {saving ? 'Saving…' : 'Log'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

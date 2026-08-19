@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { EventFormData } from '../types/event';
-import { Modal, Button } from '@/shared/components/ui';
-
-const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
-const labelClass = 'mb-1 block text-sm font-medium text-gray-700';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface EventFormProps {
   onSubmit: (data: EventFormData) => Promise<void>;
@@ -50,118 +50,116 @@ export function EventForm({ onSubmit, onCancel }: EventFormProps) {
   };
 
   return (
-    <Modal open onClose={onCancel} title="Add Event">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className={labelClass}>
-            Event Name *
-          </label>
-          <input
-            id="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className={inputClass}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="type" className={labelClass}>
-              Type *
-            </label>
-            <select
-              id="type"
-              value={formData.type}
-              onChange={(e) =>
-                setFormData({ ...formData, type: e.target.value as EventFormData['type'] })
-              }
-              className={inputClass}
-            >
-              {eventTypes.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="date" className={labelClass}>
-              Date *
-            </label>
-            <input
-              id="date"
-              type="date"
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Event</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="name">Event Name *</Label>
+            <Input
+              id="name"
+              type="text"
               required
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className={inputClass}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
-        </div>
 
-        <div>
-          <label htmlFor="location" className={labelClass}>
-            Location
-          </label>
-          <input
-            id="location"
-            type="text"
-            value={formData.location ?? ''}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            className={inputClass}
-          />
-        </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="type">Type *</Label>
+              <select
+                id="type"
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value as EventFormData['type'] })
+                }
+                className="flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                {eventTypes.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="date">Date *</Label>
+              <Input
+                id="date"
+                type="date"
+                required
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              />
+            </div>
+          </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label htmlFor="distance" className={labelClass}>
-              Distance (km)
-            </label>
-            <input
-              id="distance"
-              type="number"
-              min="0"
-              value={formData.distance ?? ''}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  distance: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              className={inputClass}
+          <div className="space-y-1.5">
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              type="text"
+              value={formData.location ?? ''}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             />
           </div>
-          <div>
-            <label htmlFor="registration_fee" className={labelClass}>
-              Registration Fee (IDR)
-            </label>
-            <input
-              id="registration_fee"
-              type="number"
-              min="0"
-              value={formData.registration_fee ?? ''}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  registration_fee: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              className={inputClass}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="distance">Distance (km)</Label>
+              <Input
+                id="distance"
+                type="number"
+                min="0"
+                value={formData.distance ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    distance: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="registration_fee">Registration Fee (IDR)</Label>
+              <Input
+                id="registration_fee"
+                type="number"
+                min="0"
+                value={formData.registration_fee ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    registration_fee: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              value={formData.notes ?? ''}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              placeholder="Optional notes…"
             />
           </div>
-        </div>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={saving}>
-            {saving ? 'Saving...' : 'Add'}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="secondary" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={saving}>
+              {saving ? 'Saving…' : 'Add'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

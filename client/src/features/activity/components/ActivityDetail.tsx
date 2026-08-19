@@ -1,6 +1,7 @@
 import type { Activity } from '../types/activity';
 import { formatDistance, formatDuration, formatSpeed, formatDateTime } from '@/shared/lib/utils';
-import { Badge, Card } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface ActivityDetailProps {
   activity: Activity;
@@ -48,11 +49,13 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {items.map((item) => (
-          <Card key={item.label} padding="sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              {item.label}
-            </p>
-            <p className="mt-1 text-lg font-bold text-gray-900">{item.value}</p>
+          <Card key={item.label} size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                {item.label}
+              </p>
+              <p className="mt-1 text-lg font-bold tabular-nums text-gray-900">{item.value}</p>
+            </CardContent>
           </Card>
         ))}
       </div>

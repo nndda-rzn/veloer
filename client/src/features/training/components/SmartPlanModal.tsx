@@ -2,6 +2,16 @@ import { useState } from 'react';
 import { AlertTriangle, CheckCircle2, Zap, Clock, TrendingUp } from 'lucide-react';
 import type { FitnessAnalysis, TemplateKey } from '../types/training';
 import { TEMPLATE_LIST } from '../types/training';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface SmartPlanModalProps {
   analysis: FitnessAnalysis;
@@ -59,16 +69,15 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-        {/* Header */}
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold text-gray-900">Smart Plan</h2>
-          <p className="text-sm text-gray-500">Based on your Strava activity data</p>
-        </div>
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-h-[90dvh] max-w-2xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Smart Plan</DialogTitle>
+          <DialogDescription>Based on your Strava activity data</DialogDescription>
+        </DialogHeader>
 
         {/* Fitness Analysis Summary */}
-        <div className="mb-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
             Your Strava Analysis — {analysis.activity_count}{' '}
             {analysis.activity_count === 1 ? 'activity' : 'activities'} synced
@@ -80,7 +89,9 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <Zap className="h-3.5 w-3.5 text-orange-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Est. FTP</span>
               </div>
-              <div className="text-xl font-bold text-gray-900">{analysis.estimated_ftp}W</div>
+              <div className="text-xl font-bold tabular-nums text-gray-900">
+                {analysis.estimated_ftp}W
+              </div>
               <div className={`mt-0.5 flex items-center gap-1 text-xs ${confidence.color}`}>
                 <ConfidenceIcon className="h-3 w-3" aria-hidden="true" />
                 {confidence.label}
@@ -93,7 +104,9 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <Clock className="h-3.5 w-3.5 text-blue-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Avg/week</span>
               </div>
-              <div className="text-xl font-bold text-gray-900">{analysis.avg_weekly_hours}h</div>
+              <div className="text-xl font-bold tabular-nums text-gray-900">
+                {analysis.avg_weekly_hours}h
+              </div>
               <div className="mt-0.5 text-xs text-gray-400">
                 ~{analysis.avg_weekly_tss} TSS/week
               </div>
@@ -105,7 +118,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <TrendingUp className="h-3.5 w-3.5 text-green-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Fitness (CTL)</span>
               </div>
-              <div className="text-xl font-bold text-gray-900">{analysis.ctl}</div>
+              <div className="text-xl font-bold tabular-nums text-gray-900">{analysis.ctl}</div>
               <div className="mt-0.5 text-xs text-gray-400">42-day average</div>
             </div>
           </div>
@@ -130,7 +143,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
         </div>
 
         {/* Recommended Plan Config */}
-        <div className="mb-5 space-y-4">
+        <div className="space-y-4">
           <h3 className="text-sm font-semibold text-gray-700">Recommended Plan</h3>
 
           {/* Template selection */}
@@ -181,42 +194,38 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
 
           {/* FTP + Start Date + Title */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                FTP Baseline (W)
-              </label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="ftp-baseline">FTP Baseline (W)</Label>
+              <Input
+                id="ftp-baseline"
                 type="number"
                 min="1"
                 value={ftpBaseline}
                 onChange={(e) => setFtpBaseline(Number(e.target.value))}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="text-xs text-gray-400">
                 Pre-filled from your Strava data — adjust if needed.
               </p>
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="start-date">Start Date</Label>
+              <Input
+                id="start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Plan Title (optional)
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="plan-title">Plan Title (optional)</Label>
+            <Input
+              id="plan-title"
               type="text"
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
               placeholder={selectedTemplateInfo?.title ?? 'My Training Plan'}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -230,21 +239,18 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
 
         {/* Actions */}
         <div className="flex justify-end gap-2">
-          <button
-            onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
-          >
+          <Button variant="secondary" onClick={onCancel}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => void handleConfirm()}
             disabled={!startDate || ftpBaseline <= 0 || submitting}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            loading={submitting}
           >
-            {submitting ? 'Creating...' : 'Create Plan'}
-          </button>
+            {submitting ? 'Creating…' : 'Create Plan'}
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

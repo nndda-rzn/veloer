@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/shared/lib/api-client';
 import { activityApi } from '../api/activity.api';
+import { Button } from '@/components/ui/button';
 
 interface Bike {
   id: string;
@@ -62,7 +63,7 @@ export function ActivityBikeLinker({
             id="bikeSelect"
             value={selectedBike}
             onChange={(e) => setSelectedBike(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <option value="">— No bike —</option>
             {bikes.map((bike) => (
@@ -72,13 +73,13 @@ export function ActivityBikeLinker({
             ))}
           </select>
         </div>
-        <button
+        <Button
           onClick={() => void handleLink()}
           disabled={saving || selectedBike === (currentBikeId ?? '')}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+          loading={saving}
         >
-          {saving ? 'Saving...' : 'Save'}
-        </button>
+          {saving ? 'Saving…' : 'Save'}
+        </Button>
       </div>
       {bikes.length === 0 && (
         <p className="text-xs text-gray-400">

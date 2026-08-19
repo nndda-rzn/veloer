@@ -1,15 +1,2 @@
 export { PageHeader } from './PageHeader';
 export { EmptyState } from './EmptyState';
-export { Badge } from './Badge';
-export { ConfirmDialog } from './ConfirmDialog';
-export { Button } from './Button';
-export { Modal } from './Modal';
-export { Alert } from './Alert';
-export { Skeleton } from './Skeleton';
-export { Card } from './Card';
-export { Tabs } from './Tabs';
-export type { ButtonProps } from './Button';
-export type { ModalProps } from './Modal';
-export type { AlertProps } from './Alert';
-export type { CardProps } from './Card';
-export type { TabItem } from './Tabs';

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { activityApi } from '@/features/activity';
 import type { Activity } from '@/features/activity';
+import { Button } from '@/components/ui/button';
 
 interface ActivityLinkerProps {
   workoutId: string;
@@ -53,22 +54,18 @@ export function ActivityLinker({
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="flex-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-primary focus:outline-none"
+        className="h-8 flex-1 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <option value="">Select activity...</option>
+        <option value="">Select activity…</option>
         {activities.map((a) => (
           <option key={a.id} value={a.id}>
             {a.name} — {new Date(a.start_date).toLocaleDateString()}
           </option>
         ))}
       </select>
-      <button
-        onClick={handleLink}
-        disabled={!selected || loading}
-        className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
-      >
-        {loading ? 'Linking...' : 'Link'}
-      </button>
+      <Button onClick={handleLink} disabled={!selected || loading} loading={loading}>
+        {loading ? 'Linking…' : 'Link'}
+      </Button>
     </div>
   );
 }

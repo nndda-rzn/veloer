@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import type { TrainingWorkout, WorkoutFormData, WorkoutType } from '../types/training';
 import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface WorkoutFormProps {
   workout?: TrainingWorkout;
@@ -81,19 +92,22 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {workout ? 'Edit Workout' : 'New Workout'}
-        </h2>
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-h-[90dvh] max-w-lg overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{workout ? 'Edit Workout' : 'New Workout'}</DialogTitle>
+          <DialogDescription>
+            Define the workout targets and optional interval structure.
+          </DialogDescription>
+        </DialogHeader>
 
-        {error && <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Workout type */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Type</label>
-            <div className="flex flex-wrap gap-2">
+            <Label>Type</Label>
+            <div className="mt-1.5 flex flex-wrap gap-2">
               {workoutTypes.map((t) => (
                 <button
                   key={t}
@@ -112,202 +126,194 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Title</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="workout-title">Title</Label>
+              <Input
+                id="workout-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. 2x20 Threshold"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Date</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="workout-date">Date</Label>
+              <Input
+                id="workout-date"
                 type="date"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Duration (min)</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="duration">Duration (min)</Label>
+              <Input
+                id="duration"
                 type="number"
                 min={10}
                 value={durationMin}
                 onChange={(e) => setDurationMin(Number(e.target.value))}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Target TSS</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="target-tss">Target TSS</Label>
+              <Input
+                id="target-tss"
                 type="number"
                 min={0}
                 value={targetTss}
                 onChange={(e) => setTargetTss(e.target.value)}
                 placeholder="—"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Power (W)</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="target-power">Power (W)</Label>
+              <Input
+                id="target-power"
                 type="number"
                 min={0}
                 value={targetPower}
                 onChange={(e) => setTargetPower(e.target.value)}
                 placeholder="—"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">HR (bpm)</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="target-hr">HR (bpm)</Label>
+              <Input
+                id="target-hr"
                 type="number"
                 value={targetHr}
                 onChange={(e) => setTargetHr(e.target.value)}
                 placeholder="—"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Cadence min</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="cadence-min">Cadence min</Label>
+              <Input
+                id="cadence-min"
                 type="number"
                 value={cadenceMin}
                 onChange={(e) => setCadenceMin(e.target.value)}
                 placeholder="—"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Cadence max</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="cadence-max">Cadence max</Label>
+              <Input
+                id="cadence-max"
                 type="number"
                 value={cadenceMax}
                 onChange={(e) => setCadenceMax(e.target.value)}
                 placeholder="—"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
               />
             </div>
           </div>
 
           {/* Interval builder */}
           <div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
+            <Label>
               <input
                 type="checkbox"
                 checked={showIntervals}
                 onChange={(e) => setShowIntervals(e.target.checked)}
-                className="rounded"
+                className="mr-2 rounded"
               />
               Interval structure
-            </label>
+            </Label>
             {showIntervals && (
               <div className="mt-2 grid grid-cols-3 gap-3 rounded-lg border border-gray-200 p-3">
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">Reps</label>
-                  <input
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">Reps</Label>
+                  <Input
                     type="number"
                     min={1}
                     value={intervalCount}
                     onChange={(e) => setIntervalCount(Number(e.target.value))}
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="h-7"
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">On (sec)</label>
-                  <input
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">On (sec)</Label>
+                  <Input
                     type="number"
                     min={10}
                     value={intervalDuration}
                     onChange={(e) => setIntervalDuration(Number(e.target.value))}
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="h-7"
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">On % FTP</label>
-                  <input
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">On % FTP</Label>
+                  <Input
                     type="number"
                     min={50}
                     max={200}
                     value={intervalPower}
                     onChange={(e) => setIntervalPower(Number(e.target.value))}
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="h-7"
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">Rest (sec)</label>
-                  <input
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">Rest (sec)</Label>
+                  <Input
                     type="number"
                     min={10}
                     value={restDuration}
                     onChange={(e) => setRestDuration(Number(e.target.value))}
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="h-7"
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">Rest % FTP</label>
-                  <input
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">Rest % FTP</Label>
+                  <Input
                     type="number"
                     min={20}
                     max={100}
                     value={restPower}
                     onChange={(e) => setRestPower(Number(e.target.value))}
-                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    className="h-7"
                   />
                 </div>
               </div>
             )}
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Description</label>
-            <textarea
+          <div className="space-y-1.5">
+            <Label htmlFor="workout-desc">Description</Label>
+            <Textarea
+              id="workout-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
             />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Notes</label>
-            <textarea
+          <div className="space-y-1.5">
+            <Label htmlFor="workout-notes">Notes</Label>
+            <Textarea
+              id="workout-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
             />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
+            <Button type="button" variant="secondary" onClick={onCancel}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
-            >
-              {submitting ? 'Saving...' : workout ? 'Save Changes' : 'Add Workout'}
-            </button>
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {submitting ? 'Saving…' : workout ? 'Save Changes' : 'Add Workout'}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,16 @@
 import type { Transaction } from '../types/finance';
 import { formatIDR, formatDate } from '@/shared/lib/utils';
-import { Badge, EmptyState, Button } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/shared/components/ui';
 import { Receipt } from 'lucide-react';
 
 interface TransactionListProps {
@@ -39,59 +49,49 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-100">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Date
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Description
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Category
-            </th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Amount
-            </th>
-            <th className="px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {transactions.map((tx) => (
-            <tr key={tx.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                {formatDate(tx.date)}
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {tx.description || tx.merchant || '—'}
-              </td>
-              <td className="px-4 py-3">
-                <Badge>{categoryLabels[tx.category]}</Badge>
-              </td>
-              <td
-                className={`whitespace-nowrap px-4 py-3 text-right text-sm font-medium ${
-                  tx.type === 'income' ? 'text-green-600' : 'text-red-600'
-                }`}
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Date</TableHead>
+          <TableHead>Description</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="text-right"></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {transactions.map((tx) => (
+          <TableRow key={tx.id}>
+            <TableCell className="whitespace-nowrap text-sm text-gray-500">
+              {formatDate(tx.date)}
+            </TableCell>
+            <TableCell className="text-sm text-gray-900">
+              {tx.description || tx.merchant || '—'}
+            </TableCell>
+            <TableCell>
+              <Badge>{categoryLabels[tx.category]}</Badge>
+            </TableCell>
+            <TableCell
+              className={`whitespace-nowrap text-right text-sm font-medium tabular-nums ${
+                tx.type === 'income' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {tx.type === 'income' ? '+' : '-'}
+              {formatIDR(tx.amount)}
+            </TableCell>
+            <TableCell className="text-right">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDelete(tx)}
+                className="text-red-500 hover:bg-red-50 hover:text-red-700"
               >
-                {tx.type === 'income' ? '+' : '-'}
-                {formatIDR(tx.amount)}
-              </td>
-              <td className="px-4 py-3 text-right">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onDelete(tx)}
-                  className="text-red-500 hover:bg-red-50 hover:text-red-700"
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                Delete
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

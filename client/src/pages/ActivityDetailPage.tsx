@@ -10,7 +10,8 @@ import {
   useActivityDetail,
 } from '@/features/activity';
 import { settingsApi } from '@/features/settings';
-import { Tabs, Alert } from '@/shared/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert } from '@/components/ui/alert';
 import type { UserProfile } from '@/features/settings';
 
 export function ActivityDetailPage() {
@@ -71,17 +72,13 @@ export function ActivityDetailPage() {
       <ActivityDetail activity={activity} />
 
       {/* Tabs */}
-      <Tabs
-        tabs={[
-          { id: 'overview', label: 'Overview' },
-          { id: 'training', label: 'Training' },
-        ]}
-        active={tab}
-        onChange={(id) => setTab(id as 'overview' | 'training')}
-      />
+      <Tabs value={tab} onValueChange={(id) => setTab(id as 'overview' | 'training')}>
+        <TabsList variant="line">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="training">Training</TabsTrigger>
+        </TabsList>
 
-      {tab === 'overview' && (
-        <>
+        <TabsContent value="overview" className="space-y-6">
           <div>
             <h4 className="mb-2 text-sm font-semibold text-gray-700">Route Map</h4>
             <ActivityMap encodedPolyline={activity.polyline} />
@@ -95,11 +92,9 @@ export function ActivityDetailPage() {
               onLinked={refetch}
             />
           </div>
-        </>
-      )}
+        </TabsContent>
 
-      {tab === 'training' && (
-        <>
+        <TabsContent value="training" className="space-y-6">
           <div>
             <h4 className="mb-2 text-sm font-semibold text-gray-700">Training Metrics</h4>
             <TrainingLoadSummary activity={activity} ftp={profile?.ftp ?? null} />
@@ -114,8 +109,8 @@ export function ActivityDetailPage() {
             <h4 className="mb-2 text-sm font-semibold text-gray-700">Lap Breakdown</h4>
             <LapBreakdown activityId={activity.id} />
           </div>
-        </>
-      )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

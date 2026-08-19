@@ -3,9 +3,16 @@ import { useProfile } from '@/features/settings';
 import { useBikes } from '@/features/inventory';
 import { useAuth } from '@/features/auth';
 import type { ProfileFormData } from '@/features/settings';
-import { PageHeader, Badge, Button, Alert } from '@/shared/components/ui';
-import { inputClass, labelClass } from '@/shared/lib/ui';
+import { PageHeader } from '@/shared/components/ui';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { CheckCircle2 } from 'lucide-react';
+
+const selectClass =
+  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function SettingsPage() {
   const { profile, loading, error, saving, save } = useProfile();
@@ -91,29 +98,23 @@ export function SettingsPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h2 className="mb-4 text-sm font-semibold text-gray-700">Profile</h2>
         <div className="space-y-4">
-          <div>
-            <label htmlFor="display_name" className={labelClass}>
-              Display Name
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="display_name">Display Name</Label>
+            <Input
               id="display_name"
               type="text"
               value={formData.display_name ?? ''}
               onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-              className={inputClass}
               disabled={saving}
             />
           </div>
-          <div>
-            <label htmlFor="avatar_url" className={labelClass}>
-              Avatar URL
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="avatar_url">Avatar URL</Label>
+            <Input
               id="avatar_url"
               type="text"
               value={formData.avatar_url ?? ''}
               onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-              className={inputClass}
               disabled={saving}
             />
           </div>
@@ -124,10 +125,8 @@ export function SettingsPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h2 className="mb-4 text-sm font-semibold text-gray-700">Preferences</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="preferred_units" className={labelClass}>
-              Units
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="preferred_units">Units</Label>
             <select
               id="preferred_units"
               value={formData.preferred_units ?? 'metric'}
@@ -137,50 +136,42 @@ export function SettingsPage() {
                   preferred_units: e.target.value as 'metric' | 'imperial',
                 })
               }
-              className={inputClass}
+              className={selectClass}
               disabled={saving}
             >
               <option value="metric">Metric (km, m)</option>
               <option value="imperial">Imperial (mi, ft)</option>
             </select>
           </div>
-          <div>
-            <label htmlFor="currency" className={labelClass}>
-              Currency
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="currency">Currency</Label>
+            <Input
               id="currency"
               type="text"
               value={formData.currency ?? 'IDR'}
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className={inputClass}
               disabled={saving}
             />
           </div>
-          <div>
-            <label htmlFor="timezone" className={labelClass}>
-              Timezone
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="timezone">Timezone</Label>
+            <Input
               id="timezone"
               type="text"
               value={formData.timezone ?? 'Asia/Jakarta'}
               onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-              className={inputClass}
               disabled={saving}
             />
           </div>
-          <div>
-            <label htmlFor="default_bike_id" className={labelClass}>
-              Default Bike
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="default_bike_id">Default Bike</Label>
             <select
               id="default_bike_id"
               value={formData.default_bike_id ?? ''}
               onChange={(e) =>
                 setFormData({ ...formData, default_bike_id: e.target.value || null })
               }
-              className={inputClass}
+              className={selectClass}
               disabled={saving}
             >
               <option value="">— None —</option>
@@ -198,39 +189,36 @@ export function SettingsPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h2 className="mb-4 text-sm font-semibold text-gray-700">Training Settings</h2>
         <div className="space-y-4">
-          <div>
-            <label htmlFor="ftp" className={labelClass}>
-              FTP (Functional Threshold Power)
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="ftp">FTP (Functional Threshold Power)</Label>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 id="ftp"
                 type="number"
                 min="0"
+                className="w-32"
                 value={formData.ftp ?? 250}
                 onChange={(e) =>
                   setFormData({ ...formData, ftp: e.target.value ? Number(e.target.value) : null })
                 }
-                className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 disabled={saving}
               />
               <span className="text-sm text-gray-500">Watts</span>
             </div>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="text-xs text-gray-400">
               Used for TSS and IF calculations. Default: 250W. Set to your tested 20-minute power
               minus 5%.
             </p>
           </div>
-          <div>
-            <label htmlFor="lthr" className={labelClass}>
-              LTHR (Lactate Threshold Heart Rate)
-            </label>
+          <div className="space-y-1.5">
+            <Label htmlFor="lthr">LTHR (Lactate Threshold Heart Rate)</Label>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 id="lthr"
                 type="number"
                 min="0"
                 max="250"
+                className="w-32"
                 value={formData.lthr ?? ''}
                 onChange={(e) =>
                   setFormData({
@@ -238,13 +226,12 @@ export function SettingsPage() {
                     lthr: e.target.value ? Number(e.target.value) : null,
                   })
                 }
-                className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 disabled={saving}
                 placeholder="—"
               />
               <span className="text-sm text-gray-500">bpm</span>
             </div>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="text-xs text-gray-400">
               Optional. Used as fallback for hrTSS when no power meter data is available. Typically
               your average HR during a 30-min all-out effort.
             </p>

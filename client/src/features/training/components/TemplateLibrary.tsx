@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import type { TemplateKey, TemplateInfo } from '../types/training';
 import { TEMPLATE_LIST } from '../types/training';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface TemplateLibraryProps {
   defaultFtp?: number;
@@ -84,15 +94,17 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-        <h2 className="mb-1 text-lg font-semibold text-gray-900">Training Plan Templates</h2>
-        <p className="mb-4 text-sm text-gray-500">
-          Select a template to auto-generate a complete training schedule.
-        </p>
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-h-[90dvh] max-w-2xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Training Plan Templates</DialogTitle>
+          <DialogDescription>
+            Select a template to auto-generate a complete training schedule.
+          </DialogDescription>
+        </DialogHeader>
 
         {/* Template grid */}
-        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {TEMPLATE_LIST.map((t) => (
             <TemplateCard
               key={t.key}
@@ -105,30 +117,28 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
 
         {/* Config */}
         {selectedTemplate && (
-          <div className="mb-4 space-y-3 rounded-lg border border-primary/20 bg-primary-50 p-4">
+          <div className="space-y-3 rounded-lg border border-primary/20 bg-primary-50 p-4">
             <h3 className="text-sm font-medium text-gray-700">
               Configure: {selectedTemplate.title}
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
-                <input
+              <div className="space-y-1.5">
+                <Label htmlFor="template-start">Start Date</Label>
+                <Input
+                  id="template-start"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Custom Title (optional)
-                </label>
-                <input
+              <div className="space-y-1.5">
+                <Label htmlFor="template-title">Custom Title (optional)</Label>
+                <Input
+                  id="template-title"
                   type="text"
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
                   placeholder={selectedTemplate.title}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
                 />
               </div>
             </div>
@@ -140,21 +150,18 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
         )}
 
         <div className="flex justify-end gap-2">
-          <button
-            onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-          >
+          <Button variant="secondary" onClick={onCancel}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSubmit}
             disabled={!selectedKey || !startDate || submitting}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
+            loading={submitting}
           >
-            {submitting ? 'Generating...' : 'Generate Plan'}
-          </button>
+            {submitting ? 'Generating…' : 'Generate Plan'}
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
