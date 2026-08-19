@@ -8,8 +8,7 @@ import {
 import { useBikes } from '@/features/inventory';
 import type { Bike } from '@/features/inventory';
 import type { MaintenanceLog, MaintenanceLogFormData } from '@/features/maintenance';
-import { apiClient } from '@/shared/lib/api-client';
-import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
 import { Wrench } from 'lucide-react';
 
 export function MaintenancePage() {
@@ -39,19 +38,6 @@ export function MaintenancePage() {
       setDeletingLog(null);
     }
   };
-
-  // Fallback fetch if useBikes doesn't load (it uses /api/bikes)
-  // Use apiClient directly as a safety net
-  useEffect(() => {
-    if (bikesLoading && bikes.length === 0) {
-      apiClient
-        .get<Bike[]>('/api/bikes')
-        .then(({ data }) => {
-          if (data.length > 0) setSelectedBike(data[0]);
-        })
-        .catch(() => {});
-    }
-  }, [bikesLoading, bikes.length]);
 
   return (
     <div className="space-y-6">
@@ -89,21 +75,10 @@ export function MaintenancePage() {
                 ))}
               </select>
             </div>
-            {selectedBike && (
-              <button
-                onClick={() => setShowForm(true)}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Log Service
-              </button>
-            )}
+            {selectedBike && <Button onClick={() => setShowForm(true)}>Log Service</Button>}
           </div>
 
-          {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              {error}
-            </div>
-          )}
+          {error && <Alert variant="error">{error}</Alert>}
 
           {selectedBike && (
             <MaintenanceLogList logs={logs} loading={loading} onDelete={handleDelete} />

@@ -1,6 +1,7 @@
 import type { Goal } from '../types/goal';
 import { ProgressRing } from './ProgressRing';
 import { formatDate } from '@/shared/lib/utils';
+import { Badge, Card, Button } from '@/shared/components/ui';
 
 interface GoalCardProps {
   goal: Goal;
@@ -21,29 +22,25 @@ const periodLabels: Record<Goal['period'], string> = {
   custom: 'Custom',
 };
 
-const statusColors: Record<Goal['status'], string> = {
-  active: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
-  failed: 'bg-red-100 text-red-700',
-  cancelled: 'bg-gray-100 text-gray-600',
+const statusVariants: Record<Goal['status'], 'info' | 'success' | 'danger' | 'neutral'> = {
+  active: 'info',
+  completed: 'success',
+  failed: 'danger',
+  cancelled: 'neutral',
 };
 
 export function GoalCard({ goal, onDelete }: GoalCardProps) {
   const percentage = goal.target_value > 0 ? (goal.current_value / goal.target_value) * 100 : 0;
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4">
+    <Card className="flex items-center gap-4">
       <ProgressRing percentage={percentage} />
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <h4 className="font-medium text-gray-900">
+          <h4 className="font-semibold text-gray-900">
             {goal.title || `${typeLabels[goal.type]} Goal`}
           </h4>
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${statusColors[goal.status]}`}
-          >
-            {goal.status}
-          </span>
+          <Badge variant={statusVariants[goal.status]}>{goal.status}</Badge>
         </div>
         <p className="text-sm text-gray-500">
           {typeLabels[goal.type]} • {periodLabels[goal.period]}
@@ -59,12 +56,9 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
           <p className="mt-1 text-xs italic text-gray-400">{goal.description}</p>
         )}
       </div>
-      <button
-        onClick={() => onDelete(goal)}
-        className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-      >
+      <Button variant="danger" size="sm" onClick={() => onDelete(goal)}>
         Delete
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }
