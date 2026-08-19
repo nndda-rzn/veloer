@@ -25,7 +25,7 @@ const categoryLabels: Record<string, string> = {
 export function CategoryChart({ summary }: CategoryChartProps) {
   if (!summary || Object.keys(summary.byCategory).length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-lg border border-gray-200 bg-white">
+      <div className="flex h-64 items-center justify-center rounded-xl border border-gray-200 bg-white">
         <p className="text-sm text-gray-400">No expense data to display</p>
       </div>
     );
@@ -38,7 +38,7 @@ export function CategoryChart({ summary }: CategoryChartProps) {
   }));
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-semibold text-gray-700">Expenses by Category</h4>
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>

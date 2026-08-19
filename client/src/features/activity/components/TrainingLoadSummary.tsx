@@ -56,7 +56,7 @@ export function TrainingLoadSummary({ activity, ftp }: TrainingLoadSummaryProps)
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
       {metrics.map((m) => (
-        <div key={m.label} className="rounded-lg border border-gray-200 bg-white p-3">
+        <div key={m.label} className="rounded-xl border border-gray-200 bg-white p-3">
           <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{m.label}</p>
           <p className="mt-1 text-lg font-bold text-gray-900">{m.value}</p>
           {m.hint && <p className="text-xs text-gray-400">{m.hint}</p>}

@@ -53,7 +53,7 @@ export function WorkoutDetail({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
       <button
         className="absolute inset-0 w-full cursor-default"
         onClick={onClose}

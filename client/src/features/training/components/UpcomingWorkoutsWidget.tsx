@@ -49,7 +49,7 @@ export function UpcomingWorkoutsWidget() {
 
   if (workouts.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
         <p className="text-xs text-gray-400">No upcoming workouts</p>
         <Link to="/training-plans" className="mt-1 block text-xs text-primary hover:underline">
           Create a training plan
@@ -72,7 +72,7 @@ export function UpcomingWorkoutsWidget() {
           <Link
             key={w.id}
             to={`/training-plans/${w.plan_id}`}
-            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50"
+            className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 hover:bg-gray-50"
           >
             <div
               className="h-8 w-1.5 flex-shrink-0 rounded-full"

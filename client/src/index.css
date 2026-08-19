@@ -23,6 +23,10 @@
   --color-danger: #ef4444;
   --color-info: #3b82f6;
 
+  /* Strava brand */
+  --color-strava: #fc4c02;
+  --color-strava-dark: #e04302;
+
   /* Font family */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
