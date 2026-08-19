@@ -75,7 +75,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
           </h3>
           <div className="grid grid-cols-3 gap-3">
             {/* Estimated FTP */}
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <div className="rounded-xl border border-gray-200 bg-white p-3">
               <div className="mb-1 flex items-center gap-1.5">
                 <Zap className="h-3.5 w-3.5 text-orange-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Est. FTP</span>
@@ -88,7 +88,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
             </div>
 
             {/* Weekly Volume */}
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <div className="rounded-xl border border-gray-200 bg-white p-3">
               <div className="mb-1 flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-blue-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Avg/week</span>
@@ -100,7 +100,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
             </div>
 
             {/* CTL */}
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <div className="rounded-xl border border-gray-200 bg-white p-3">
               <div className="mb-1 flex items-center gap-1.5">
                 <TrendingUp className="h-3.5 w-3.5 text-green-500" aria-hidden="true" />
                 <span className="text-xs text-gray-500">Fitness (CTL)</span>
@@ -182,7 +182,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
           {/* FTP + Start Date + Title */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
                 FTP Baseline (W)
               </label>
               <input
@@ -197,7 +197,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
               </p>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Start Date</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
               <input
                 type="date"
                 value={startDate}
@@ -208,7 +208,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-600">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Plan Title (optional)
             </label>
             <input

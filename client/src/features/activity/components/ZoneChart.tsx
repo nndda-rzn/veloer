@@ -44,12 +44,12 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
   }, [activityId]);
 
   if (loading) {
-    return <div className="h-48 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-48 animate-pulse rounded-xl bg-gray-100" />;
   }
 
   if (error || zones.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
         <p className="text-sm text-gray-500">Zone data not available.</p>
       </div>
     );
@@ -63,7 +63,7 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
     }));
 
     return (
-      <div key={index} className="rounded-lg border border-gray-200 bg-white p-4">
+      <div key={index} className="rounded-xl border border-gray-200 bg-white p-4">
         <h4 className="mb-2 text-sm font-semibold capitalize text-gray-700">
           {zone.sensor_type === 'heartrate' ? 'Heart Rate Zones' : 'Power Zones'}
         </h4>

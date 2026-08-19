@@ -9,7 +9,7 @@ import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
 import { settingsApi } from '@/features/settings';
 import { useEffect, useRef } from 'react';
-import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
 import { ClipboardList, Sparkles } from 'lucide-react';
 
 export function TrainingPlansPage() {
@@ -18,6 +18,7 @@ export function TrainingPlansPage() {
   const [showForm, setShowForm] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showSmartPlan, setShowSmartPlan] = useState(false);
+  const [templateError, setTemplateError] = useState<string | null>(null);
   const [defaultFtp, setDefaultFtp] = useState(250);
   const ftpFetched = useRef(false);
   const {
@@ -63,7 +64,7 @@ export function TrainingPlansPage() {
       refetch();
     } catch (err) {
       console.error('Failed to create plan from template:', err);
-      alert('Failed to create plan from template. Please try again.');
+      setTemplateError('Failed to create plan from template. Please try again.');
     }
   };
 
@@ -95,29 +96,24 @@ export function TrainingPlansPage() {
         description="Plan and schedule your cycling training"
         action={
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => void handleOpenSmartPlan()}
               disabled={analysisLoading}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              loading={analysisLoading}
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
               {analysisLoading ? 'Analyzing...' : 'Smart Plan'}
-            </button>
-            <button
-              onClick={() => setShowTemplates(true)}
-              className="rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
+            </Button>
+            <Button variant="outline" onClick={() => setShowTemplates(true)}>
               From Template
-            </button>
-            <button
-              onClick={() => setShowForm(true)}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              New Plan
-            </button>
+            </Button>
+            <Button onClick={() => setShowForm(true)}>New Plan</Button>
           </div>
         }
       />
+
+      {templateError && <Alert variant="error">{templateError}</Alert>}
 
       {loading && (
         <div className="space-y-2">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { EventList, EventForm, useEvents } from '@/features/events';
 import type { Event, EventFormData } from '@/features/events';
-import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
+import { PageHeader, ConfirmDialog, Button, Alert } from '@/shared/components/ui';
 
 export function EventsPage() {
   const { events, loading, error, createEvent, deleteEvent } = useEvents();
@@ -25,21 +25,10 @@ export function EventsPage() {
       <PageHeader
         title="Events"
         description="Cycling events, races, and group rides"
-        action={
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-          >
-            Add Event
-          </button>
-        }
+        action={<Button onClick={() => setShowForm(true)}>Add Event</Button>}
       />
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <Alert variant="error">{error}</Alert>}
 
       <EventList events={events} loading={loading} onDelete={setDeletingEvent} />
 

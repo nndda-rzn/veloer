@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/features/auth';
 import { Loader2 } from 'lucide-react';
+import { Button } from '@/shared/components/ui';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -27,10 +28,11 @@ export function LoginPage() {
           </p>
 
           <div className="mt-8 space-y-4">
-            <button
+            <Button
               onClick={handleLogin}
               disabled={loading}
-              className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#fc4c02] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e04302] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fc4c02] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+              loading={loading}
+              className="w-full gap-3 bg-strava px-4 py-3 text-sm font-semibold text-white hover:bg-strava-dark focus-visible:ring-strava"
             >
               {loading ? (
                 <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
@@ -40,7 +42,7 @@ export function LoginPage() {
                 </svg>
               )}
               {loading ? 'Connecting to Strava...' : 'Continue with Strava'}
-            </button>
+            </Button>
 
             <p className="text-center text-xs text-gray-400">
               Sign in with your Strava account to sync your cycling activities

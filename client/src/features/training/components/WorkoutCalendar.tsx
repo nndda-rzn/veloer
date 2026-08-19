@@ -66,7 +66,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-white p-4">
       <Calendar
         localizer={localizer}
         events={events}

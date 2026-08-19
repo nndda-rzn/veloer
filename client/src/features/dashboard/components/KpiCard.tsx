@@ -29,7 +29,7 @@ export function KpiCard({
           </div>
         )}
       </div>
-      <p className="mt-3 text-3xl font-bold text-gray-900">{value}</p>
+      <p className="mt-3 text-2xl font-bold text-gray-900">{value}</p>
       {trend && <p className="mt-1 text-xs text-gray-400">{trend}</p>}
     </div>
   );

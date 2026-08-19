@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Component, ComponentFormData } from '../types/inventory';
+import { Modal, Button } from '@/shared/components/ui';
 
 interface ComponentFormProps {
   bikeId: string;
@@ -48,145 +49,129 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="mb-4 text-lg font-bold text-gray-900">
-          {component ? 'Edit Component' : 'Add Component'}
-        </h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal open onClose={onCancel} title={component ? 'Edit Component' : 'Add Component'}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
+            Name *
+          </label>
+          <input
+            id="name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="mb-1 block text-sm font-medium text-gray-700">
+            Category *
+          </label>
+          <select
+            id="category"
+            value={formData.category}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value as Component['category'] })
+            }
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            {categories.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-              Name *
+            <label htmlFor="brand" className="mb-1 block text-sm font-medium text-gray-700">
+              Brand
             </label>
             <input
-              id="name"
+              id="brand"
               type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              value={formData.brand ?? ''}
+              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
-
           <div>
-            <label htmlFor="category" className="mb-1 block text-sm font-medium text-gray-700">
-              Category *
-            </label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value as Component['category'] })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              {categories.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="brand" className="mb-1 block text-sm font-medium text-gray-700">
-                Brand
-              </label>
-              <input
-                id="brand"
-                type="text"
-                value={formData.brand ?? ''}
-                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label htmlFor="model" className="mb-1 block text-sm font-medium text-gray-700">
-                Model
-              </label>
-              <input
-                id="model"
-                type="text"
-                value={formData.model ?? ''}
-                onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label
-                htmlFor="install_date"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Install Date *
-              </label>
-              <input
-                id="install_date"
-                type="date"
-                required
-                value={formData.install_date}
-                onChange={(e) => setFormData({ ...formData, install_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label htmlFor="install_km" className="mb-1 block text-sm font-medium text-gray-700">
-                Install KM
-              </label>
-              <input
-                id="install_km"
-                type="number"
-                min="0"
-                value={formData.install_km}
-                onChange={(e) => setFormData({ ...formData, install_km: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="expected_lifespan_km"
-              className="mb-1 block text-sm font-medium text-gray-700"
-            >
-              Expected Lifespan (km)
+            <label htmlFor="model" className="mb-1 block text-sm font-medium text-gray-700">
+              Model
             </label>
             <input
-              id="expected_lifespan_km"
+              id="model"
+              type="text"
+              value={formData.model ?? ''}
+              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="install_date" className="mb-1 block text-sm font-medium text-gray-700">
+              Install Date *
+            </label>
+            <input
+              id="install_date"
+              type="date"
+              required
+              value={formData.install_date}
+              onChange={(e) => setFormData({ ...formData, install_date: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+          <div>
+            <label htmlFor="install_km" className="mb-1 block text-sm font-medium text-gray-700">
+              Install KM
+            </label>
+            <input
+              id="install_km"
               type="number"
               min="0"
-              value={formData.expected_lifespan_km ?? ''}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  expected_lifespan_km: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              value={formData.install_km}
+              onChange={(e) => setFormData({ ...formData, install_km: Number(e.target.value) })}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+        </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : component ? 'Update' : 'Add'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div>
+          <label
+            htmlFor="expected_lifespan_km"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
+            Expected Lifespan (km)
+          </label>
+          <input
+            id="expected_lifespan_km"
+            type="number"
+            min="0"
+            value={formData.expected_lifespan_km ?? ''}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                expected_lifespan_km: e.target.value ? Number(e.target.value) : null,
+              })
+            }
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={saving}>
+            {saving ? 'Saving...' : component ? 'Update' : 'Add'}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

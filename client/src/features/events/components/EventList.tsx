@@ -1,5 +1,7 @@
 import type { Event } from '../types/event';
 import { formatDate, formatIDR } from '@/shared/lib/utils';
+import { Badge, Card, EmptyState, Button } from '@/shared/components/ui';
+import { CalendarDays } from 'lucide-react';
 
 interface EventListProps {
   events: Event[];
@@ -16,12 +18,15 @@ const typeLabels: Record<Event['type'], string> = {
   other: 'Other',
 };
 
-const statusColors: Record<Event['status'], string> = {
-  registered: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
-  cancelled: 'bg-gray-100 text-gray-600',
-  dns: 'bg-orange-100 text-orange-700',
-  dnf: 'bg-red-100 text-red-700',
+const statusVariants: Record<
+  Event['status'],
+  'info' | 'success' | 'neutral' | 'warning' | 'danger'
+> = {
+  registered: 'info',
+  completed: 'success',
+  cancelled: 'neutral',
+  dns: 'warning',
+  dnf: 'danger',
 };
 
 export function EventList({ events, loading, onDelete }: EventListProps) {
@@ -29,7 +34,7 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
         ))}
       </div>
     );
@@ -37,25 +42,23 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
 
   if (events.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-        <p className="text-sm text-gray-500">No events yet.</p>
-      </div>
+      <EmptyState
+        icon={CalendarDays}
+        title="No events yet"
+        description="Add your next race, gran fondo, or group ride."
+      />
     );
   }
 
   return (
     <div className="space-y-3">
       {events.map((event) => (
-        <div key={event.id} className="rounded-lg border border-gray-200 bg-white p-4">
+        <Card key={event.id}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h4 className="font-medium text-gray-900">{event.name}</h4>
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${statusColors[event.status]}`}
-                >
-                  {event.status}
-                </span>
+                <h4 className="font-semibold text-gray-900">{event.name}</h4>
+                <Badge variant={statusVariants[event.status]}>{event.status}</Badge>
               </div>
               <p className="text-sm text-gray-500">
                 {typeLabels[event.type]} • {formatDate(event.date)}
@@ -69,14 +72,11 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
                 {event.result && <span>Result: {event.result}</span>}
               </div>
             </div>
-            <button
-              onClick={() => onDelete(event)}
-              className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-            >
+            <Button variant="danger" size="sm" onClick={() => onDelete(event)}>
               Delete
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   );

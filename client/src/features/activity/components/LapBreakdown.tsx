@@ -21,12 +21,12 @@ export function LapBreakdown({ activityId }: LapBreakdownProps) {
   }, [activityId]);
 
   if (loading) {
-    return <div className="h-32 animate-pulse rounded-lg bg-gray-100" />;
+    return <div className="h-32 animate-pulse rounded-xl bg-gray-100" />;
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
         <p className="text-sm text-gray-500">Lap data not available for this activity.</p>
       </div>
     );
@@ -34,14 +34,14 @@ export function LapBreakdown({ activityId }: LapBreakdownProps) {
 
   if (laps.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
         <p className="text-sm text-gray-500">No lap data.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>

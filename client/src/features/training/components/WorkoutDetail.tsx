@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import type { TrainingWorkout, WorkoutStatus } from '../types/training';
 import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
 import { formatDate, formatEnumLabel } from '@/shared/lib/utils';
+import { Badge, Button } from '@/shared/components/ui';
 
 interface WorkoutDetailProps {
   workout: TrainingWorkout;
@@ -11,15 +12,15 @@ interface WorkoutDetailProps {
   onMarkComplete: (id: string) => Promise<void>;
   onMarkSkipped: (id: string) => Promise<void>;
   onEdit: (workout: TrainingWorkout) => void;
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (workout: TrainingWorkout) => void;
   onLinkActivity: (workout: TrainingWorkout) => void;
 }
 
-const statusBadge: Record<WorkoutStatus, string> = {
-  planned: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
-  skipped: 'bg-yellow-100 text-yellow-700',
-  missed: 'bg-gray-100 text-gray-600',
+const statusVariants: Record<WorkoutStatus, 'info' | 'success' | 'warning' | 'neutral'> = {
+  planned: 'info',
+  completed: 'success',
+  skipped: 'warning',
+  missed: 'neutral',
 };
 
 function MetricRow({ label, value }: { label: string; value: string | number | null | undefined }) {
@@ -52,7 +53,7 @@ export function WorkoutDetail({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
       <button
         className="absolute inset-0 w-full cursor-default"
         onClick={onClose}
@@ -84,10 +85,12 @@ export function WorkoutDetail({
             </button>
           </div>
           <span
-            className={`mt-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge[workout.status]}`}
+            className="mt-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium text-white"
+            style={{ backgroundColor: color }}
           >
-            {formatEnumLabel(workout.status)}
+            {WORKOUT_TYPE_LABELS[workout.workout_type]}
           </span>
+          <Badge variant={statusVariants[workout.status]}>{formatEnumLabel(workout.status)}</Badge>
         </div>
 
         <div className="space-y-4 p-4">
@@ -197,41 +200,34 @@ export function WorkoutDetail({
           {/* Actions */}
           {workout.status === 'planned' && (
             <div className="flex flex-col gap-2">
-              <button
+              <Button
+                variant="primary"
                 onClick={() => onMarkComplete(workout.id)}
-                className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 focus-visible:ring-green-500"
               >
                 Mark Complete
-              </button>
-              <button
-                onClick={() => onMarkSkipped(workout.id)}
-                className="w-full rounded-lg border border-yellow-400 px-4 py-2 text-sm font-medium text-yellow-700 hover:bg-yellow-50"
-              >
+              </Button>
+              <Button variant="secondary" onClick={() => onMarkSkipped(workout.id)}>
                 Skip
-              </button>
+              </Button>
             </div>
           )}
 
-          <button
-            onClick={() => onLinkActivity(workout)}
-            className="w-full rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50"
-          >
+          <Button variant="outline" className="w-full" onClick={() => onLinkActivity(workout)}>
             Link Activity
-          </button>
+          </Button>
 
           <div className="flex gap-2 border-t border-gray-100 pt-2">
-            <button
-              onClick={() => onEdit(workout)}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
+            <Button variant="secondary" className="flex-1" onClick={() => onEdit(workout)}>
               Edit
-            </button>
-            <button
-              onClick={() => onDelete(workout.id)}
-              className="flex-1 rounded-lg border border-red-300 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+            </Button>
+            <Button
+              variant="danger"
+              className="flex-1 bg-transparent text-red-600 hover:bg-red-50 focus-visible:ring-red-400"
+              onClick={() => onDelete(workout)}
             >
               Delete
-            </button>
+            </Button>
           </div>
         </div>
       </div>

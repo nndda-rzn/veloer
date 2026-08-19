@@ -1,5 +1,7 @@
 import type { MaintenanceLog } from '../types/maintenance';
 import { formatDate, formatIDR } from '@/shared/lib/utils';
+import { Badge, Card, EmptyState, Button } from '@/shared/components/ui';
+import { Wrench } from 'lucide-react';
 
 interface MaintenanceLogListProps {
   logs: MaintenanceLog[];
@@ -15,12 +17,15 @@ const typeLabels: Record<MaintenanceLog['type'], string> = {
   tuning: 'Tuning',
 };
 
-const typeColors: Record<MaintenanceLog['type'], string> = {
-  routine: 'bg-blue-100 text-blue-700',
-  repair: 'bg-orange-100 text-orange-700',
-  replacement: 'bg-purple-100 text-purple-700',
-  cleaning: 'bg-green-100 text-green-700',
-  tuning: 'bg-yellow-100 text-yellow-700',
+const typeVariants: Record<
+  MaintenanceLog['type'],
+  'info' | 'warning' | 'danger' | 'success' | 'neutral'
+> = {
+  routine: 'info',
+  repair: 'warning',
+  replacement: 'danger',
+  cleaning: 'success',
+  tuning: 'neutral',
 };
 
 export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogListProps) {
@@ -28,7 +33,7 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
         ))}
       </div>
     );
@@ -36,24 +41,22 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
 
   if (logs.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-        <p className="text-sm text-gray-500">No maintenance logs yet.</p>
-      </div>
+      <EmptyState
+        icon={Wrench}
+        title="No maintenance logs yet"
+        description="Log maintenance work to keep your bike in top shape."
+      />
     );
   }
 
   return (
     <div className="space-y-3">
       {logs.map((log) => (
-        <div key={log.id} className="rounded-lg border border-gray-200 bg-white p-4">
+        <Card key={log.id}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${typeColors[log.type]}`}
-                >
-                  {typeLabels[log.type]}
-                </span>
+                <Badge variant={typeVariants[log.type]}>{typeLabels[log.type]}</Badge>
                 <span className="text-xs text-gray-400">{formatDate(log.service_date)}</span>
                 <span className="text-xs text-gray-400">{log.service_km.toFixed(0)} km</span>
               </div>
@@ -64,14 +67,11 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
                 {log.next_service_date && <span>Next: {formatDate(log.next_service_date)}</span>}
               </div>
             </div>
-            <button
-              onClick={() => onDelete(log)}
-              className="rounded border border-red-300 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-            >
+            <Button variant="danger" size="sm" onClick={() => onDelete(log)}>
               Delete
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   );
