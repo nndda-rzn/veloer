@@ -7,7 +7,7 @@ interface UseBikesReturn {
   loading: boolean;
   error: string | null;
   refetch: () => void;
-  createBike: (data: BikeFormData) => Promise<void>;
+  createBike: (data: BikeFormData) => Promise<Bike>;
   updateBike: (id: string, data: Partial<BikeFormData>) => Promise<void>;
   deleteBike: (id: string) => Promise<void>;
 }
@@ -29,9 +29,10 @@ export function useBikes(): UseBikesReturn {
 
   const refetch = useCallback(() => setRefetchFlag((f) => f + 1), []);
 
-  const createBike = useCallback(async (data: BikeFormData) => {
-    await bikeApi.create(data);
+  const createBike = useCallback(async (data: BikeFormData): Promise<Bike> => {
+    const bike = await bikeApi.create(data);
     setRefetchFlag((f) => f + 1);
+    return bike;
   }, []);
 
   const updateBike = useCallback(async (id: string, data: Partial<BikeFormData>) => {
