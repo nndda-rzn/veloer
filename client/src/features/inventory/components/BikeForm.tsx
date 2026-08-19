@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import { bikeApi } from '../api/bike.api';
+import { Modal, Button } from '@/shared/components/ui';
 import type { Bike, BikeFormData } from '../types/inventory';
 
 interface BikeFormProps {
@@ -101,194 +102,180 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
   const displayImage = previewUrl ?? formData.photo_url ?? null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="mb-4 text-lg font-bold text-gray-900">{bike ? 'Edit Bike' : 'Add Bike'}</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Photo upload */}
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Bike Photo</label>
-            {displayImage ? (
-              <div className="relative overflow-hidden rounded-lg border border-gray-200">
-                <img
-                  src={displayImage}
-                  alt={formData.name || 'Bike'}
-                  className="aspect-video w-full object-cover"
-                />
-                {bike && (
-                  <button
-                    type="button"
-                    onClick={handleClearPhoto}
-                    className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
-                    aria-label="Remove photo"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                )}
-                <label className="absolute bottom-2 right-2 cursor-pointer rounded-lg bg-black/60 px-2 py-1 text-xs font-medium text-white hover:bg-black/80">
-                  Change
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(e) => void handleFileSelect(e)}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            ) : (
-              <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 text-center hover:border-primary hover:bg-primary-50">
-                {uploading ? (
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
-                ) : (
-                  <ImagePlus className="h-6 w-6 text-gray-400" aria-hidden="true" />
-                )}
-                <span className="text-sm text-gray-500">
-                  {uploading ? 'Uploading...' : bike ? 'Upload a photo' : 'Add photo after saving'}
-                </span>
-                <span className="text-xs text-gray-400">JPG, PNG or WebP — max 5 MB</span>
+    <Modal open onClose={onCancel} title={bike ? 'Edit Bike' : 'Add Bike'}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Photo upload */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Bike Photo</label>
+          {displayImage ? (
+            <div className="relative overflow-hidden rounded-lg border border-gray-200">
+              <img
+                src={displayImage}
+                alt={formData.name || 'Bike'}
+                className="aspect-video w-full object-cover"
+              />
+              {bike && (
+                <button
+                  type="button"
+                  onClick={handleClearPhoto}
+                  className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+                  aria-label="Remove photo"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              )}
+              <label className="absolute bottom-2 right-2 cursor-pointer rounded-lg bg-black/60 px-2 py-1 text-xs font-medium text-white hover:bg-black/80">
+                Change
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   onChange={(e) => void handleFileSelect(e)}
                   className="hidden"
-                  disabled={!bike || uploading}
                 />
               </label>
-            )}
-            {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
-          </div>
+            </div>
+          ) : (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 text-center hover:border-primary hover:bg-primary-50">
+              {uploading ? (
+                <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
+              ) : (
+                <ImagePlus className="h-6 w-6 text-gray-400" aria-hidden="true" />
+              )}
+              <span className="text-sm text-gray-500">
+                {uploading ? 'Uploading...' : bike ? 'Upload a photo' : 'Add photo after saving'}
+              </span>
+              <span className="text-xs text-gray-400">JPG, PNG or WebP — max 5 MB</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => void handleFileSelect(e)}
+                className="hidden"
+                disabled={!bike || uploading}
+              />
+            </label>
+          )}
+          {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
+        </div>
 
+        <div>
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
+            Name *
+          </label>
+          <input
+            id="name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-              Name *
+            <label htmlFor="brand" className="mb-1 block text-sm font-medium text-gray-700">
+              Brand
             </label>
             <input
-              id="name"
+              id="brand"
               type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.brand ?? ''}
+              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="brand" className="mb-1 block text-sm font-medium text-gray-700">
-                Brand
-              </label>
-              <input
-                id="brand"
-                type="text"
-                value={formData.brand ?? ''}
-                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-            <div>
-              <label htmlFor="model" className="mb-1 block text-sm font-medium text-gray-700">
-                Model
-              </label>
-              <input
-                id="model"
-                type="text"
-                value={formData.model ?? ''}
-                onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
-
           <div>
-            <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
-              Type *
+            <label htmlFor="model" className="mb-1 block text-sm font-medium text-gray-700">
+              Model
             </label>
-            <select
-              id="type"
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as Bike['type'] })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {bikeTypes.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label
-                htmlFor="purchase_date"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Purchase Date
-              </label>
-              <input
-                id="purchase_date"
-                type="date"
-                value={formData.purchase_date ?? ''}
-                onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="purchase_price"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Purchase Price (IDR)
-              </label>
-              <input
-                id="purchase_price"
-                type="number"
-                min="0"
-                value={formData.purchase_price ?? ''}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    purchase_price: e.target.value ? Number(e.target.value) : null,
-                  })
-                }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="notes" className="mb-1 block text-sm font-medium text-gray-700">
-              Notes
-            </label>
-            <textarea
-              id="notes"
-              rows={2}
-              value={formData.notes ?? ''}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            <input
+              id="model"
+              type="text"
+              value={formData.model ?? ''}
+              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+        </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : bike ? 'Update' : 'Add'}
-            </button>
+        <div>
+          <label htmlFor="type" className="mb-1 block text-sm font-medium text-gray-700">
+            Type *
+          </label>
+          <select
+            id="type"
+            value={formData.type}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value as Bike['type'] })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            {bikeTypes.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="purchase_date" className="mb-1 block text-sm font-medium text-gray-700">
+              Purchase Date
+            </label>
+            <input
+              id="purchase_date"
+              type="date"
+              value={formData.purchase_date ?? ''}
+              onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
           </div>
-        </form>
-      </div>
-    </div>
+          <div>
+            <label
+              htmlFor="purchase_price"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Purchase Price (IDR)
+            </label>
+            <input
+              id="purchase_price"
+              type="number"
+              min="0"
+              value={formData.purchase_price ?? ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  purchase_price: e.target.value ? Number(e.target.value) : null,
+                })
+              }
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="notes" className="mb-1 block text-sm font-medium text-gray-700">
+            Notes
+          </label>
+          <textarea
+            id="notes"
+            rows={2}
+            value={formData.notes ?? ''}
+            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={saving}>
+            {saving ? 'Saving...' : bike ? 'Update' : 'Add'}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }
