@@ -10,6 +10,7 @@ interface BikeHeroProps {
   bikes: Bike[];
   defaultBikeId: string | null;
   activityStats: ActivityStats | null;
+  loading?: boolean;
 }
 
 function getGreeting(): string {
@@ -37,8 +38,18 @@ const bikeTypeLabels: Record<Bike['type'], string> = {
   other: 'Bike',
 };
 
-export function BikeHero({ displayName, bikes, defaultBikeId, activityStats }: BikeHeroProps) {
+export function BikeHero({
+  displayName,
+  bikes,
+  defaultBikeId,
+  activityStats,
+  loading = false,
+}: BikeHeroProps) {
   const activeBikes = bikes.filter((b) => b.status === 'active');
+
+  if (loading && bikes.length === 0) {
+    return <div className="h-64 animate-pulse rounded-2xl bg-gray-200" />;
+  }
   const defaultBike = activeBikes.find((b) => b.id === defaultBikeId) ?? activeBikes[0] ?? null;
   const [selectedBikeId, setSelectedBikeId] = useState(defaultBike?.id ?? null);
   const selectedBike = activeBikes.find((b) => b.id === selectedBikeId) ?? defaultBike ?? null;
