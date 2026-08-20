@@ -5,5 +5,7 @@ export { RecentActivities } from './components/RecentActivities';
 export { WeeklyDistanceChart } from './components/WeeklyDistanceChart';
 export { BudgetSummary } from './components/BudgetSummary';
 export { GoalProgress } from './components/GoalProgress';
+export { TrainingLoadCard } from './components/TrainingLoadCard';
 export { UpcomingEvents } from './components/UpcomingEvents';
 export { useDashboardData } from './hooks/useDashboardData';
+export type { UseDashboardData } from './hooks/useDashboardData';
