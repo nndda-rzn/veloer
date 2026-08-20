@@ -7,8 +7,10 @@ export { ActivityBikeLinker } from './components/ActivityBikeLinker';
 export { LapBreakdown } from './components/LapBreakdown';
 export { ZoneChart } from './components/ZoneChart';
 export { TrainingLoadSummary } from './components/TrainingLoadSummary';
+export { LastSyncIndicator } from './components/LastSyncIndicator';
 export { useActivities } from './hooks/useActivities';
 export { useActivityDetail } from './hooks/useActivityDetail';
+export { SyncProvider, useSync } from './hooks/useSync';
 export { activityApi } from './api/activity.api';
 export type {
   Activity,
@@ -18,3 +20,4 @@ export type {
   ActivityLap,
   ActivityZone,
 } from './types/activity';
+export type { SyncStatus } from './hooks/useSync';

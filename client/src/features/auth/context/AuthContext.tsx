@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext, type ReactNode } from 'react';
 import { authApi, type AuthUser } from '../api/auth.api';
+import { clearSyncStorage } from '@/shared/lib/sync-storage';
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -29,12 +30,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading && user === null) {
+      clearSyncStorage();
+    }
+  }, [isLoading, user]);
+
   const login = () => {
     window.location.href = authApi.getLoginUrl();
   };
 
   const logout = async () => {
     await authApi.logout();
+    clearSyncStorage();
     setUser(null);
     window.location.href = '/login';
   };
