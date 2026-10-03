@@ -44,7 +44,7 @@ export function ActivitiesPage() {
 
       {lastResult && (
         <Alert variant="success" live="polite">
-          Sync complete — {lastResult.synced} new, {lastResult.skipped} already synced
+          Sync complete · {lastResult.synced} new, {lastResult.skipped} already synced
           {lastResult.workoutsLinked > 0 && (
             <>
               , {lastResult.workoutsLinked} workout

@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   Veloer design tokens — source of truth.
+   Veloer design tokens: source of truth.
    Aesthetic: timeless, clean, elegant. Warm "stone" neutrals + deep ride-green.
    Every value below is verified for WCAG AA contrast (see docs/20-design-system.md).
    ========================================================================== */
@@ -15,7 +15,7 @@
   --font-display: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', monospace;
 
-  /* Brand — deep ride-green --------------------------------------------- */
+  /* Brand: deep ride-green ---------------------------------------------- */
   /* #0f6e4e = 6.25:1 on white → passes AA for text and for white-on-brand */
   --color-primary: #0f6e4e;
   --color-primary-dark: #0c5b41;
@@ -147,7 +147,7 @@ body {
 }
 
 :root {
-  /* Surfaces — warm stone neutrals */
+  /* Surfaces: warm stone neutrals */
   --background: #fafaf9;
   --foreground: #1c1917;
   --card: #ffffff;
@@ -172,10 +172,10 @@ body {
 
   /* Lines */
   --border: #e7e5e4; /* dividers, card edges */
-  --input: #948d88; /* form field boundary — 3.27:1 on white (WCAG 1.4.11) */
+  --input: #948d88; /* form field boundary: 3.27:1 on white (WCAG 1.4.11) */
   --ring: #0f6e4e;
 
-  /* Data-viz — harmonised with brand */
+  /* Data-viz: harmonised with brand */
   --chart-1: #0f6e4e;
   --chart-2: #c2410c;
   --chart-3: #1d4ed8;

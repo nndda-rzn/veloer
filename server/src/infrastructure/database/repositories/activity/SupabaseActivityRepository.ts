@@ -77,7 +77,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
     const supabase = getSupabaseClient();
 
     if (bikeId) {
-      // Link activity to bike via RPC — also updates bike & component km
+      // Link activity to bike via RPC: also updates bike & component km
       const { error } = await supabase.rpc('link_activity_bike', {
         activity_uuid: activityId,
         bike_uuid: bikeId,

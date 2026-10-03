@@ -143,7 +143,7 @@ export function TrainingPlanDetailPage() {
         </Link>
         <PageHeader
           title={plan.title}
-          description={`${plan.start_date} — ${plan.end_date} • FTP ${plan.ftp_baseline}W`}
+          description={`${plan.start_date} – ${plan.end_date} • FTP ${plan.ftp_baseline}W`}
           action={
             <>
               <Button variant="secondary" onClick={() => reschedule()}>
@@ -173,7 +173,7 @@ export function TrainingPlanDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Calendar — 2/3 width */}
+        {/* Calendar: 2/3 width */}
         <div className="lg:col-span-2">
           {workoutsLoading ? (
             <div className="h-96 animate-pulse rounded-xl bg-secondary" />
@@ -186,7 +186,7 @@ export function TrainingPlanDetailPage() {
           )}
         </div>
 
-        {/* Sidebar — 1/3 width */}
+        {/* Sidebar: 1/3 width */}
         <div className="space-y-4">
           {/* Form gauge */}
           {!recLoading && recommendation && (

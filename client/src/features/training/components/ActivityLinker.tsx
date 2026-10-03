@@ -60,7 +60,7 @@ export function ActivityLinker({
         <option value="">Select activity…</option>
         {activities.map((a) => (
           <option key={a.id} value={a.id}>
-            {a.name} — {new Date(a.start_date).toLocaleDateString()}
+            {a.name} · {new Date(a.start_date).toLocaleDateString()}
           </option>
         ))}
       </select>

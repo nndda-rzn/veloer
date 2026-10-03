@@ -72,7 +72,7 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard
           label="Distance (7d)"
-          value={current ? formatDistance(current.totalDistance) : '—'}
+          value={current ? formatDistance(current.totalDistance) : '–'}
           icon={<Route className="h-5 w-5" aria-hidden="true" />}
           loading={statsLoading}
           trend={
@@ -87,7 +87,7 @@ export function DashboardPage() {
         />
         <KpiCard
           label="Rides (7d)"
-          value={current ? String(current.count) : '—'}
+          value={current ? String(current.count) : '–'}
           icon={<Activity className="h-5 w-5" aria-hidden="true" />}
           loading={statsLoading}
           trend={
@@ -102,7 +102,7 @@ export function DashboardPage() {
         />
         <KpiCard
           label="Elevation (7d)"
-          value={current ? `${current.totalElevationGain.toFixed(0)} m` : '—'}
+          value={current ? `${current.totalElevationGain.toFixed(0)} m` : '–'}
           icon={<Mountain className="h-5 w-5" aria-hidden="true" />}
           loading={statsLoading}
           trend={

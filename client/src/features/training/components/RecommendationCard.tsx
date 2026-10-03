@@ -39,7 +39,7 @@ export function RecommendationCard({ recommendation: rec, onAddToPlan }: Recomme
       {rec.intervals && (
         <div className="mb-3 text-xs tabular-nums text-muted-foreground">
           {rec.intervals.count}×{rec.intervals.duration_seconds}s @ {rec.intervals.power_pct_ftp}%
-          FTP — {rec.intervals.rest_seconds}s rest @ {rec.intervals.rest_pct_ftp}% FTP
+          FTP · {rec.intervals.rest_seconds}s rest @ {rec.intervals.rest_pct_ftp}% FTP
         </div>
       )}
 

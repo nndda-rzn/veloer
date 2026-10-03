@@ -79,14 +79,14 @@ export class GenerateRecommendation {
       days42.push({ date: ds, tss: tssMap[ds] ?? 0 });
     }
 
-    // CTL — 42-day EMA (decay = e^(-1/42))
+    // CTL: 42-day EMA (decay = e^(-1/42))
     const decayCTL = Math.exp(-1 / 42);
     let ctl = 0;
     for (const { tss } of days42) {
       ctl = ctl * decayCTL + tss * (1 - decayCTL);
     }
 
-    // ATL — 7-day EMA (decay = e^(-1/7))
+    // ATL: 7-day EMA (decay = e^(-1/7))
     const decayATL = Math.exp(-1 / 7);
     let atl = 0;
     const days7 = days42.slice(-7);
@@ -155,11 +155,11 @@ export class GenerateRecommendation {
   ): WorkoutRecommendation {
     // Override: too many consecutive days
     if (consecutiveDays >= 3) {
-      return this.recovery('3 consecutive days riding — active recovery recommended', ftp, metrics);
+      return this.recovery('3 consecutive days riding. Active recovery recommended', ftp, metrics);
     }
 
     if (tsb < -30) {
-      return this.recovery('High fatigue (TSB < -30) — prioritize recovery', ftp, metrics);
+      return this.recovery('High fatigue (TSB < -30). Prioritize recovery', ftp, metrics);
     }
 
     if (tsb < -15) {
@@ -244,7 +244,7 @@ export class GenerateRecommendation {
       };
     }
 
-    // TSB >= 20 — very fresh
+    // TSB >= 20: very fresh
     return {
       workout_type: 'anaerobic',
       title: 'Anaerobic Sprint Session',

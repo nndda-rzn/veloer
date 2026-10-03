@@ -69,7 +69,7 @@ export function ActivityBikeLinker({
             onChange={(e) => setSelectedBike(e.target.value)}
             className={selectClass}
           >
-            <option value="">— No bike —</option>
+            <option value="">– No bike –</option>
             {bikes.map((bike) => (
               <option key={bike.id} value={bike.id}>
                 {bike.name} ({bike.brand} {bike.model})

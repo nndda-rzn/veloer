@@ -67,16 +67,16 @@ export class AnalyzeStravaFitness {
       } else {
         ftpConfidence = 'low';
         warnings.push(
-          `Limited power data (${activitiesWithPower.length} rides with power) — FTP estimate may not reflect current fitness.`,
+          `Limited power data (${activitiesWithPower.length} rides with power). FTP estimate may not reflect current fitness.`,
         );
       }
     } else {
-      warnings.push('No power data found — FTP estimate is based on your Settings value.');
+      warnings.push('No power data found. FTP estimate is based on your Settings value.');
     }
 
     if (activityCount < 5) {
       warnings.push(
-        `Only ${activityCount} ${activityCount === 1 ? 'activity' : 'activities'} synced — estimates may not be accurate. Sync more rides for better results.`,
+        `Only ${activityCount} ${activityCount === 1 ? 'activity' : 'activities'} synced. Estimates may not be accurate. Sync more rides for better results.`,
       );
     }
 
@@ -99,7 +99,7 @@ export class AnalyzeStravaFitness {
     }
 
     if (avgWeeklyHours < 2 && activityCount >= 3) {
-      warnings.push('Low weekly volume detected — starting with Base Build is recommended.');
+      warnings.push('Low weekly volume detected. Starting with Base Build is recommended.');
     }
 
     // ---- CTL (42-day EMA of daily TSS) ----

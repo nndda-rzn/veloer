@@ -13,7 +13,7 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-dvh">
-      {/* Left — form */}
+      {/* Left: form */}
       <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 lg:px-16">
         <div className="mx-auto w-full max-w-sm">
           {/* Logo */}
@@ -50,7 +50,7 @@ export function LoginPage() {
         </div>
       </div>
 
-      {/* Right — quiet brand panel (hidden on mobile) */}
+      {/* Right: quiet brand panel (hidden on mobile) */}
       <div className="relative hidden overflow-hidden border-l border-border bg-primary-900 lg:flex lg:w-1/2 lg:items-center lg:justify-center">
         <div
           aria-hidden="true"
@@ -70,7 +70,7 @@ export function LoginPage() {
           />
           <p className="mt-10 font-display text-2xl text-white">Your personal cycling companion</p>
           <p className="mt-2 max-w-xs text-sm text-primary-200">
-            From training plans to gear maintenance — all in one place.
+            From training plans to gear maintenance, all in one place.
           </p>
         </div>
       </div>

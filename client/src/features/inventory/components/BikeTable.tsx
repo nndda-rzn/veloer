@@ -167,7 +167,7 @@ export function BikeTable({
                             {bike.name}
                           </p>
                           <p className="truncate text-xs text-muted-foreground">
-                            {bike.brand ?? '—'} {bike.model ?? ''}
+                            {bike.brand ?? '–'} {bike.model ?? ''}
                           </p>
                         </div>
                         <Badge variant={statusVariants[bike.status]}>
@@ -182,7 +182,7 @@ export function BikeTable({
                       {bike.current_km.toFixed(0)} km
                     </td>
                     <td className="hidden whitespace-nowrap px-4 py-3 text-right text-sm text-muted-foreground lg:table-cell">
-                      {bike.purchase_price != null ? formatIDR(bike.purchase_price) : '—'}
+                      {bike.purchase_price != null ? formatIDR(bike.purchase_price) : '–'}
                     </td>
                     <td className="hidden px-4 py-3 text-center sm:table-cell">
                       {alertCount > 0 && (

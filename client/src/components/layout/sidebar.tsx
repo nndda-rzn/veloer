@@ -99,7 +99,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </ul>
       </nav>
 
-      {/* Footer — profile */}
+      {/* Footer: profile */}
       <div className="border-t border-border px-3 py-3">
         <DropdownMenu>
           <DropdownMenuTrigger

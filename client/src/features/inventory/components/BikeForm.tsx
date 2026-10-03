@@ -60,7 +60,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
     setUploadError(null);
 
     if (!bike) {
-      // No bike id yet — user must save the bike first, then photo will upload
+      // No bike id yet: user must save the bike first, then photo will upload
       setUploadError('Save the bike first, then add a photo from Edit.');
       URL.revokeObjectURL(previewUrl ?? '');
       setPreviewUrl(null);
@@ -154,7 +154,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 <span className="text-sm text-muted-foreground">
                   {uploading ? 'Uploading…' : bike ? 'Upload a photo' : 'Add photo after saving'}
                 </span>
-                <span className="text-xs text-muted-foreground">JPG, PNG or WebP — max 5 MB</span>
+                <span className="text-xs text-muted-foreground">JPG, PNG or WebP · max 5 MB</span>
                 <input
                   ref={fileInputRef}
                   type="file"

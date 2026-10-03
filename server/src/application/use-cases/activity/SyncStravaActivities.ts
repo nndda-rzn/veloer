@@ -160,7 +160,7 @@ export class SyncStravaActivities {
           if (w.status !== 'planned' || w.target_duration_minutes == null) continue;
 
           const durationDiffSec = Math.abs(activity.moving_time - w.target_duration_minutes * 60);
-          if (durationDiffSec >= 1800) continue; // outside ±30 min — skip entirely
+          if (durationDiffSec >= 1800) continue; // outside ±30 min: skip entirely
 
           let score = 0;
 
