@@ -34,11 +34,9 @@ jobs:
 
       - name: Run lint
         run: npm run lint
-        continue-on-error: true # lint non-blocking until configs are fully set up
 
       - name: Run type-check
         run: npm run type-check
-        continue-on-error: true # type-check non-blocking until client/server are set up
 
       - name: Build client
         run: npm run build
