@@ -36,7 +36,7 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -57,16 +57,18 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
       {logs.map((log) => (
         <Card key={log.id}>
           <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <Badge variant={typeVariants[log.type]}>{typeLabels[log.type]}</Badge>
-                <span className="text-xs text-gray-400">{formatDate(log.service_date)}</span>
-                <span className="text-xs tabular-nums text-gray-400">
+                <span className="text-xs text-muted-foreground">
+                  {formatDate(log.service_date)}
+                </span>
+                <span className="text-xs tabular-nums text-muted-foreground">
                   {log.service_km.toFixed(0)} km
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-900">{log.description}</p>
-              <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
+              <p className="mt-1 text-sm text-foreground">{log.description}</p>
+              <div className="mt-1 flex flex-wrap gap-4 text-xs text-muted-foreground">
                 {log.cost != null && (
                   <span className="tabular-nums">Cost: {formatIDR(log.cost)}</span>
                 )}

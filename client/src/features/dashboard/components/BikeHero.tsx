@@ -48,7 +48,7 @@ export function BikeHero({
   const activeBikes = bikes.filter((b) => b.status === 'active');
 
   if (loading && bikes.length === 0) {
-    return <div className="h-64 animate-pulse rounded-2xl bg-gray-200" />;
+    return <div className="h-40 animate-pulse rounded-xl bg-secondary" />;
   }
   const defaultBike = activeBikes.find((b) => b.id === defaultBikeId) ?? activeBikes[0] ?? null;
   const [selectedBikeId, setSelectedBikeId] = useState(defaultBike?.id ?? null);
@@ -56,15 +56,17 @@ export function BikeHero({
 
   if (!selectedBike) {
     return (
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-primary-900 to-primary-800 p-6 md:p-10">
-        <p className="text-sm font-medium text-primary-200">{getGreeting()}</p>
-        <h2 className="mt-1 text-2xl font-bold text-white md:text-3xl">
-          {displayName ?? 'Welcome back'}!
+      <div className="rounded-xl border border-border bg-card p-6 md:p-8">
+        <p className="text-sm font-medium text-primary-700">{getGreeting()}</p>
+        <h2 className="mt-1 font-display text-2xl text-foreground md:text-3xl">
+          {displayName ?? 'Welcome back'}
         </h2>
-        <p className="mt-2 text-sm text-primary-200">No active bikes yet.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          No active bikes yet. Add one to start tracking rides, wear, and maintenance.
+        </p>
         <Link
           to="/inventory"
-          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark"
         >
           <BikeIcon className="h-4 w-4" aria-hidden="true" />
           Add a bike
@@ -75,64 +77,66 @@ export function BikeHero({
 
   const bikeImage = getBikeImage(selectedBike.type);
   const totalRides = activityStats?.count ?? 0;
-  const totalKm = selectedBike.current_km;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-primary-900 to-primary-800 p-6 md:p-10">
-      {/* Bike image — large background */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center md:justify-end">
-        <img
-          src={bikeImage}
-          alt={selectedBike.name}
-          width={480}
-          height={300}
-          className="h-full max-h-[300px] w-auto object-contain opacity-90 drop-shadow-2xl md:mr-8"
-        />
-      </div>
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-primary-700">{getGreeting()}</p>
+          <h2 className="mt-1 font-display text-2xl leading-tight text-foreground md:text-3xl">
+            {displayName ?? 'Welcome back'}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {bikeTypeLabels[selectedBike.type]} —{' '}
+            <span className="font-medium text-foreground">{selectedBike.name}</span>
+          </p>
 
-      {/* Foreground content */}
-      <div className="relative z-10 flex flex-col gap-2 md:max-w-md">
-        <p className="text-sm font-medium text-primary-200">{getGreeting()}</p>
-        <h2 className="text-2xl font-bold text-white md:text-3xl">
-          {displayName ?? 'Welcome back'}!
-        </h2>
-        <p className="text-sm text-primary-200">
-          {bikeTypeLabels[selectedBike.type]} &mdash;{' '}
-          <span className="font-medium text-white">{selectedBike.name}</span>
-        </p>
-
-        <div className="mt-3 flex gap-3">
-          <div className="rounded-lg bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-            <p className="text-xs text-primary-200">Total Distance</p>
-            <p className="text-base font-bold text-white">{formatDistance(totalKm * 1000)}</p>
-          </div>
-          <div className="rounded-lg bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-            <p className="text-xs text-primary-200">Total Rides</p>
-            <p className="text-base font-bold text-white">{totalRides}</p>
+          <div className="mt-5 flex gap-8">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                Total distance
+              </p>
+              <p className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
+                {formatDistance(selectedBike.current_km * 1000)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">Rides (7d)</p>
+              <p className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
+                {totalRides}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Bike switcher */}
-        {activeBikes.length > 1 && (
-          <div className="mt-3 flex gap-2">
-            {activeBikes.map((bike) => (
-              <button
-                key={bike.id}
-                onClick={() => setSelectedBikeId(bike.id)}
-                aria-label={`Switch to ${bike.name}`}
-                aria-pressed={bike.id === selectedBike.id}
-                className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                  bike.id === selectedBike.id
-                    ? 'bg-white text-primary-900'
-                    : 'bg-white/10 text-white hover:bg-white/20'
-                }`}
-              >
-                {bike.name}
-              </button>
-            ))}
-          </div>
-        )}
+        <img
+          src={bikeImage}
+          alt={selectedBike.name}
+          width={280}
+          height={175}
+          loading="lazy"
+          className="pointer-events-none hidden h-auto w-[280px] flex-shrink-0 object-contain md:block"
+        />
       </div>
+
+      {activeBikes.length > 1 && (
+        <div className="flex flex-wrap gap-1.5 border-t border-border bg-background/60 px-6 py-3 md:px-8">
+          {activeBikes.map((bike) => (
+            <button
+              key={bike.id}
+              onClick={() => setSelectedBikeId(bike.id)}
+              aria-pressed={bike.id === selectedBike.id}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                bike.id === selectedBike.id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+              }`}
+            >
+              {bike.name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

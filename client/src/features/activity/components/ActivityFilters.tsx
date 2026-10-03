@@ -11,7 +11,7 @@ export function ActivityFilters({ filters, onChange }: ActivityFiltersProps) {
   return (
     <div className="flex flex-wrap items-end gap-3">
       <div className="flex flex-col gap-1">
-        <label htmlFor="startDate" className="block text-xs font-medium text-gray-600">
+        <label htmlFor="startDate" className="block text-xs font-medium text-muted-foreground">
           From
         </label>
         <Input
@@ -25,7 +25,7 @@ export function ActivityFilters({ filters, onChange }: ActivityFiltersProps) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="endDate" className="block text-xs font-medium text-gray-600">
+        <label htmlFor="endDate" className="block text-xs font-medium text-muted-foreground">
           To
         </label>
         <Input

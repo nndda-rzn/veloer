@@ -1,19 +1,9 @@
 import { useState } from 'react';
 import { GoalCard, GoalForm, useGoals } from '@/features/goals';
 import type { Goal, GoalFormData } from '@/features/goals';
-import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Target } from 'lucide-react';
 
 export function GoalsPage() {
@@ -46,7 +36,7 @@ export function GoalsPage() {
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-secondary" />
           ))}
         </div>
       ) : goals.length === 0 ? (
@@ -66,24 +56,13 @@ export function GoalsPage() {
 
       {showForm && <GoalForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
 
-      {deletingGoal && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingGoal(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Goal</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete this goal? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingGoal !== null}
+        onOpenChange={(open) => !open && setDeletingGoal(null)}
+        title="Delete goal"
+        description="Are you sure you want to delete this goal? This action cannot be undone."
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

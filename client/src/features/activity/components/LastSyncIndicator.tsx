@@ -77,7 +77,7 @@ export function LastSyncIndicator() {
         render={<Button variant="ghost" size="sm" className="gap-2 text-muted-foreground" />}
       >
         <CheckCircle2
-          className={cn('h-4 w-4', stale ? 'text-amber-500' : 'text-green-600')}
+          className={cn('h-4 w-4', stale ? 'text-amber-500' : 'text-success')}
           aria-hidden="true"
         />
         Synced {relative}

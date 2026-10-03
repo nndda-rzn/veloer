@@ -100,16 +100,16 @@ export const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
 };
 
 export const WORKOUT_TYPE_COLORS: Record<WorkoutType, string> = {
-  recovery: '#64748b',
-  endurance: '#3b82f6',
-  tempo: '#eab308',
-  sweet_spot: '#f59e0b',
-  threshold: '#f97316',
-  vo2max: '#ef4444',
-  anaerobic: '#8b5cf6',
-  sprint: '#ec4899',
-  race: '#111827',
-  interval: '#6366f1',
+  recovery: '#78716c',
+  endurance: '#2563eb',
+  tempo: '#0891b2',
+  sweet_spot: '#0f6e4e',
+  threshold: '#c2410c',
+  vo2max: '#b91c1c',
+  anaerobic: '#7c3aed',
+  sprint: '#be185d',
+  race: '#1c1917',
+  interval: '#4f46e5',
 };
 
 export type TemplateKey = 'BASE_BUILD_4W' | 'FTP_BUILDER_6W' | 'CENTURY_PREP_8W' | 'GRAN_FONDO_12W';

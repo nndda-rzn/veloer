@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface ComponentFormProps {
   bikeId: string;
@@ -20,9 +21,6 @@ const categories: { value: Component['category']; label: string }[] = [
   { value: 'frame', label: 'Frame' },
   { value: 'other', label: 'Other' },
 ];
-
-const selectClass =
-  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function ComponentForm({ bikeId, component, onSubmit, onCancel }: ComponentFormProps) {
   const [formData, setFormData] = useState<ComponentFormData>({

@@ -41,7 +41,7 @@ export function UpcomingWorkoutsWidget() {
     return (
       <div className="space-y-2">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-12 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-12 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -49,8 +49,8 @@ export function UpcomingWorkoutsWidget() {
 
   if (workouts.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-        <p className="text-xs text-gray-400">No upcoming workouts</p>
+      <div className="rounded-xl border border-border bg-card p-4 text-center">
+        <p className="text-xs text-muted-foreground">No upcoming workouts</p>
         <Link to="/training-plans" className="mt-1 block text-xs text-primary hover:underline">
           Create a training plan
         </Link>
@@ -72,21 +72,23 @@ export function UpcomingWorkoutsWidget() {
           <Link
             key={w.id}
             to={`/training-plans/${w.plan_id}`}
-            className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 hover:bg-gray-50"
+            className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 hover:bg-secondary"
           >
             <div
               className="h-8 w-1.5 flex-shrink-0 rounded-full"
               style={{ backgroundColor: color }}
             />
             <div className="flex-1 min-w-0">
-              <p className="truncate text-sm font-medium text-gray-900">{w.title}</p>
-              <p className="text-xs text-gray-400">
+              <p className="truncate text-sm font-medium text-foreground">{w.title}</p>
+              <p className="text-xs text-muted-foreground">
                 {dayLabel} • {WORKOUT_TYPE_LABELS[w.workout_type]}
                 {w.target_duration_minutes ? ` • ${w.target_duration_minutes}min` : ''}
               </p>
             </div>
             {w.target_tss && (
-              <span className="flex-shrink-0 text-xs text-gray-400">TSS {w.target_tss}</span>
+              <span className="flex-shrink-0 text-xs text-muted-foreground">
+                TSS {w.target_tss}
+              </span>
             )}
           </Link>
         );

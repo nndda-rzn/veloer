@@ -8,19 +8,10 @@ import {
 import { useBikes } from '@/features/inventory';
 import type { Bike } from '@/features/inventory';
 import type { MaintenanceLog, MaintenanceLogFormData } from '@/features/maintenance';
-import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { selectClass } from '@/shared/lib/form-styles';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Wrench } from 'lucide-react';
 
 export function MaintenancePage() {
@@ -61,15 +52,18 @@ export function MaintenancePage() {
         <EmptyState
           icon={Wrench}
           title="No bikes yet"
-          description="Add a bike first in the Inventory page to start logging maintenance."
+          description="Add a bike first in the Bikes & Gear page to start logging maintenance."
         />
       ) : (
         <>
           {/* Bike selector */}
           <div className="flex items-end gap-3">
-            <div className="flex-1">
-              <label htmlFor="bikeSelect" className="mb-1 block text-sm font-medium text-gray-700">
-                Select Bike
+            <div className="max-w-xs flex-1">
+              <label
+                htmlFor="bikeSelect"
+                className="mb-1.5 block text-sm font-medium text-foreground"
+              >
+                Select bike
               </label>
               <select
                 id="bikeSelect"
@@ -78,7 +72,7 @@ export function MaintenancePage() {
                   const bike = bikes.find((b) => b.id === e.target.value);
                   setSelectedBike(bike ?? null);
                 }}
-                className="flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className={selectClass}
               >
                 {bikes.map((bike) => (
                   <option key={bike.id} value={bike.id}>
@@ -110,24 +104,13 @@ export function MaintenancePage() {
         />
       )}
 
-      {deletingLog && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingLog(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Log</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete this maintenance log?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingLog !== null}
+        onOpenChange={(open) => !open && setDeletingLog(null)}
+        title="Delete log"
+        description="Are you sure you want to delete this maintenance log? This action cannot be undone."
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

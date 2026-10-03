@@ -18,11 +18,11 @@ export function LoginPage() {
         <div className="mx-auto w-full max-w-sm">
           {/* Logo */}
           <div className="mb-10">
-            <img src="/logo.png" alt="Veloer" className="h-10 w-auto" />
+            <img src="/logo.png" alt="Veloer" width={160} height={40} className="h-10 w-auto" />
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <h1 className="font-display text-3xl leading-tight text-foreground">Welcome back</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Track your rides, gear, and training in one place.
           </p>
 
@@ -36,32 +36,40 @@ export function LoginPage() {
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
               </svg>
-              {loading ? 'Connecting to Strava...' : 'Continue with Strava'}
+              {loading ? 'Connecting to Strava…' : 'Continue with Strava'}
             </Button>
 
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-muted-foreground">
               Sign in with your Strava account to sync your cycling activities
             </p>
           </div>
 
-          <div className="mt-12 border-t border-gray-100 pt-6">
-            <p className="text-xs text-gray-400">Track. Maintain. Ride.</p>
+          <div className="mt-12 border-t border-border pt-6">
+            <p className="text-xs tracking-wide text-muted-foreground">Track. Maintain. Ride.</p>
           </div>
         </div>
       </div>
 
-      {/* Right — hero image (hidden on mobile) */}
-      <div className="relative hidden overflow-hidden bg-gradient-to-br from-gray-900 via-primary-900 to-primary-800 lg:flex lg:w-1/2 lg:items-center lg:justify-center">
-        <img
-          src="/road-bike.png"
-          alt="Road bike"
-          width={560}
-          height={360}
-          className="max-h-[360px] w-auto object-contain opacity-90 drop-shadow-2xl"
+      {/* Right — quiet brand panel (hidden on mobile) */}
+      <div className="relative hidden overflow-hidden border-l border-border bg-primary-900 lg:flex lg:w-1/2 lg:items-center lg:justify-center">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, #ffffff 1px, transparent 0)',
+            backgroundSize: '28px 28px',
+          }}
         />
-        <div className="absolute bottom-10 left-10 right-10">
-          <p className="text-xl font-bold text-white">Your personal cycling companion</p>
-          <p className="mt-1 text-sm text-primary-200">
+        <div className="relative flex flex-col items-center px-12 text-center">
+          <img
+            src="/road-bike.png"
+            alt=""
+            width={420}
+            height={263}
+            className="max-h-[280px] w-auto object-contain"
+          />
+          <p className="mt-10 font-display text-2xl text-white">Your personal cycling companion</p>
+          <p className="mt-2 max-w-xs text-sm text-primary-200">
             From training plans to gear maintenance — all in one place.
           </p>
         </div>

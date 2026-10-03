@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { TrainingWorkout, WorkoutFormData, WorkoutType } from '../types/training';
-import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
+import { WORKOUT_TYPE_LABELS } from '../types/training';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -113,11 +113,12 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className="rounded-full px-3 py-1 text-xs font-medium text-white transition-opacity"
-                  style={{
-                    backgroundColor: WORKOUT_TYPE_COLORS[t],
-                    opacity: type === t ? 1 : 0.35,
-                  }}
+                  aria-pressed={type === t}
+                  className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    type === t
+                      ? 'border-primary bg-primary-50 text-primary-700'
+                      : 'border-border bg-card text-muted-foreground hover:border-input'
+                  }`}
                 >
                   {WORKOUT_TYPE_LABELS[t]}
                 </button>
@@ -227,9 +228,9 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
               Interval structure
             </Label>
             {showIntervals && (
-              <div className="mt-2 grid grid-cols-3 gap-3 rounded-lg border border-gray-200 p-3">
+              <div className="mt-2 grid grid-cols-3 gap-3 rounded-lg border border-border p-3">
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Reps</Label>
+                  <Label className="text-xs text-muted-foreground">Reps</Label>
                   <Input
                     type="number"
                     min={1}
@@ -239,7 +240,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">On (sec)</Label>
+                  <Label className="text-xs text-muted-foreground">On (sec)</Label>
                   <Input
                     type="number"
                     min={10}
@@ -249,7 +250,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">On % FTP</Label>
+                  <Label className="text-xs text-muted-foreground">On % FTP</Label>
                   <Input
                     type="number"
                     min={50}
@@ -260,7 +261,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Rest (sec)</Label>
+                  <Label className="text-xs text-muted-foreground">Rest (sec)</Label>
                   <Input
                     type="number"
                     min={10}
@@ -270,7 +271,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Rest % FTP</Label>
+                  <Label className="text-xs text-muted-foreground">Rest % FTP</Label>
                   <Input
                     type="number"
                     min={20}

@@ -39,23 +39,23 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
       <ProgressRing percentage={percentage} />
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <h4 className="font-semibold text-gray-900">
+          <h4 className="font-semibold text-foreground">
             {goal.title || `${typeLabels[goal.type]} Goal`}
           </h4>
           <Badge variant={statusVariants[goal.status]}>{goal.status}</Badge>
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           {typeLabels[goal.type]} • {periodLabels[goal.period]}
         </p>
-        <p className="mt-1 text-sm text-gray-700">
-          <span className="font-bold">{goal.current_value.toFixed(1)}</span> /{' '}
+        <p className="mt-1 text-sm text-foreground">
+          <span className="font-semibold">{goal.current_value.toFixed(1)}</span> /{' '}
           {goal.target_value.toFixed(1)} {goal.unit}
         </p>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-muted-foreground">
           {formatDate(goal.start_date)} — {formatDate(goal.end_date)}
         </p>
         {goal.description && (
-          <p className="mt-1 text-xs italic text-gray-400">{goal.description}</p>
+          <p className="mt-1 text-xs italic text-muted-foreground">{goal.description}</p>
         )}
       </div>
       <Button variant="destructive" size="sm" onClick={() => onDelete(goal)}>

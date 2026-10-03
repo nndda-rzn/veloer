@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface EventFormProps {
   onSubmit: (data: EventFormData) => Promise<void>;
@@ -76,7 +77,7 @@ export function EventForm({ onSubmit, onCancel }: EventFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value as EventFormData['type'] })
                 }
-                className="flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className={selectClass}
               >
                 {eventTypes.map((t) => (
                   <option key={t.value} value={t.value}>

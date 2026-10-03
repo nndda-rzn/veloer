@@ -13,11 +13,11 @@ interface TrainingLoadCardProps {
 
 type Tone = 'fresh' | 'balanced' | 'fatigued' | 'rested';
 
-const toneStyles: Record<Tone, { chip: string; text: string; Icon: typeof Zap }> = {
-  fresh: { chip: 'bg-emerald-100 text-emerald-700', text: 'text-emerald-700', Icon: TrendingUp },
-  balanced: { chip: 'bg-blue-100 text-blue-700', text: 'text-blue-700', Icon: Minus },
-  fatigued: { chip: 'bg-amber-100 text-amber-700', text: 'text-amber-700', Icon: TrendingDown },
-  rested: { chip: 'bg-gray-100 text-gray-600', text: 'text-gray-600', Icon: Minus },
+const toneStyles: Record<Tone, { chip: string; Icon: typeof Zap }> = {
+  fresh: { chip: 'bg-emerald-50 text-emerald-800', Icon: TrendingUp },
+  balanced: { chip: 'bg-blue-50 text-blue-800', Icon: Minus },
+  fatigued: { chip: 'bg-amber-50 text-amber-800', Icon: TrendingDown },
+  rested: { chip: 'bg-secondary text-muted-foreground', Icon: Minus },
 };
 
 export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoadCardProps) {
@@ -31,7 +31,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
   const confidence = fitness?.ftp_confidence ?? null;
 
   if (loading) {
-    return <div className="h-80 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-80 animate-pulse rounded-xl bg-secondary" />;
   }
 
   const hasData = loadHistory.length > 0;
@@ -41,12 +41,12 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
       <Card>
         <CardContent>
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700">Training Load</h3>
+            <h3 className="text-sm font-semibold text-foreground">Training Load</h3>
           </div>
-          <div className="mt-6 flex flex-col items-center gap-2 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
-            <Zap className="h-6 w-6 text-gray-300" aria-hidden="true" />
-            <p className="text-sm font-medium text-gray-700">No training load yet</p>
-            <p className="max-w-sm text-xs text-gray-500">
+          <div className="mt-6 flex flex-col items-center gap-2 rounded-lg border border-dashed border-border bg-secondary px-6 py-10 text-center">
+            <Zap className="h-6 w-6 text-stone-300" aria-hidden="true" />
+            <p className="text-sm font-medium text-foreground">No training load yet</p>
+            <p className="max-w-sm text-xs text-muted-foreground">
               Sync rides with power meter data to track fitness (CTL) and fatigue (ATL) over time.
             </p>
           </div>
@@ -63,7 +63,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
       <CardContent>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-semibold text-gray-700">Training Load</h3>
+            <h3 className="text-sm font-semibold text-foreground">Training Load</h3>
             <span
               className={cn(
                 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
@@ -83,28 +83,32 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
         {hasData ? (
           <TrainingLoadChart data={loadHistory} embedded />
         ) : (
-          <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-xs text-gray-500">
+          <div className="rounded-xl border border-dashed border-border bg-secondary p-6 text-center text-xs text-muted-foreground">
             No load history yet — keep syncing rides to build your fitness trend.
           </div>
         )}
 
-        <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-gray-500">
+        <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-muted-foreground">
           <div>
-            <span className="block text-[10px] uppercase tracking-wider text-gray-400">CTL</span>
-            <span className="text-base font-semibold tabular-nums text-gray-900">
+            <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">
+              CTL
+            </span>
+            <span className="text-base font-semibold tabular-nums text-foreground">
               {ctl.toFixed(0)}
             </span>
           </div>
           <div>
-            <span className="block text-[10px] uppercase tracking-wider text-gray-400">ATL</span>
-            <span className="text-base font-semibold tabular-nums text-gray-900">
+            <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">
+              ATL
+            </span>
+            <span className="text-base font-semibold tabular-nums text-foreground">
               {atl.toFixed(0)}
             </span>
           </div>
         </div>
 
         {confidence === 'low' && (
-          <p className="mt-3 text-xs text-amber-600">
+          <p className="mt-3 text-xs text-warning">
             FTP estimate has low confidence — keep recording rides for better accuracy.
           </p>
         )}
@@ -115,8 +119,8 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
 
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-2 py-1 text-gray-700">
-      <span className="text-[10px] uppercase tracking-wider text-gray-400">{label}</span>
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2 py-1 text-foreground">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
       <span className="font-semibold tabular-nums">{value}</span>
     </span>
   );

@@ -7,19 +7,9 @@ import {
   useTransactions,
 } from '@/features/finance';
 import type { Transaction, TransactionFormData } from '@/features/finance';
-import { PageHeader } from '@/shared/components/ui';
+import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 export function FinancePage() {
   const { transactions, summary, loading, error, createTransaction, deleteTransaction } =
@@ -62,24 +52,13 @@ export function FinancePage() {
 
       {showForm && <TransactionForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
 
-      {deletingTx && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingTx(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete this transaction?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingTx !== null}
+        onOpenChange={(open) => !open && setDeletingTx(null)}
+        title="Delete transaction"
+        description="Are you sure you want to delete this transaction? This action cannot be undone."
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

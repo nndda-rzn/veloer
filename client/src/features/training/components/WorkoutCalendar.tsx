@@ -55,7 +55,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
     const isMissed = workout.status === 'missed';
     return {
       style: {
-        backgroundColor: isDone ? '#16a34a' : isMissed ? '#9ca3af' : color,
+        backgroundColor: isDone ? '#0f6e4e' : isMissed ? '#a8a29e' : color,
         borderColor: 'transparent',
         borderRadius: '4px',
         color: '#fff',
@@ -66,7 +66,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <Calendar
         localizer={localizer}
         events={events}

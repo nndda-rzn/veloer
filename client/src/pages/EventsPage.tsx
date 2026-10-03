@@ -1,19 +1,9 @@
 import { useState } from 'react';
 import { EventList, EventForm, useEvents } from '@/features/events';
 import type { Event, EventFormData } from '@/features/events';
-import { PageHeader } from '@/shared/components/ui';
+import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 export function EventsPage() {
   const { events, loading, error, createEvent, deleteEvent } = useEvents();
@@ -46,24 +36,13 @@ export function EventsPage() {
 
       {showForm && <EventForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
 
-      {deletingEvent && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingEvent(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Event</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete &quot;{deletingEvent.name}&quot;?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingEvent !== null}
+        onOpenChange={(open) => !open && setDeletingEvent(null)}
+        title="Delete event"
+        description={`Are you sure you want to delete “${deletingEvent?.name ?? ''}”? This action cannot be undone.`}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

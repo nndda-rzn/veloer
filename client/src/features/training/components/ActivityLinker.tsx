@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { activityApi } from '@/features/activity';
 import type { Activity } from '@/features/activity';
 import { Button } from '@/components/ui/button';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface ActivityLinkerProps {
   workoutId: string;
@@ -54,7 +55,7 @@ export function ActivityLinker({
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="h-8 flex-1 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        className={`flex-1 ${selectClass}`}
       >
         <option value="">Select activity…</option>
         {activities.map((a) => (
