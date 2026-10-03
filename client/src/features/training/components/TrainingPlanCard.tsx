@@ -43,7 +43,7 @@ export function TrainingPlanCard({
             {PLAN_GOAL_TYPE_LABELS[plan.goal_type]} • FTP {plan.ftp_baseline}W
           </p>
           <p className="text-xs text-muted-foreground">
-            {formatDate(plan.start_date)} — {formatDate(plan.end_date)}
+            {formatDate(plan.start_date)} – {formatDate(plan.end_date)}
           </p>
           {plan.description && (
             <p className="mt-1 text-xs italic text-muted-foreground">{plan.description}</p>

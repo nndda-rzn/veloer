@@ -167,7 +167,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                 min={0}
                 value={targetTss}
                 onChange={(e) => setTargetTss(e.target.value)}
-                placeholder="—"
+                placeholder="–"
               />
             </div>
             <div className="space-y-1.5">
@@ -178,7 +178,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                 min={0}
                 value={targetPower}
                 onChange={(e) => setTargetPower(e.target.value)}
-                placeholder="—"
+                placeholder="–"
               />
             </div>
           </div>
@@ -191,7 +191,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                 type="number"
                 value={targetHr}
                 onChange={(e) => setTargetHr(e.target.value)}
-                placeholder="—"
+                placeholder="–"
               />
             </div>
             <div className="space-y-1.5">
@@ -201,7 +201,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                 type="number"
                 value={cadenceMin}
                 onChange={(e) => setCadenceMin(e.target.value)}
-                placeholder="—"
+                placeholder="–"
               />
             </div>
             <div className="space-y-1.5">
@@ -211,7 +211,7 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
                 type="number"
                 value={cadenceMax}
                 onChange={(e) => setCadenceMax(e.target.value)}
-                placeholder="—"
+                placeholder="–"
               />
             </div>
           </div>

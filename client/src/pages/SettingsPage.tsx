@@ -86,7 +86,7 @@ export function SettingsPage() {
               <p className="text-sm font-medium text-foreground">
                 {profile?.display_name ?? 'Connected'}
               </p>
-              <p className="text-xs text-muted-foreground">Strava ID: {user?.stravaId ?? '—'}</p>
+              <p className="text-xs text-muted-foreground">Strava ID: {user?.stravaId ?? '–'}</p>
             </div>
             <div className="ml-auto">
               <Badge variant="success">Connected</Badge>
@@ -178,7 +178,7 @@ export function SettingsPage() {
                 className={selectClass}
                 disabled={saving}
               >
-                <option value="">— None —</option>
+                <option value="">– None –</option>
                 {bikes.map((bike) => (
                   <option key={bike.id} value={bike.id}>
                     {bike.name}
@@ -236,7 +236,7 @@ export function SettingsPage() {
                     })
                   }
                   disabled={saving}
-                  placeholder="—"
+                  placeholder="–"
                 />
                 <span className="text-sm text-muted-foreground">bpm</span>
               </div>

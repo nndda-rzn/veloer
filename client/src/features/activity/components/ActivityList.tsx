@@ -81,12 +81,12 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
               {formatDuration(activity.moving_time)}
             </TableCell>
             <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground md:table-cell">
-              {activity.avg_speed ? formatSpeed(activity.avg_speed) : '—'}
+              {activity.avg_speed ? formatSpeed(activity.avg_speed) : '–'}
             </TableCell>
             <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground md:table-cell">
               {activity.total_elevation_gain != null
                 ? `${activity.total_elevation_gain.toFixed(0)} m`
-                : '—'}
+                : '–'}
             </TableCell>
           </TableRow>
         ))}

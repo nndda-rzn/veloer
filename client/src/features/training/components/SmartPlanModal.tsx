@@ -71,7 +71,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
         {/* Fitness Analysis Summary */}
         <div className="rounded-xl border border-border bg-secondary p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Your Strava Analysis — {analysis.activity_count}{' '}
+            Your Strava Analysis · {analysis.activity_count}{' '}
             {analysis.activity_count === 1 ? 'activity' : 'activities'} synced
           </h3>
           <div className="grid grid-cols-3 gap-3">
@@ -196,7 +196,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 onChange={(e) => setFtpBaseline(Number(e.target.value))}
               />
               <p className="text-xs text-muted-foreground">
-                Pre-filled from your Strava data — adjust if needed.
+                Pre-filled from your Strava data. Adjust if needed.
               </p>
             </div>
             <div className="space-y-1.5">

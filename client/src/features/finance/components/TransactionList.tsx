@@ -66,7 +66,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
               {formatDate(tx.date)}
             </TableCell>
             <TableCell className="text-sm text-foreground">
-              {tx.description || tx.merchant || '—'}
+              {tx.description || tx.merchant || '–'}
             </TableCell>
             <TableCell>
               <Badge variant="neutral">{categoryLabels[tx.category]}</Badge>

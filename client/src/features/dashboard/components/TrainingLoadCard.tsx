@@ -26,7 +26,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
   const atl = latest?.atl ?? 0;
   const form = formFromLoad(ctl, atl);
 
-  const ftpLabel = fitness?.estimated_ftp ? `${fitness.estimated_ftp}W` : '—';
+  const ftpLabel = fitness?.estimated_ftp ? `${fitness.estimated_ftp}W` : '–';
   const weeklyTss = fitness?.avg_weekly_tss ?? null;
   const confidence = fitness?.ftp_confidence ?? null;
 
@@ -84,7 +84,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
           <TrainingLoadChart data={loadHistory} embedded />
         ) : (
           <div className="rounded-xl border border-dashed border-border bg-secondary p-6 text-center text-xs text-muted-foreground">
-            No load history yet — keep syncing rides to build your fitness trend.
+            No load history yet. Keep syncing rides to build your fitness trend.
           </div>
         )}
 
@@ -109,7 +109,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
 
         {confidence === 'low' && (
           <p className="mt-3 text-xs text-warning">
-            FTP estimate has low confidence — keep recording rides for better accuracy.
+            FTP estimate has low confidence. Keep recording rides for better accuracy.
           </p>
         )}
       </CardContent>

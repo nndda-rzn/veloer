@@ -37,7 +37,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
       <div className="rounded-xl border border-border bg-card p-4">
         <h2 className="text-lg font-semibold text-foreground">{plan.title}</h2>
         <p className="text-sm text-muted-foreground">
-          {plan.start_date} — {plan.end_date} • FTP baseline: {plan.ftp_baseline}W
+          {plan.start_date} – {plan.end_date} • FTP baseline: {plan.ftp_baseline}W
           {summary.ftp_change != null && (
             <span
               className={`ml-2 font-medium ${

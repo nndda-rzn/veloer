@@ -87,7 +87,7 @@ export function BikeHero({
             {displayName ?? 'Welcome back'}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {bikeTypeLabels[selectedBike.type]} —{' '}
+            {bikeTypeLabels[selectedBike.type]} ·{' '}
             <span className="font-medium text-foreground">{selectedBike.name}</span>
           </p>
 

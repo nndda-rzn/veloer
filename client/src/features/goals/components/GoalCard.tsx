@@ -52,7 +52,7 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
           {goal.target_value.toFixed(1)} {goal.unit}
         </p>
         <p className="text-xs text-muted-foreground">
-          {formatDate(goal.start_date)} — {formatDate(goal.end_date)}
+          {formatDate(goal.start_date)} – {formatDate(goal.end_date)}
         </p>
         {goal.description && (
           <p className="mt-1 text-xs italic text-muted-foreground">{goal.description}</p>

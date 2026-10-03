@@ -127,7 +127,7 @@ export interface TemplateInfo {
 export const TEMPLATE_LIST: TemplateInfo[] = [
   {
     key: 'BASE_BUILD_4W',
-    title: 'Base Build — 4 Weeks',
+    title: 'Base Build · 4 Weeks',
     description: 'Progressive Z2 endurance volume. Build aerobic base with 3-4 rides/week.',
     weeks: 4,
     goal_type: 'endurance',
@@ -136,7 +136,7 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'FTP_BUILDER_6W',
-    title: 'FTP Builder — 6 Weeks',
+    title: 'FTP Builder · 6 Weeks',
     description: 'Sweet spot and threshold intervals. Designed to raise FTP progressively.',
     weeks: 6,
     goal_type: 'ftp',
@@ -145,7 +145,7 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'CENTURY_PREP_8W',
-    title: 'Century Prep — 8 Weeks',
+    title: 'Century Prep · 8 Weeks',
     description: 'Build endurance for a 100-160km event. Long rides with progressive overload.',
     weeks: 8,
     goal_type: 'century',
@@ -154,7 +154,7 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'GRAN_FONDO_12W',
-    title: 'Gran Fondo — 12 Weeks',
+    title: 'Gran Fondo · 12 Weeks',
     description: 'Full periodized plan: base → build → peak → taper. Ideal for gran fondo events.',
     weeks: 12,
     goal_type: 'gran_fondo',
