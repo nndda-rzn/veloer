@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useProfile } from '@/features/settings';
+import { useProfile } from '@/features/settings/hooks/useProfile';
 import { useAuthContext } from '@/features/auth/context/AuthContext';
 
 export const navItems: { to: string; label: string; icon: LucideIcon }[] = [

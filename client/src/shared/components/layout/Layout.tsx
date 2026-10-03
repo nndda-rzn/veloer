@@ -4,7 +4,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { SidebarContent, navItems } from '@/components/layout/sidebar';
-import { LastSyncIndicator } from '@/features/activity';
+import { LastSyncIndicator } from '@/features/activity/components/LastSyncIndicator';
 
 function usePageTitle(): string {
   const location = useLocation();

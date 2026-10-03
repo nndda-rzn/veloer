@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/features/auth';
-import { SyncProvider } from '@/features/activity';
+import { AuthProvider } from '@/features/auth/context/AuthContext';
+import { SyncProvider } from '@/features/activity/hooks/useSync';
 import { ToasterProvider } from '@/shared/components/feedback/Toaster';
 
 const queryClient = new QueryClient({
