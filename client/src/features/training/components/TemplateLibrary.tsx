@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Mountain, Zap, Bike, Trophy, ClipboardList, type LucideIcon } from 'lucide-react';
 import type { TemplateKey, TemplateInfo } from '../types/training';
 import { TEMPLATE_LIST } from '../types/training';
 import { Button } from '@/components/ui/button';
@@ -18,19 +19,11 @@ interface TemplateLibraryProps {
   onCancel: () => void;
 }
 
-const goalTypeColors: Record<string, string> = {
-  ftp: 'bg-orange-100 text-orange-700',
-  endurance: 'bg-blue-100 text-blue-700',
-  century: 'bg-green-100 text-green-700',
-  gran_fondo: 'bg-purple-100 text-purple-700',
-  custom: 'bg-gray-100 text-gray-600',
-};
-
-const focusIcons: Record<string, string> = {
-  'Aerobic base': '🏔️',
-  'FTP / Threshold': '⚡',
-  'Long ride endurance': '🚵',
-  'Periodized peak performance': '🏆',
+const focusIcons: Record<string, LucideIcon> = {
+  'Aerobic base': Mountain,
+  'FTP / Threshold': Zap,
+  'Long ride endurance': Bike,
+  'Periodized peak performance': Trophy,
 };
 
 function TemplateCard({
@@ -42,28 +35,28 @@ function TemplateCard({
   selected: boolean;
   onSelect: (key: TemplateKey) => void;
 }) {
+  const Icon = focusIcons[template.focus] ?? ClipboardList;
   return (
     <button
       onClick={() => onSelect(template.key)}
-      className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
-        selected ? 'border-primary bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'
+      aria-pressed={selected}
+      className={`w-full rounded-lg border p-4 text-left transition-colors ${
+        selected ? 'border-primary bg-primary-50' : 'border-border bg-card hover:border-input'
       }`}
     >
       <div className="mb-1 flex items-start justify-between gap-2">
-        <h3 className="text-sm font-semibold text-gray-900">{template.title}</h3>
-        <span className="text-base">{focusIcons[template.focus] ?? '📋'}</span>
+        <h3 className="text-sm font-semibold text-foreground">{template.title}</h3>
+        <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
       </div>
-      <p className="mb-2 text-xs text-gray-500">{template.description}</p>
+      <p className="mb-2 text-xs text-muted-foreground">{template.description}</p>
       <div className="flex flex-wrap gap-1.5">
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${goalTypeColors[template.goal_type]}`}
-        >
-          {template.goal_type}
+        <span className="rounded-md bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700">
+          {template.goal_type.replace(/_/g, ' ')}
         </span>
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+        <span className="rounded-md bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
           {template.weeks} weeks
         </span>
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+        <span className="rounded-md bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
           {template.workouts_per_week}x/week
         </span>
       </div>
@@ -118,7 +111,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
         {/* Config */}
         {selectedTemplate && (
           <div className="space-y-3 rounded-lg border border-primary/20 bg-primary-50 p-4">
-            <h3 className="text-sm font-medium text-gray-700">
+            <h3 className="text-sm font-medium text-foreground">
               Configure: {selectedTemplate.title}
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -142,7 +135,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
                 />
               </div>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               End date: ~{selectedTemplate.weeks} weeks from start • ~
               {selectedTemplate.workouts_per_week * selectedTemplate.weeks} workouts total
             </p>

@@ -11,17 +11,8 @@ import { ActivityLinker } from '@/features/training/components/ActivityLinker';
 import { TrainingLoadChart } from '@/features/training/components/TrainingLoadChart';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
+import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import {
   Dialog,
   DialogContent,
@@ -131,8 +122,8 @@ export function TrainingPlanDetailPage() {
   if (planLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-        <div className="h-96 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-8 w-64 animate-pulse rounded bg-secondary" />
+        <div className="h-96 animate-pulse rounded-xl bg-secondary" />
       </div>
     );
   }
@@ -146,40 +137,38 @@ export function TrainingPlanDetailPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="space-y-3">
         <Link to="/training-plans" className="text-sm text-primary hover:underline">
           &larr; Training Plans
         </Link>
-        <div className="mt-2 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{plan.title}</h1>
-            <p className="text-sm text-gray-500">
-              {plan.start_date} — {plan.end_date} • FTP {plan.ftp_baseline}W
-            </p>
-            <div className="mt-1 flex items-center gap-2 text-xs text-gray-400">
-              <span>
-                {completedCount}/{workouts.length} workouts
-              </span>
-              <div className="h-1.5 w-24 overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-              <span>{progressPct}%</span>
-            </div>
+        <PageHeader
+          title={plan.title}
+          description={`${plan.start_date} — ${plan.end_date} • FTP ${plan.ftp_baseline}W`}
+          action={
+            <>
+              <Button variant="secondary" onClick={() => reschedule()}>
+                Reschedule Missed
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/training-plans/${plan.id}/retrospective`)}
+              >
+                Retrospective
+              </Button>
+            </>
+          }
+        />
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="tabular-nums">
+            {completedCount}/{workouts.length} workouts
+          </span>
+          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-secondary">
+            <div
+              className="h-full rounded-full bg-primary transition-[width]"
+              style={{ width: `${progressPct}%` }}
+            />
           </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => reschedule()}>
-              Reschedule Missed
-            </Button>
-            <Link
-              to={`/training-plans/${plan.id}/retrospective`}
-              className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              Retrospective
-            </Link>
-          </div>
+          <span className="tabular-nums">{progressPct}%</span>
         </div>
       </div>
 
@@ -187,7 +176,7 @@ export function TrainingPlanDetailPage() {
         {/* Calendar — 2/3 width */}
         <div className="lg:col-span-2">
           {workoutsLoading ? (
-            <div className="h-96 animate-pulse rounded-xl bg-gray-100" />
+            <div className="h-96 animate-pulse rounded-xl bg-secondary" />
           ) : (
             <WorkoutCalendar
               workouts={workouts}
@@ -216,13 +205,13 @@ export function TrainingPlanDetailPage() {
             />
           )}
 
-          {recLoading && <div className="h-48 animate-pulse rounded-xl bg-gray-100" />}
+          {recLoading && <div className="h-48 animate-pulse rounded-xl bg-secondary" />}
         </div>
       </div>
 
       {/* Training Load Chart */}
       {loadHistoryLoading ? (
-        <div className="h-56 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-56 animate-pulse rounded-xl bg-secondary" />
       ) : (
         <TrainingLoadChart data={loadHistory} />
       )}
@@ -246,25 +235,13 @@ export function TrainingPlanDetailPage() {
 
       {/* Delete workout confirm */}
       {deletingWorkout && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingWorkout(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Workout</AlertDialogTitle>
-              <AlertDialogDescription>
-                Delete &quot;{deletingWorkout.title}&quot;? This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                variant="danger"
-                onClick={() => void handleDeleteWorkout(deletingWorkout.id)}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => !open && setDeletingWorkout(null)}
+          title="Delete workout"
+          description={`Delete “${deletingWorkout.title}”? This cannot be undone.`}
+          onConfirm={() => handleDeleteWorkout(deletingWorkout.id)}
+        />
       )}
 
       {/* Activity linker */}

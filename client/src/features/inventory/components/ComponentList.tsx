@@ -33,7 +33,7 @@ export function ComponentList({ components, loading, onEdit, onDelete }: Compone
     return (
       <div className="space-y-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-24 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -52,33 +52,25 @@ export function ComponentList({ components, loading, onEdit, onDelete }: Compone
   return (
     <div className="space-y-2">
       {components.map((component) => (
-        <div
-          key={component.id}
-          className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-        >
-          <div className="flex items-start justify-between">
-            <div>
+        <div key={component.id} className="rounded-xl border border-border bg-card p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h4 className="text-sm font-semibold text-gray-900">{component.name}</h4>
+                <h4 className="truncate text-sm font-semibold text-foreground">{component.name}</h4>
                 <Badge variant={statusVariant[component.status]}>
                   {component.status.charAt(0).toUpperCase() + component.status.slice(1)}
                 </Badge>
               </div>
-              <p className="mt-0.5 text-xs text-gray-500">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {categoryLabels[component.category]}
                 {component.brand ? ` • ${component.brand} ${component.model ?? ''}` : ''}
               </p>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex flex-shrink-0 gap-1.5">
               <Button variant="outline" size="sm" onClick={() => onEdit(component)}>
                 Edit
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                onClick={() => onDelete(component)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => onDelete(component)}>
                 Delete
               </Button>
             </div>
@@ -86,18 +78,18 @@ export function ComponentList({ components, loading, onEdit, onDelete }: Compone
 
           <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Installed
               </p>
-              <p className="mt-0.5 text-sm font-medium text-gray-900">
+              <p className="mt-0.5 text-sm font-medium text-foreground">
                 {formatDate(component.install_date)}
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Current KM
               </p>
-              <p className="mt-0.5 text-sm font-medium text-gray-900">
+              <p className="mt-0.5 text-sm font-medium tabular-nums text-foreground">
                 {component.current_km.toFixed(0)} km
               </p>
             </div>

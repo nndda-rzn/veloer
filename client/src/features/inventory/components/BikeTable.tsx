@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Wrench, Bike as BikeIcon } from 'lucide-react';
 import type { Bike, Component } from '../types/inventory';
 import { formatIDR } from '@/shared/lib/utils';
+import { lifespanBarColor } from '../lib/lifespan';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -72,8 +73,8 @@ function BikeThumbnail({ bike }: { bike: Bike }) {
     );
   }
   return (
-    <div className="flex h-9 w-12 shrink-0 items-center justify-center rounded bg-gray-100">
-      <BikeIcon className="h-5 w-5 text-gray-300" aria-hidden="true" />
+    <div className="flex h-9 w-12 shrink-0 items-center justify-center rounded bg-secondary">
+      <BikeIcon className="h-5 w-5 text-stone-300" aria-hidden="true" />
     </div>
   );
 }
@@ -81,14 +82,6 @@ function BikeThumbnail({ bike }: { bike: Bike }) {
 function lifespanPercent(component: Component): number {
   if (!component.expected_lifespan_km || component.expected_lifespan_km === 0) return 0;
   return Math.min(100, (component.current_km / component.expected_lifespan_km) * 100);
-}
-
-function lifespanBarColor(component: Component): string {
-  const pct = lifespanPercent(component);
-  if (pct >= 100) return 'bg-red-500';
-  if (pct >= 90) return 'bg-orange-500';
-  if (pct >= 70) return 'bg-yellow-500';
-  return 'bg-green-500';
 }
 
 export function BikeTable({
@@ -107,7 +100,7 @@ export function BikeTable({
     return (
       <div className="space-y-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-16 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -116,32 +109,32 @@ export function BikeTable({
   const toggle = (id: string) => setExpandedId((cur) => (cur === id ? null : id));
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-100">
-        <thead className="bg-gray-50">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <table className="min-w-full divide-y divide-border">
+        <thead className="bg-secondary">
           <tr>
             <th className="w-8 px-2 py-3"></th>
-            <th className="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Bike
             </th>
-            <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+            <th className="hidden px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground md:table-cell">
               Type
             </th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Current KM
             </th>
-            <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+            <th className="hidden px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground lg:table-cell">
               Purchase
             </th>
-            <th className="hidden px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
+            <th className="hidden px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground sm:table-cell">
               Alerts
             </th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-border">
           {bikes.map((bike) => {
             const expanded = expandedId === bike.id;
             const components = componentsByBike[bike.id] ?? [];
@@ -152,11 +145,11 @@ export function BikeTable({
                 key={bike.id}
                 expanded={expanded}
                 row={
-                  <tr className="transition-colors hover:bg-gray-50">
+                  <tr className="transition-colors hover:bg-secondary">
                     <td className="px-2 py-3">
                       <button
                         onClick={() => toggle(bike.id)}
-                        className="rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
                         aria-label={expanded ? 'Collapse components' : 'Expand components'}
                       >
                         {expanded ? (
@@ -170,10 +163,10 @@ export function BikeTable({
                       <div className="flex items-center gap-3">
                         <BikeThumbnail bike={bike} />
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-gray-900">
+                          <p className="truncate text-sm font-semibold text-foreground">
                             {bike.name}
                           </p>
-                          <p className="truncate text-xs text-gray-500">
+                          <p className="truncate text-xs text-muted-foreground">
                             {bike.brand ?? '—'} {bike.model ?? ''}
                           </p>
                         </div>
@@ -182,19 +175,19 @@ export function BikeTable({
                         </Badge>
                       </div>
                     </td>
-                    <td className="hidden px-4 py-3 text-sm text-gray-500 md:table-cell">
+                    <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">
                       {typeLabels[bike.type]}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-medium text-foreground">
                       {bike.current_km.toFixed(0)} km
                     </td>
-                    <td className="hidden whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 lg:table-cell">
+                    <td className="hidden whitespace-nowrap px-4 py-3 text-right text-sm text-muted-foreground lg:table-cell">
                       {bike.purchase_price != null ? formatIDR(bike.purchase_price) : '—'}
                     </td>
                     <td className="hidden px-4 py-3 text-center sm:table-cell">
                       {alertCount > 0 && (
                         <span
-                          className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700"
+                          className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800"
                           title={`${alertCount} component${alertCount !== 1 ? 's' : ''} need attention`}
                         >
                           <Wrench className="h-3 w-3" aria-hidden="true" />
@@ -207,12 +200,7 @@ export function BikeTable({
                         <Button variant="secondary" size="sm" onClick={() => onEdit(bike)}>
                           Edit
                         </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          className="bg-transparent text-red-600 hover:bg-red-50 focus-visible:ring-red-400"
-                          onClick={() => onDelete(bike)}
-                        >
+                        <Button variant="danger" size="sm" onClick={() => onDelete(bike)}>
                           Delete
                         </Button>
                       </div>
@@ -220,10 +208,10 @@ export function BikeTable({
                   </tr>
                 }
                 detail={
-                  <tr className="bg-gray-50">
+                  <tr className="bg-secondary">
                     <td colSpan={7} className="px-6 py-4">
                       <div className="mb-2 flex items-center justify-between">
-                        <p className="text-sm font-semibold text-gray-700">
+                        <p className="text-sm font-semibold text-foreground">
                           Components ({components.length})
                         </p>
                         <Button size="sm" onClick={() => onAddComponent(bike)}>
@@ -231,59 +219,61 @@ export function BikeTable({
                         </Button>
                       </div>
                       {components.length === 0 ? (
-                        <p className="text-sm text-gray-400">No components for this bike yet.</p>
+                        <p className="text-sm text-muted-foreground">
+                          No components for this bike yet.
+                        </p>
                       ) : (
-                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-                          <table className="min-w-full divide-y divide-gray-100">
-                            <thead className="bg-gray-50">
+                        <div className="overflow-hidden rounded-xl border border-border bg-card">
+                          <table className="min-w-full divide-y divide-border">
+                            <thead className="bg-secondary">
                               <tr>
-                                <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                                   Component
                                 </th>
-                                <th className="hidden px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:table-cell">
+                                <th className="hidden px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground sm:table-cell">
                                   Category
                                 </th>
-                                <th className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                <th className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                                   Current KM
                                 </th>
-                                <th className="hidden px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+                                <th className="hidden px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground md:table-cell">
                                   Lifespan
                                 </th>
-                                <th className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                <th className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                                   Actions
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-border">
                               {components.map((component) => {
                                 const pct = lifespanPercent(component);
                                 return (
-                                  <tr key={component.id} className="hover:bg-gray-50">
+                                  <tr key={component.id} className="hover:bg-secondary">
                                     <td className="px-3 py-2">
-                                      <p className="text-sm font-medium text-gray-900">
+                                      <p className="text-sm font-medium text-foreground">
                                         {component.name}
                                       </p>
-                                      <p className="text-xs text-gray-400">
+                                      <p className="text-xs text-muted-foreground">
                                         {component.brand ?? ''} {component.model ?? ''}
                                       </p>
                                     </td>
                                     <td className="hidden px-3 py-2 sm:table-cell">
-                                      <span className="text-xs text-gray-500">
+                                      <span className="text-xs text-muted-foreground">
                                         {categoryLabels[component.category]}
                                       </span>
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-2 text-right text-sm text-gray-500">
+                                    <td className="whitespace-nowrap px-3 py-2 text-right text-sm text-muted-foreground">
                                       {component.current_km.toFixed(0)} km
                                     </td>
                                     <td className="hidden px-3 py-2 md:table-cell">
                                       <div className="flex items-center gap-2">
-                                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-gray-200">
+                                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
                                           <div
-                                            className={`h-full rounded-full ${lifespanBarColor(component)}`}
+                                            className={`h-full rounded-full ${lifespanBarColor(component.current_km, component.expected_lifespan_km)}`}
                                             style={{ width: `${pct}%` }}
                                           />
                                         </div>
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-muted-foreground">
                                           {component.expected_lifespan_km
                                             ? `${pct.toFixed(0)}%`
                                             : 'N/A'}
@@ -305,7 +295,6 @@ export function BikeTable({
                                         <Button
                                           variant="ghost"
                                           size="sm"
-                                          className="text-red-500 hover:bg-red-50 hover:text-red-700"
                                           onClick={() => onDeleteComponent(component)}
                                         >
                                           Delete

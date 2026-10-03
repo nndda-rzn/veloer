@@ -12,6 +12,7 @@ import {
 import { settingsApi } from '@/features/settings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert } from '@/components/ui/alert';
+import { Card, CardContent } from '@/components/ui/card';
 import type { UserProfile } from '@/features/settings';
 
 export function ActivityDetailPage() {
@@ -30,9 +31,9 @@ export function ActivityDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-        <div className="h-32 animate-pulse rounded-xl bg-gray-100" />
-        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-8 w-48 animate-pulse rounded bg-secondary" />
+        <div className="h-32 animate-pulse rounded-xl bg-secondary" />
+        <div className="h-64 animate-pulse rounded-xl bg-secondary" />
       </div>
     );
   }
@@ -54,9 +55,11 @@ export function ActivityDetailPage() {
         <Link to="/activities" className="text-sm text-primary hover:text-primary-dark">
           &larr; Back to Activities
         </Link>
-        <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">Activity not found.</p>
-        </div>
+        <Card>
+          <CardContent className="py-8 text-center">
+            <p className="text-sm text-muted-foreground">Activity not found.</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -80,33 +83,35 @@ export function ActivityDetailPage() {
 
         <TabsContent value="overview" className="space-y-6">
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-700">Route Map</h4>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">Route Map</h4>
             <ActivityMap encodedPolyline={activity.polyline} />
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <h4 className="mb-3 text-sm font-semibold text-gray-700">Bike Assignment</h4>
-            <ActivityBikeLinker
-              activityId={activity.id}
-              currentBikeId={activity.bike_id}
-              onLinked={refetch}
-            />
-          </div>
+          <Card>
+            <CardContent>
+              <h4 className="mb-3 text-sm font-semibold text-foreground">Bike Assignment</h4>
+              <ActivityBikeLinker
+                activityId={activity.id}
+                currentBikeId={activity.bike_id}
+                onLinked={refetch}
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="training" className="space-y-6">
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-700">Training Metrics</h4>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">Training Metrics</h4>
             <TrainingLoadSummary activity={activity} ftp={profile?.ftp ?? null} />
           </div>
 
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-700">Zone Distribution</h4>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">Zone Distribution</h4>
             <ZoneChart activityId={activity.id} />
           </div>
 
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-gray-700">Lap Breakdown</h4>
+            <h4 className="mb-2 text-sm font-semibold text-foreground">Lap Breakdown</h4>
             <LapBreakdown activityId={activity.id} />
           </div>
         </TabsContent>

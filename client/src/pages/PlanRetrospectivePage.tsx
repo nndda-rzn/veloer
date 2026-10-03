@@ -22,9 +22,9 @@ export function PlanRetrospectivePage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 animate-pulse rounded-xl bg-gray-200" />
-        <div className="h-32 animate-pulse rounded-xl bg-gray-100" />
-        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-8 w-48 animate-pulse rounded-xl bg-secondary" />
+        <div className="h-32 animate-pulse rounded-xl bg-secondary" />
+        <div className="h-64 animate-pulse rounded-xl bg-secondary" />
       </div>
     );
   }
@@ -35,7 +35,7 @@ export function PlanRetrospectivePage() {
         <Link to="/training-plans" className="text-sm text-primary hover:underline">
           &larr; Training Plans
         </Link>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       </div>
@@ -50,7 +50,7 @@ export function PlanRetrospectivePage() {
         <Link to={`/training-plans/${id}`} className="text-sm text-primary hover:underline">
           &larr; Back to Plan
         </Link>
-        <h1 className="mt-2 text-xl font-bold text-gray-900">Plan Retrospective</h1>
+        <h1 className="mt-2 text-xl font-semibold text-foreground">Plan Retrospective</h1>
       </div>
       <PlanRetrospectiveView data={data} />
     </div>

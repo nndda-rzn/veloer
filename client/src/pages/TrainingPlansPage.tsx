@@ -9,19 +9,9 @@ import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
 import { settingsApi } from '@/features/settings';
 import { useEffect, useRef } from 'react';
-import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { ClipboardList, Sparkles } from 'lucide-react';
 
 export function TrainingPlansPage() {
@@ -115,7 +105,7 @@ export function TrainingPlansPage() {
               loading={analysisLoading}
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
-              {analysisLoading ? 'Analyzing...' : 'Smart Plan'}
+              {analysisLoading ? 'Analyzing…' : 'Smart Plan'}
             </Button>
             <Button variant="outline" onClick={() => setShowTemplates(true)}>
               From Template
@@ -130,13 +120,13 @@ export function TrainingPlansPage() {
       {loading && (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-secondary" />
           ))}
         </div>
       )}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       )}
@@ -193,22 +183,13 @@ export function TrainingPlansPage() {
       )}
 
       {deletingPlan && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingPlan(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Plan</AlertDialogTitle>
-              <AlertDialogDescription>
-                Delete &quot;{deletingPlan.title}&quot;? This will remove all workouts in this plan.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => !open && setDeletingPlan(null)}
+          title="Delete plan"
+          description={`Delete “${deletingPlan.title}”? This will remove all workouts in this plan.`}
+          onConfirm={confirmDelete}
+        />
       )}
     </div>
   );

@@ -44,13 +44,13 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
   }, [activityId]);
 
   if (loading) {
-    return <div className="h-48 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-48 animate-pulse rounded-xl bg-secondary" />;
   }
 
   if (error || zones.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-        <p className="text-sm text-gray-500">Zone data not available.</p>
+      <div className="rounded-xl border border-border bg-card p-4 text-center">
+        <p className="text-sm text-muted-foreground">Zone data not available.</p>
       </div>
     );
   }
@@ -63,21 +63,24 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
     }));
 
     return (
-      <div key={index} className="rounded-xl border border-gray-200 bg-white p-4">
-        <h4 className="mb-2 text-sm font-semibold capitalize text-gray-700">
+      <div key={index} className="rounded-xl border border-border bg-card p-4">
+        <h4 className="mb-2 text-sm font-semibold capitalize text-foreground">
           {zone.sensor_type === 'heartrate' ? 'Heart Rate Zones' : 'Power Zones'}
         </h4>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e7e5e4" />
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 10, fill: '#78716c' }}
               angle={-20}
               textAnchor="end"
               height={50}
             />
-            <YAxis tickFormatter={(v) => formatDuration(v)} tick={{ fontSize: 10 }} />
+            <YAxis
+              tickFormatter={(v) => formatDuration(v)}
+              tick={{ fontSize: 10, fill: '#78716c' }}
+            />
             <Tooltip formatter={(v) => formatDuration(Number(v))} />
             <Bar dataKey="time" radius={[4, 4, 0, 0]}>
               {data.map((_, i) => (

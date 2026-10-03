@@ -21,63 +21,67 @@ export function LapBreakdown({ activityId }: LapBreakdownProps) {
   }, [activityId]);
 
   if (loading) {
-    return <div className="h-32 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-32 animate-pulse rounded-xl bg-secondary" />;
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-        <p className="text-sm text-gray-500">Lap data not available for this activity.</p>
+      <div className="rounded-xl border border-border bg-card p-4 text-center">
+        <p className="text-sm text-muted-foreground">Lap data not available for this activity.</p>
       </div>
     );
   }
 
   if (laps.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-        <p className="text-sm text-gray-500">No lap data.</p>
+      <div className="rounded-xl border border-border bg-card p-4 text-center">
+        <p className="text-sm text-muted-foreground">No lap data.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <table className="min-w-full divide-y divide-border">
+        <thead className="bg-secondary">
           <tr>
-            <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">#</th>
-            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-gray-500">
+            <th className="px-3 py-2 text-left text-xs font-medium uppercase text-muted-foreground">
+              #
+            </th>
+            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-muted-foreground">
               Dist
             </th>
-            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-gray-500">
+            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-muted-foreground">
               Time
             </th>
-            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-gray-500">HR</th>
-            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-gray-500">
+            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-muted-foreground">
+              HR
+            </th>
+            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-muted-foreground">
               Cad
             </th>
-            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-gray-500">
+            <th className="px-3 py-2 text-right text-xs font-medium uppercase text-muted-foreground">
               Power
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-border">
           {laps.map((lap) => (
-            <tr key={lap.id} className="hover:bg-gray-50">
-              <td className="px-3 py-2 text-sm text-gray-500">{lap.lap_index + 1}</td>
-              <td className="px-3 py-2 text-right text-sm text-gray-900">
+            <tr key={lap.id} className="hover:bg-secondary">
+              <td className="px-3 py-2 text-sm text-muted-foreground">{lap.lap_index + 1}</td>
+              <td className="px-3 py-2 text-right text-sm text-foreground">
                 {formatDistance(lap.distance)}
               </td>
-              <td className="px-3 py-2 text-right text-sm text-gray-500">
+              <td className="px-3 py-2 text-right text-sm text-muted-foreground">
                 {formatDuration(lap.moving_time)}
               </td>
-              <td className="px-3 py-2 text-right text-sm text-gray-500">
+              <td className="px-3 py-2 text-right text-sm text-muted-foreground">
                 {lap.average_heartrate ? `${lap.average_heartrate.toFixed(0)}` : '-'}
               </td>
-              <td className="px-3 py-2 text-right text-sm text-gray-500">
+              <td className="px-3 py-2 text-right text-sm text-muted-foreground">
                 {lap.average_cadence ? `${lap.average_cadence.toFixed(0)}` : '-'}
               </td>
-              <td className="px-3 py-2 text-right text-sm text-gray-500">
+              <td className="px-3 py-2 text-right text-sm text-muted-foreground">
                 {lap.average_watts ? `${lap.average_watts.toFixed(0)}W` : '-'}
               </td>
             </tr>

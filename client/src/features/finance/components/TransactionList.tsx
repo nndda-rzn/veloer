@@ -32,7 +32,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
     return (
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-12 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-12 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -62,30 +62,25 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
       <TableBody>
         {transactions.map((tx) => (
           <TableRow key={tx.id}>
-            <TableCell className="whitespace-nowrap text-sm text-gray-500">
+            <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
               {formatDate(tx.date)}
             </TableCell>
-            <TableCell className="text-sm text-gray-900">
+            <TableCell className="text-sm text-foreground">
               {tx.description || tx.merchant || '—'}
             </TableCell>
             <TableCell>
-              <Badge>{categoryLabels[tx.category]}</Badge>
+              <Badge variant="neutral">{categoryLabels[tx.category]}</Badge>
             </TableCell>
             <TableCell
               className={`whitespace-nowrap text-right text-sm font-medium tabular-nums ${
-                tx.type === 'income' ? 'text-green-600' : 'text-red-600'
+                tx.type === 'income' ? 'text-success' : 'text-danger'
               }`}
             >
               {tx.type === 'income' ? '+' : '-'}
               {formatIDR(tx.amount)}
             </TableCell>
             <TableCell className="text-right">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDelete(tx)}
-                className="text-red-500 hover:bg-red-50 hover:text-red-700"
-              >
+              <Button variant="ghost" size="sm" onClick={() => onDelete(tx)}>
                 Delete
               </Button>
             </TableCell>

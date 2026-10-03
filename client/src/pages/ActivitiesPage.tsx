@@ -9,6 +9,7 @@ import {
 import { PageHeader } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
+import { Card, CardContent } from '@/components/ui/card';
 import { RefreshCw } from 'lucide-react';
 
 export function ActivitiesPage() {
@@ -30,7 +31,7 @@ export function ActivitiesPage() {
               className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
               aria-hidden="true"
             />
-            {isSyncing ? 'Syncing...' : 'Sync Now'}
+            {isSyncing ? 'Syncing…' : 'Sync Now'}
           </Button>
         }
       />
@@ -56,9 +57,11 @@ export function ActivitiesPage() {
 
       <ActivityStatsBar stats={stats} loading={loading} />
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
-        <ActivityFilters filters={filters} onChange={setFilters} />
-      </div>
+      <Card>
+        <CardContent>
+          <ActivityFilters filters={filters} onChange={setFilters} />
+        </CardContent>
+      </Card>
 
       <ActivityList activities={activities} loading={loading} />
     </div>

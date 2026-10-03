@@ -29,7 +29,7 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
     return (
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-14 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-14 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -60,30 +60,30 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
       <TableBody>
         {activities.map((activity) => (
           <TableRow key={activity.id}>
-            <TableCell className="whitespace-nowrap text-xs text-gray-400">
+            <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
               {formatDate(activity.start_date)}
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
                 <Link
                   to={`/activities/${activity.id}`}
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
+                  className="max-w-[24ch] truncate text-sm font-medium text-foreground hover:text-primary"
                 >
                   {activity.name}
                 </Link>
                 <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
               </div>
             </TableCell>
-            <TableCell className="whitespace-nowrap text-right text-sm font-semibold tabular-nums text-gray-900">
+            <TableCell className="whitespace-nowrap text-right text-sm font-semibold tabular-nums text-foreground">
               {formatDistance(activity.distance)}
             </TableCell>
-            <TableCell className="whitespace-nowrap text-right text-sm tabular-nums text-gray-500">
+            <TableCell className="whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground">
               {formatDuration(activity.moving_time)}
             </TableCell>
-            <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-gray-500 md:table-cell">
+            <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground md:table-cell">
               {activity.avg_speed ? formatSpeed(activity.avg_speed) : '—'}
             </TableCell>
-            <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-gray-500 md:table-cell">
+            <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground md:table-cell">
               {activity.total_elevation_gain != null
                 ? `${activity.total_elevation_gain.toFixed(0)} m`
                 : '—'}

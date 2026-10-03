@@ -74,8 +74,6 @@ export function DashboardPage() {
           label="Distance (7d)"
           value={current ? formatDistance(current.totalDistance) : '—'}
           icon={<Route className="h-5 w-5" aria-hidden="true" />}
-          iconBg="bg-blue-50"
-          iconColor="text-blue-500"
           loading={statsLoading}
           trend={
             current
@@ -91,8 +89,6 @@ export function DashboardPage() {
           label="Rides (7d)"
           value={current ? String(current.count) : '—'}
           icon={<Activity className="h-5 w-5" aria-hidden="true" />}
-          iconBg="bg-primary-50"
-          iconColor="text-primary"
           loading={statsLoading}
           trend={
             current
@@ -108,8 +104,6 @@ export function DashboardPage() {
           label="Elevation (7d)"
           value={current ? `${current.totalElevationGain.toFixed(0)} m` : '—'}
           icon={<Mountain className="h-5 w-5" aria-hidden="true" />}
-          iconBg="bg-orange-50"
-          iconColor="text-orange-500"
           loading={statsLoading}
           trend={
             current
@@ -125,8 +119,6 @@ export function DashboardPage() {
           label="Active Bikes"
           value={String(activeBikes)}
           icon={<Bike className="h-5 w-5" aria-hidden="true" />}
-          iconBg="bg-green-50"
-          iconColor="text-green-600"
           loading={bikesLoading}
           hint={bikesLoading ? undefined : `${bikes.length} total • ${alertBikes} need attention`}
         />
@@ -134,8 +126,6 @@ export function DashboardPage() {
           label="Monthly Spend"
           value={formatIDR(monthlySpent)}
           icon={<Wallet className="h-5 w-5" aria-hidden="true" />}
-          iconBg="bg-amber-50"
-          iconColor="text-amber-600"
           loading={financeLoading}
           progress={{
             spent: monthlySpent,

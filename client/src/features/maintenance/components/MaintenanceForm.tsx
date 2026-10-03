@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface MaintenanceFormProps {
   bikeId: string;
@@ -20,9 +21,6 @@ const logTypes: { value: MaintenanceLogFormData['type']; label: string }[] = [
   { value: 'cleaning', label: 'Cleaning' },
   { value: 'tuning', label: 'Tuning' },
 ];
-
-const selectClass =
-  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: MaintenanceFormProps) {
   const [formData, setFormData] = useState<MaintenanceLogFormData>({

@@ -11,7 +11,7 @@ interface MaintenanceAlertsProps {
 
 export function MaintenanceAlerts({ dueSchedules, loading }: MaintenanceAlertsProps) {
   if (loading) {
-    return <div className="h-16 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-16 animate-pulse rounded-xl bg-secondary" />;
   }
 
   if (dueSchedules.length === 0) {

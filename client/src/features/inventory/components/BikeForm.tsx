@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { selectClass } from '@/shared/lib/form-styles';
 import type { Bike, BikeFormData } from '../types/inventory';
 
 interface BikeFormProps {
@@ -22,9 +23,6 @@ const bikeTypes: { value: Bike['type']; label: string }[] = [
   { value: 'folding', label: 'Folding' },
   { value: 'other', label: 'Other' },
 ];
-
-const selectClass =
-  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
 
 export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
   const [formData, setFormData] = useState<BikeFormData>({
@@ -119,7 +117,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
           <div className="space-y-1.5">
             <Label>Bike Photo</Label>
             {displayImage ? (
-              <div className="relative overflow-hidden rounded-lg border border-gray-200">
+              <div className="relative overflow-hidden rounded-lg border border-border">
                 <img
                   src={displayImage}
                   alt={formData.name || 'Bike'}
@@ -147,16 +145,16 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 </label>
               </div>
             ) : (
-              <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 text-center hover:border-primary hover:bg-primary-50">
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-input bg-secondary py-6 text-center hover:border-primary hover:bg-primary-50">
                 {uploading ? (
                   <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
                 ) : (
-                  <ImagePlus className="h-6 w-6 text-gray-400" aria-hidden="true" />
+                  <ImagePlus className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
                 )}
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   {uploading ? 'Uploading…' : bike ? 'Upload a photo' : 'Add photo after saving'}
                 </span>
-                <span className="text-xs text-gray-400">JPG, PNG or WebP — max 5 MB</span>
+                <span className="text-xs text-muted-foreground">JPG, PNG or WebP — max 5 MB</span>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -167,7 +165,7 @@ export function BikeForm({ bike, onSubmit, onCancel }: BikeFormProps) {
                 />
               </label>
             )}
-            {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
+            {uploadError && <p className="text-xs text-danger">{uploadError}</p>}
           </div>
 
           <div className="space-y-1.5">

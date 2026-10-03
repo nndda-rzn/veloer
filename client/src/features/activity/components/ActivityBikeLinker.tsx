@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '@/shared/lib/api-client';
 import { activityApi } from '../api/activity.api';
 import { Button } from '@/components/ui/button';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface Bike {
   id: string;
@@ -49,21 +50,24 @@ export function ActivityBikeLinker({
   };
 
   if (loading) {
-    return <div className="h-12 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-12 animate-pulse rounded-xl bg-secondary" />;
   }
 
   return (
     <div className="space-y-3">
       <div className="flex items-end gap-3">
         <div className="flex-1">
-          <label htmlFor="bikeSelect" className="mb-1 block text-xs font-medium text-gray-500">
+          <label
+            htmlFor="bikeSelect"
+            className="mb-1 block text-xs font-medium text-muted-foreground"
+          >
             Assign to Bike
           </label>
           <select
             id="bikeSelect"
             value={selectedBike}
             onChange={(e) => setSelectedBike(e.target.value)}
-            className="flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className={selectClass}
           >
             <option value="">— No bike —</option>
             {bikes.map((bike) => (
@@ -82,7 +86,7 @@ export function ActivityBikeLinker({
         </Button>
       </div>
       {bikes.length === 0 && (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-muted-foreground">
           No bikes in your inventory yet. Add a bike first to link activities.
         </p>
       )}

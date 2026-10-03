@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/shared/components/ui';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, MapPin } from 'lucide-react';
 
 interface EventListProps {
   events: Event[];
@@ -37,7 +37,7 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-secondary" />
         ))}
       </div>
     );
@@ -58,16 +58,21 @@ export function EventList({ events, loading, onDelete }: EventListProps) {
       {events.map((event) => (
         <Card key={event.id}>
           <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-gray-900">{event.name}</h4>
+                <h4 className="truncate font-semibold text-foreground">{event.name}</h4>
                 <Badge variant={statusVariants[event.status]}>{event.status}</Badge>
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {typeLabels[event.type]} • {formatDate(event.date)}
               </p>
-              {event.location && <p className="text-xs text-gray-400">📍 {event.location}</p>}
-              <div className="mt-1 flex flex-wrap gap-4 text-xs text-gray-500">
+              {event.location && (
+                <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="h-3 w-3" aria-hidden="true" />
+                  {event.location}
+                </p>
+              )}
+              <div className="mt-1 flex flex-wrap gap-4 text-xs text-muted-foreground">
                 {event.distance != null && (
                   <span className="tabular-nums">{event.distance} km</span>
                 )}

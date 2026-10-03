@@ -2,19 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { BikeTable, BikeForm, ComponentForm, useBikes } from '@/features/inventory';
 import { componentApi } from '@/features/inventory/api/component.api';
 import type { Bike, BikeFormData, Component, ComponentFormData } from '@/features/inventory';
-import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Plus } from 'lucide-react';
 
 export function InventoryPage() {
@@ -163,55 +153,28 @@ export function InventoryPage() {
       )}
 
       {/* Delete Bike Confirmation */}
-      {deletingBike && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingBike(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Bike</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete &quot;{deletingBike.name}&quot;? This action cannot
-                be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                variant="danger"
-                onClick={async () => {
-                  await deleteBike(deletingBike.id);
-                  setDeletingBike(null);
-                  refetchBikes();
-                }}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingBike !== null}
+        onOpenChange={(open) => !open && setDeletingBike(null)}
+        title="Delete bike"
+        description={`Are you sure you want to delete “${deletingBike?.name ?? ''}”? This action cannot be undone.`}
+        onConfirm={async () => {
+          if (deletingBike) {
+            await deleteBike(deletingBike.id);
+            setDeletingBike(null);
+            refetchBikes();
+          }
+        }}
+      />
 
       {/* Delete Component Confirmation */}
-      {deletingComponent && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingComponent(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Component</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete &quot;{deletingComponent.name}&quot;?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                variant="danger"
-                onClick={() => void handleDeleteComponent(deletingComponent)}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ConfirmDialog
+        open={deletingComponent !== null}
+        onOpenChange={(open) => !open && setDeletingComponent(null)}
+        title="Delete component"
+        description={`Are you sure you want to delete “${deletingComponent?.name ?? ''}”? This action cannot be undone.`}
+        onConfirm={() => (deletingComponent ? handleDeleteComponent(deletingComponent) : undefined)}
+      />
     </div>
   );
 }

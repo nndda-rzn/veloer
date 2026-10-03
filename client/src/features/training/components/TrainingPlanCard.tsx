@@ -30,23 +30,23 @@ export function TrainingPlanCard({
 
   return (
     <Card
-      className="cursor-pointer transition-shadow hover:shadow-md"
+      className="cursor-pointer transition-colors hover:border-input"
       onClick={() => onClick(plan)}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900">{plan.title}</h3>
+            <h3 className="font-semibold text-foreground">{plan.title}</h3>
             <Badge variant={statusVariants[plan.status]}>{plan.status}</Badge>
           </div>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-muted-foreground">
             {PLAN_GOAL_TYPE_LABELS[plan.goal_type]} • FTP {plan.ftp_baseline}W
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             {formatDate(plan.start_date)} — {formatDate(plan.end_date)}
           </p>
           {plan.description && (
-            <p className="mt-1 text-xs italic text-gray-400">{plan.description}</p>
+            <p className="mt-1 text-xs italic text-muted-foreground">{plan.description}</p>
           )}
         </div>
         <Button
@@ -63,15 +63,15 @@ export function TrainingPlanCard({
 
       {/* Progress bar */}
       <div className="mt-3">
-        <div className="mb-1 flex justify-between text-xs text-gray-500">
+        <div className="mb-1 flex justify-between text-xs text-muted-foreground">
           <span>
             {completedCount}/{workoutCount} workouts
           </span>
           <span>{progressPct}%</span>
         </div>
-        <div className="h-1.5 w-full rounded-full bg-gray-100">
+        <div className="h-1.5 w-full rounded-full bg-secondary">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all"
+            className="h-1.5 rounded-full bg-primary transition-[width]"
             style={{ width: `${progressPct}%` }}
           />
         </div>

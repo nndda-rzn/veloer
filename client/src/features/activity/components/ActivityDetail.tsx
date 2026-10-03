@@ -41,20 +41,22 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
     <div className="space-y-4">
       <div>
         <div className="flex items-center gap-3">
-          <h3 className="text-xl font-bold text-gray-900">{activity.name}</h3>
+          <h3 className="text-xl font-semibold text-foreground">{activity.name}</h3>
           <Badge>{activity.type}</Badge>
         </div>
-        <p className="mt-1 text-sm text-gray-500">{formatDateTime(activity.start_date)}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{formatDateTime(activity.start_date)}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {items.map((item) => (
           <Card key={item.label} size="sm">
             <CardContent>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 {item.label}
               </p>
-              <p className="mt-1 text-lg font-bold tabular-nums text-gray-900">{item.value}</p>
+              <p className="mt-1 text-lg font-semibold tabular-nums text-foreground">
+                {item.value}
+              </p>
             </CardContent>
           </Card>
         ))}

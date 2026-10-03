@@ -150,7 +150,7 @@ function ToastViewport({
 }
 
 const LEVEL_CLASSES: Record<ToastLevel, string> = {
-  success: 'border-green-200 bg-green-50 text-green-800',
+  success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   error: 'border-red-200 bg-red-50 text-red-800',
   warning: 'border-amber-200 bg-amber-50 text-amber-800',
   info: 'border-blue-200 bg-blue-50 text-blue-800',
@@ -161,7 +161,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastEntry; onDismiss: (id: st
     <div
       role={toast.level === 'error' ? 'alert' : 'status'}
       aria-live={toast.level === 'error' ? 'assertive' : 'polite'}
-      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border px-4 py-3 shadow-lg ring-1 ring-black/5 backdrop-blur transition-all animate-in fade-in-0 slide-in-from-top-2 sm:slide-in-from-right-2 ${LEVEL_CLASSES[toast.level]}`}
+      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border px-4 py-3 shadow-lg ring-1 ring-black/5 backdrop-blur transition-[opacity,transform] animate-in fade-in-0 slide-in-from-top-2 sm:slide-in-from-right-2 ${LEVEL_CLASSES[toast.level]}`}
     >
       <div className="flex-1 space-y-0.5 text-sm">
         {toast.title && <p className="font-semibold">{toast.title}</p>}
