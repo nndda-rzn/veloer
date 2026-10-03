@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Bike,
@@ -51,6 +51,7 @@ function getInitials(name: string): string {
 export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { profile } = useProfile();
   const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
 
   const displayName = profile?.display_name ?? 'Veloer Rider';
   const email = user?.email ?? '';
@@ -63,10 +64,10 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5">
+      <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
         <Link to="/" className="flex items-center gap-2.5" onClick={onNavigate}>
-          <img src="/logo.png" alt="Veloer" className="h-8 w-auto" />
-          <span className="text-lg font-bold text-gray-900">Veloer</span>
+          <img src="/logo.png" alt="" width={32} height={32} className="h-8 w-8 object-contain" />
+          <span className="font-display text-xl tracking-tight text-foreground">Veloer</span>
         </Link>
       </div>
 
@@ -82,14 +83,13 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   end={item.to === '/'}
                   onClick={onNavigate}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                    `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       isActive
-                        ? 'bg-primary-50 font-semibold text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-sidebar-accent font-semibold text-sidebar-accent-foreground'
+                        : 'text-sidebar-foreground hover:bg-secondary hover:text-foreground'
                     }`
                   }
                 >
-                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" aria-hidden="true" />
                   <Icon className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
                   {item.label}
                 </NavLink>
@@ -100,13 +100,13 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Footer — profile */}
-      <div className="border-t border-gray-100 px-3 py-3">
+      <div className="border-t border-border px-3 py-3">
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 px-2 py-2 text-left hover:bg-gray-50"
+                className="h-auto w-full justify-start gap-3 px-2 py-2 text-left"
               />
             }
           >
@@ -117,10 +117,10 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               </AvatarFallback>
             </Avatar>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium text-gray-900">
+              <span className="block truncate text-sm font-medium text-foreground">
                 {displayName}
               </span>
-              <span className="block truncate text-xs text-gray-400">{email}</span>
+              <span className="block truncate text-xs text-muted-foreground">{email}</span>
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="min-w-52">
@@ -128,7 +128,12 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               <DropdownMenuLabel>Account</DropdownMenuLabel>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => (window.location.href = '/settings')}>
+            <DropdownMenuItem
+              onSelect={() => {
+                onNavigate?.();
+                navigate('/settings');
+              }}
+            >
               <User aria-hidden="true" />
               Profile &amp; Settings
             </DropdownMenuItem>

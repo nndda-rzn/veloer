@@ -20,8 +20,15 @@ export function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <aside className="hidden w-64 flex-shrink-0 border-r border-gray-100 bg-white md:block">
+    <div className="flex h-dvh overflow-hidden">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
+
+      <aside className="hidden w-64 flex-shrink-0 border-r border-border bg-card md:block">
         <SidebarContent />
       </aside>
 
@@ -33,8 +40,8 @@ export function Layout() {
       </Sheet>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 flex-shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
-          <div className="flex items-center gap-3">
+        <header className="flex h-16 flex-shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-4 md:px-6">
+          <div className="flex min-w-0 items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
@@ -44,20 +51,22 @@ export function Layout() {
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
             </Button>
-            <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
-              <Link to="/" className="font-medium text-gray-400 hover:text-primary">
+            <nav aria-label="Breadcrumb" className="min-w-0 text-sm text-muted-foreground">
+              <Link to="/" className="font-medium text-muted-foreground hover:text-primary">
                 Veloer
               </Link>
-              <span aria-hidden="true" className="mx-1.5">
+              <span aria-hidden="true" className="mx-1.5 text-stone-300">
                 /
               </span>
-              <span className="font-semibold text-gray-700">{pageTitle}</span>
+              <span className="font-medium text-foreground">{pageTitle}</span>
             </nav>
           </div>
           <LastSyncIndicator />
         </header>
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
-          <Outlet />
+        <main id="main-content" className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
+          <div className="mx-auto w-full max-w-7xl">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
