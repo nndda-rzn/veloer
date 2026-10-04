@@ -41,12 +41,12 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
       <Card>
         <CardContent>
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">Training Load</h3>
+            <h3 className="text-base font-semibold text-foreground">Training Load</h3>
           </div>
           <div className="mt-6 flex flex-col items-center gap-2 rounded-lg border border-dashed border-border bg-secondary px-6 py-10 text-center">
             <Zap className="h-6 w-6 text-stone-300" aria-hidden="true" />
             <p className="text-sm font-medium text-foreground">No training load yet</p>
-            <p className="max-w-sm text-xs text-muted-foreground">
+            <p className="max-w-sm text-sm text-muted-foreground">
               Sync rides with power meter data to track fitness (CTL) and fatigue (ATL) over time.
             </p>
           </div>
@@ -63,7 +63,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
       <CardContent>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-semibold text-foreground">Training Load</h3>
+            <h3 className="text-base font-semibold text-foreground">Training Load</h3>
             <span
               className={cn(
                 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',

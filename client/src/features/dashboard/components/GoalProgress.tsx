@@ -33,8 +33,8 @@ export function GoalProgress({ goals, loading }: GoalProgressProps) {
       <CardContent>
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Goals in Motion</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">Progress and pace to deadline</p>
+            <h3 className="text-base font-semibold text-foreground">Goals in Motion</h3>
+            <p className="mt-0.5 text-sm text-muted-foreground">Progress and pace to deadline</p>
           </div>
           <Link
             to="/goals"

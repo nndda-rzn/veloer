@@ -46,7 +46,7 @@ export function TrainingPlanCard({
             {formatDate(plan.start_date)} – {formatDate(plan.end_date)}
           </p>
           {plan.description && (
-            <p className="mt-1 text-xs italic text-muted-foreground">{plan.description}</p>
+            <p className="mt-1 text-sm italic text-muted-foreground">{plan.description}</p>
           )}
         </div>
         <Button

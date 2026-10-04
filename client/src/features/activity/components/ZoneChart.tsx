@@ -64,7 +64,7 @@ export function ZoneChart({ activityId }: ZoneChartProps) {
 
     return (
       <div key={index} className="rounded-xl border border-border bg-card p-4">
-        <h4 className="mb-2 text-sm font-semibold capitalize text-foreground">
+        <h4 className="mb-2 text-base font-semibold capitalize text-foreground">
           {zone.sensor_type === 'heartrate' ? 'Heart Rate Zones' : 'Power Zones'}
         </h4>
         <ResponsiveContainer width="100%" height={200}>

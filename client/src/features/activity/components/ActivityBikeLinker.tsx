@@ -86,7 +86,7 @@ export function ActivityBikeLinker({
         </Button>
       </div>
       {bikes.length === 0 && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           No bikes in your inventory yet. Add a bike first to link activities.
         </p>
       )}

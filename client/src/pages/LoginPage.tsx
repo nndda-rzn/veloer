@@ -41,7 +41,7 @@ export function LoginPage() {
               {loading ? 'Connecting to Strava…' : 'Continue with Strava'}
             </Button>
 
-            <p className="text-center text-xs text-muted-foreground">
+            <p className="text-center text-sm text-muted-foreground">
               Sign in with your Strava account to sync your cycling activities
             </p>
           </div>
