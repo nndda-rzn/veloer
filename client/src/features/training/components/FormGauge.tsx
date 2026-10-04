@@ -52,15 +52,15 @@ export function FormGauge({ tsb, ctl, atl }: FormGaugeProps) {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2 text-center text-xs">
         <div className="rounded-md bg-secondary p-1.5">
-          <div className="font-semibold tabular-nums text-foreground">{ctl}</div>
+          <div className="font-mono font-semibold tabular-nums text-foreground">{ctl}</div>
           <div className="text-muted-foreground">Fitness</div>
         </div>
         <div className="rounded-md bg-secondary p-1.5">
-          <div className="font-semibold tabular-nums text-foreground">{atl}</div>
+          <div className="font-mono font-semibold tabular-nums text-foreground">{atl}</div>
           <div className="text-muted-foreground">Fatigue</div>
         </div>
         <div className="rounded-md bg-secondary p-1.5">
-          <div className="font-semibold tabular-nums text-foreground">
+          <div className="font-mono font-semibold tabular-nums text-foreground">
             {tsb > 0 ? '+' : ''}
             {tsb}
           </div>

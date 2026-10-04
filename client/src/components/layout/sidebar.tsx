@@ -67,7 +67,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
         <Link to="/" className="flex items-center gap-2.5" onClick={onNavigate}>
           <img src="/logo.png" alt="" width={32} height={32} className="h-8 w-8 object-contain" />
-          <span className="font-display text-xl tracking-tight text-foreground">Veloer</span>
+          <span className="text-xl font-semibold tracking-tight text-foreground">Veloer</span>
         </Link>
       </div>
 

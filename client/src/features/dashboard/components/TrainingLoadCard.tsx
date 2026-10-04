@@ -93,7 +93,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
             <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">
               CTL
             </span>
-            <span className="text-base font-semibold tabular-nums text-foreground">
+            <span className="text-base font-mono font-semibold tabular-nums text-foreground">
               {ctl.toFixed(0)}
             </span>
           </div>
@@ -101,7 +101,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
             <span className="block text-[10px] uppercase tracking-wider text-muted-foreground">
               ATL
             </span>
-            <span className="text-base font-semibold tabular-nums text-foreground">
+            <span className="text-base font-mono font-semibold tabular-nums text-foreground">
               {atl.toFixed(0)}
             </span>
           </div>

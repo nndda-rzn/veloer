@@ -81,7 +81,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <Zap className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                 <span className="text-xs text-muted-foreground">Est. FTP</span>
               </div>
-              <div className="text-xl font-semibold tabular-nums text-foreground">
+              <div className="text-xl font-mono font-semibold tabular-nums text-foreground">
                 {analysis.estimated_ftp}W
               </div>
               <div className={`mt-0.5 flex items-center gap-1 text-xs ${confidence.color}`}>
@@ -96,7 +96,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <Clock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                 <span className="text-xs text-muted-foreground">Avg/week</span>
               </div>
-              <div className="text-xl font-semibold tabular-nums text-foreground">
+              <div className="text-xl font-mono font-semibold tabular-nums text-foreground">
                 {analysis.avg_weekly_hours}h
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
@@ -110,7 +110,7 @@ export function SmartPlanModal({ analysis, defaultFtp, onConfirm, onCancel }: Sm
                 <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                 <span className="text-xs text-muted-foreground">Fitness (CTL)</span>
               </div>
-              <div className="text-xl font-semibold tabular-nums text-foreground">
+              <div className="text-xl font-mono font-semibold tabular-nums text-foreground">
                 {analysis.ctl}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">42-day average</div>
