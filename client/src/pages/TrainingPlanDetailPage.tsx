@@ -13,6 +13,7 @@ import { NextWorkoutPanel } from '@/features/training/components/NextWorkoutPane
 import { WeeklySummary } from '@/features/training/components/WeeklySummary';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
+import { isStrengthType } from '@/features/training';
 import { PageHeader, ConfirmDialog, Skeleton } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/components/feedback/Toaster';
@@ -346,6 +347,7 @@ export function TrainingPlanDetailPage() {
               planId={id ?? ''}
               scheduledDate={selectedWorkout.scheduled_date}
               currentActivityId={selectedWorkout.actual_activity_id}
+              workoutIsStrength={isStrengthType(selectedWorkout.workout_type)}
               onLink={async (wId, aId) => {
                 await linkActivity(wId, aId);
                 setShowLinker(false);
