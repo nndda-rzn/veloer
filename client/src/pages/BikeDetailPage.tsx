@@ -78,6 +78,9 @@ export function BikeDetailPage() {
 
   const rateKmPerWeek = useMemo(() => weeklyKmRate(activities, 4), [activities]);
 
+  const serviceCount = logs.length;
+  const serviceCost = useMemo(() => logs.reduce((sum, log) => sum + (log.cost ?? 0), 0), [logs]);
+
   const projectionFor = (component: Component) => {
     const remaining = remainingKm(
       component.current_km,
@@ -190,6 +193,8 @@ export function BikeDetailPage() {
           (bike.maintenance_alert_count ?? 0) || wearSummary.overdue + wearSummary.dueSoon
         }
         isDefault={isDefault}
+        serviceCount={serviceCount}
+        serviceCost={serviceCost}
         onEdit={() => setShowBikeForm(true)}
         onSetDefault={handleSetDefault}
       />

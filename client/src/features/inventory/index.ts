@@ -1,10 +1,11 @@
-export { BikeTable } from './components/BikeTable';
+export { BikeCard } from './components/BikeCard';
 export { BikeForm } from './components/BikeForm';
 export { BikeHero } from './components/BikeHero';
+export { ConditionRail } from './components/ConditionRail';
+export { FleetHealthStrip } from './components/FleetHealthStrip';
 export { ComponentCard, CATEGORY_LABELS } from './components/ComponentCard';
 export { ComponentForm } from './components/ComponentForm';
 export { LifespanIndicator } from './components/LifespanIndicator';
-export { GearStatsBar } from './components/GearStatsBar';
 export { useBikes } from './hooks/useBikes';
 export { useBikeDetail } from './hooks/useBikeDetail';
 export { useBikeActivities } from './hooks/useBikeActivities';
@@ -22,12 +23,21 @@ export {
 } from './lib/lifespan';
 export {
   costPerKm,
-  summarizeGear,
   summarizeWear,
   sortByWear,
   wearBand,
-  type GearSummary,
   type WearSummary,
   type WearBand,
 } from './lib/inventory-metrics';
+export {
+  CATEGORY_ORDER,
+  categoryWear,
+  bikeHealth,
+  fleetHealth,
+  type CategoryWear,
+  type BikeHealth,
+  type FleetAlert,
+  type FleetHealth,
+} from './lib/garage-metrics';
+export { weeklyKmRate, projectWear, type WearProjection } from './lib/wear-projection';
 export type { Bike, Component, BikeFormData, ComponentFormData } from './types/inventory';
