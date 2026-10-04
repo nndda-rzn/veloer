@@ -1,16 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { CalendarRange, ArrowRight } from 'lucide-react';
+import { CalendarRange, ArrowRight, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import type { TrainingPlan } from '../types/training';
 import { PLAN_GOAL_TYPE_LABELS } from '../types/training';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { planProgress } from '../lib/plan-progress';
 
 interface ActivePlanHeroProps {
   plan: TrainingPlan;
+  onEdit: (plan: TrainingPlan) => void;
+  onDelete: (plan: TrainingPlan) => void;
 }
 
-export function ActivePlanHero({ plan }: ActivePlanHeroProps) {
+export function ActivePlanHero({ plan, onEdit, onDelete }: ActivePlanHeroProps) {
   const navigate = useNavigate();
   const p = planProgress(plan);
   const daysLabel =
@@ -35,10 +44,33 @@ export function ActivePlanHero({ plan }: ActivePlanHeroProps) {
               {PLAN_GOAL_TYPE_LABELS[plan.goal_type]} · FTP {plan.ftp_baseline}W
             </p>
           </div>
-          <Button onClick={() => navigate(`/training-plans/${plan.id}`)}>
-            Open plan
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => navigate(`/training-plans/${plan.id}`)}>
+              Open plan
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon" aria-label={`Actions for ${plan.title}`} />
+                }
+              >
+                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onSelect={() => onEdit(plan)}>
+                    <Pencil aria-hidden="true" />
+                    Edit plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive" onSelect={() => onDelete(plan)}>
+                    <Trash2 aria-hidden="true" />
+                    Delete plan
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Progress */}

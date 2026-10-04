@@ -17,12 +17,20 @@ import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/components/feedback/Toaster';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { MoreHorizontal, Trash2 } from 'lucide-react';
 import type {
   TrainingPlan,
   TrainingWorkout,
@@ -43,6 +51,8 @@ export function TrainingPlanDetailPage() {
   const [showLinker, setShowLinker] = useState(false);
   const [deletingWorkout, setDeletingWorkout] = useState<TrainingWorkout | null>(null);
   const [rescheduling, setRescheduling] = useState(false);
+  const [showDeletePlan, setShowDeletePlan] = useState(false);
+  const [deletingPlan, setDeletingPlan] = useState(false);
 
   const {
     workouts,
@@ -124,6 +134,20 @@ export function TrainingPlanDetailPage() {
     }
   };
 
+  const handleDeletePlan = async () => {
+    if (!id) return;
+    setDeletingPlan(true);
+    try {
+      await trainingApi.deletePlan(id);
+      pushToast('Training plan deleted', { level: 'success' });
+      navigate('/training-plans');
+    } catch {
+      pushToast('Could not delete plan', { level: 'error' });
+      setDeletingPlan(false);
+      setShowDeletePlan(false);
+    }
+  };
+
   const handleAddRecommendation = async (rec: WorkoutRecommendation) => {
     const today = new Date().toISOString().split('T')[0];
     await createWorkout({
@@ -189,6 +213,24 @@ export function TrainingPlanDetailPage() {
               >
                 Retrospective
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={<Button variant="ghost" size="icon" aria-label="Plan actions" />}
+                >
+                  <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={() => setShowDeletePlan(true)}
+                    >
+                      <Trash2 aria-hidden="true" />
+                      Delete plan
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           }
         />
@@ -282,6 +324,18 @@ export function TrainingPlanDetailPage() {
           title="Delete workout"
           description={`Delete “${deletingWorkout.title}”? This cannot be undone.`}
           onConfirm={() => handleDeleteWorkout(deletingWorkout.id)}
+        />
+      )}
+
+      {/* Delete plan confirm */}
+      {showDeletePlan && (
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => !open && setShowDeletePlan(false)}
+          title="Delete plan"
+          description={`Delete “${plan.title}”? This will remove all workouts in this plan.`}
+          loading={deletingPlan}
+          onConfirm={handleDeletePlan}
         />
       )}
 
