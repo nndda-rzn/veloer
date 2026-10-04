@@ -76,7 +76,7 @@ function summarize(segments: CategoryWear[]): string {
     (s) =>
       `${CATEGORY_LABELS[s.category]} ${s.percent != null ? Math.round(s.percent) : 0} percent`,
   );
-  return `Component condition — ${parts.join(', ')}`;
+  return `Component condition: ${parts.join(', ')}`;
 }
 
 export { SEGMENT_FILL };

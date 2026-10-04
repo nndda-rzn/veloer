@@ -45,7 +45,7 @@ export function FleetHealthStrip({ health }: FleetHealthStripProps) {
         </span>
 
         <span className="hidden text-muted-foreground sm:inline" aria-hidden="true">
-          —
+          ·
         </span>
 
         <ul className="flex flex-wrap items-center gap-1.5">

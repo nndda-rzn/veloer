@@ -115,7 +115,7 @@ export function InventoryPage() {
     <div className="space-y-6">
       <PageHeader
         title="Bikes & Gear"
-        description="Your garage — bikes, components and wear at a glance"
+        description="Your bikes, components, and their condition"
         action={
           <Button onClick={handleAddBike}>
             <Plus className="h-4 w-4" aria-hidden="true" />

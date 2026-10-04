@@ -14,18 +14,18 @@
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', monospace;
 
-  /* Type scale: Minor Third (1.2) — see docs/20-design-system.md */
-  --text-caption: 0.75rem; /* 12px — metadata, small labels */
+  /* Type scale: Minor Third (1.2). See docs/20-design-system.md */
+  --text-caption: 0.75rem; /* 12px: metadata, small labels */
   --text-caption--line-height: 1.5;
-  --text-body-sm: 0.875rem; /* 14px — default dense UI (tables) */
+  --text-body-sm: 0.875rem; /* 14px: default dense UI (tables) */
   --text-body-sm--line-height: 1.5;
-  --text-body: 1rem; /* 16px — prose, descriptions */
+  --text-body: 1rem; /* 16px: prose, descriptions */
   --text-body--line-height: 1.6;
-  --text-h3: 1rem; /* 16px — card titles */
+  --text-h3: 1rem; /* 16px: card titles */
   --text-h3--line-height: 1.4;
-  --text-h2: 1.25rem; /* 20px — section titles */
+  --text-h2: 1.25rem; /* 20px: section titles */
   --text-h2--line-height: 1.3;
-  --text-h1: 1.5rem; /* 24px — page titles */
+  --text-h1: 1.5rem; /* 24px: page titles */
   --text-h1--line-height: 1.2;
 
   /* Brand: deep ride-green ---------------------------------------------- */
