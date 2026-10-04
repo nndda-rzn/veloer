@@ -23,9 +23,9 @@ function getGreeting(): string {
 function getBikeImage(type: Bike['type']): string {
   switch (type) {
     case 'mtb':
-      return '/mountain-bike.png';
+      return '/mountain-bike.webp';
     default:
-      return '/road-bike.png';
+      return '/road-bike.webp';
   }
 }
 

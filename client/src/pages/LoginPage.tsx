@@ -18,7 +18,7 @@ export function LoginPage() {
         <div className="mx-auto w-full max-w-sm">
           {/* Logo */}
           <div className="mb-10">
-            <img src="/logo.png" alt="Veloer" width={160} height={40} className="h-10 w-auto" />
+            <img src="/logo.webp" alt="Veloer" width={160} height={40} className="h-10 w-auto" />
           </div>
 
           <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">
@@ -64,7 +64,7 @@ export function LoginPage() {
         />
         <div className="relative flex flex-col items-center px-12 text-center">
           <img
-            src="/road-bike.png"
+            src="/road-bike.webp"
             alt=""
             width={420}
             height={263}

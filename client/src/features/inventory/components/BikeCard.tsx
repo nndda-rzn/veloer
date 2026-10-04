@@ -39,8 +39,8 @@ const statusVariants: Record<Bike['status'], 'success' | 'neutral' | 'info'> = {
 };
 
 const typeFallbackImages: Partial<Record<Bike['type'], string>> = {
-  road: '/road-bike.png',
-  mtb: '/mountain-bike.png',
+  road: '/road-bike.webp',
+  mtb: '/mountain-bike.webp',
 };
 
 export function BikeCard({
