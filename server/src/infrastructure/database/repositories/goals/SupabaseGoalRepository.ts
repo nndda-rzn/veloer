@@ -125,6 +125,9 @@ export class SupabaseGoalRepository implements GoalRepository {
       .from('activities')
       .select('distance, moving_time, total_elevation_gain')
       .eq('user_id', userId)
+      // Cycling only: goals measure riding, so a gym session must never fill a
+      // distance, time, elevation or count goal.
+      .eq('discipline', 'cycling')
       .gte('start_date', `${startDate}T00:00:00`)
       .lte('start_date', `${endDate}T23:59:59`);
     if (error) throw new Error(`Failed to fetch activities for goal: ${error.message}`);
