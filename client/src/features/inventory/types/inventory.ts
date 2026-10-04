@@ -40,6 +40,7 @@ export interface BikeFormData {
   type: Bike['type'];
   purchase_date?: string | null;
   purchase_price?: number | null;
+  status?: Bike['status'];
   photo_url?: string | null;
   notes?: string | null;
 }
