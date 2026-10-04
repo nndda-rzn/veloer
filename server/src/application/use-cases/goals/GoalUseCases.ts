@@ -18,7 +18,7 @@ export class CreateGoal {
   constructor(@inject('GoalRepository') private goalRepo: GoalRepository) {}
 
   async execute(userId: string, input: CreateGoalInput): Promise<Goal> {
-    return this.goalRepo.create({
+    const goal = await this.goalRepo.create({
       user_id: userId,
       type: input.type,
       target_value: input.target_value,
@@ -28,8 +28,12 @@ export class CreateGoal {
       end_date: input.end_date,
       title: input.title ?? null,
       description: input.description ?? null,
+      manual_adjustment: 0,
       status: 'active',
     });
+
+    // Seed progress from activities already inside the goal's date range.
+    return (await this.goalRepo.recomputeProgress(goal.id)) ?? goal;
   }
 }
 
@@ -77,10 +81,20 @@ export class GetGoalStatus {
 }
 
 @injectable()
-export class UpdateGoalProgress {
+export class RecomputeGoalProgress {
   constructor(@inject('GoalRepository') private goalRepo: GoalRepository) {}
 
-  async execute(id: string, additionalValue: number): Promise<void> {
-    await this.goalRepo.updateProgress(id, additionalValue);
+  async execute(id: string): Promise<Goal | null> {
+    return this.goalRepo.recomputeProgress(id);
+  }
+}
+
+@injectable()
+export class AdjustGoalProgress {
+  constructor(@inject('GoalRepository') private goalRepo: GoalRepository) {}
+
+  /** Add a delta to the manual adjustment, then recompute the total. */
+  async execute(id: string, delta: number): Promise<Goal | null> {
+    return this.goalRepo.adjustProgress(id, delta);
   }
 }

@@ -6,6 +6,8 @@ import {
   DeleteGoal,
   GetGoals,
   GetGoalStatus,
+  RecomputeGoalProgress,
+  AdjustGoalProgress,
 } from '../../application/use-cases/goals/GoalUseCases.js';
 
 export class GoalController {
@@ -60,6 +62,48 @@ export class GoalController {
       res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
       return;
     }
+    // Changing target or date range can change derived progress.
+    const recompute = container.resolve(RecomputeGoalProgress);
+    const updated = (await recompute.execute(String(id))) ?? goal;
+    res.json(updated);
+  }
+
+  async recalculate(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const getGoalStatus = container.resolve(GetGoalStatus);
+    const existing = await getGoalStatus.execute(String(id));
+    if (!existing || existing.user_id !== req.user.userId) {
+      res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
+      return;
+    }
+    const recompute = container.resolve(RecomputeGoalProgress);
+    const goal = await recompute.execute(String(id));
+    res.json(goal);
+  }
+
+  async adjustProgress(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const delta = Number(req.body?.delta);
+    if (!Number.isFinite(delta) || delta === 0) {
+      res.status(400).json({ error: 'Bad Request', message: 'delta must be a non-zero number' });
+      return;
+    }
+    const getGoalStatus = container.resolve(GetGoalStatus);
+    const existing = await getGoalStatus.execute(String(id));
+    if (!existing || existing.user_id !== req.user.userId) {
+      res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
+      return;
+    }
+    const adjust = container.resolve(AdjustGoalProgress);
+    const goal = await adjust.execute(String(id), delta);
     res.json(goal);
   }
 

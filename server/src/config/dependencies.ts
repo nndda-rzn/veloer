@@ -37,7 +37,11 @@ import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { SupabaseStorage } from '../infrastructure/storage/SupabaseStorage.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
-import { GetGoals, UpdateGoalProgress } from '../application/use-cases/goals/GoalUseCases.js';
+import {
+  GetGoals,
+  RecomputeGoalProgress,
+  AdjustGoalProgress,
+} from '../application/use-cases/goals/GoalUseCases.js';
 import { AddTransaction } from '../application/use-cases/finance/TransactionUseCases.js';
 import {
   GetActivityLaps,
@@ -83,7 +87,8 @@ container.registerSingleton<TrainingPlanRepository>(
 // Register use cases that are injected as class references
 container.registerSingleton(RefreshStravaToken);
 container.registerSingleton(GetGoals);
-container.registerSingleton(UpdateGoalProgress);
+container.registerSingleton(RecomputeGoalProgress);
+container.registerSingleton(AdjustGoalProgress);
 container.registerSingleton(AddTransaction);
 container.registerSingleton(GetActivityLaps);
 container.registerSingleton(GetActivityZones);

@@ -4,7 +4,7 @@ import type { UserProfileRepository } from '../../../domain/repositories/auth/Us
 import type { TrainingPlanRepository } from '../../../domain/repositories/training/TrainingPlanRepository.js';
 import type { StravaPort } from '../../ports/StravaPort.js';
 import { RefreshStravaToken } from '../auth/RefreshStravaToken.js';
-import { GetGoals, UpdateGoalProgress } from '../goals/GoalUseCases.js';
+import { GetGoals, RecomputeGoalProgress } from '../goals/GoalUseCases.js';
 import type { Activity } from '../../../domain/entities/activity/Activity.js';
 
 export interface SyncResult {
@@ -24,7 +24,7 @@ export class SyncStravaActivities {
     @inject('StravaPort') private stravaPort: StravaPort,
     @inject(RefreshStravaToken) private refreshStravaToken: RefreshStravaToken,
     @inject(GetGoals) private getGoals: GetGoals,
-    @inject(UpdateGoalProgress) private updateGoalProgress: UpdateGoalProgress,
+    @inject(RecomputeGoalProgress) private recomputeGoalProgress: RecomputeGoalProgress,
   ) {}
 
   /** Map NP/FTP intensity ratio to a simplified zone label */
@@ -193,34 +193,16 @@ export class SyncStravaActivities {
       }
     }
 
-    // Auto-update goal progress for newly synced activities
+    // Recompute goal progress for active goals. Each goal recomputes from the
+    // activities that actually fall inside its date range, so rides outside the
+    // window are never counted (the previous blind sum over all new activities
+    // could inflate a monthly goal with last month's rides).
     let goalsUpdated = 0;
     if (synced > 0) {
       const activeGoals = await this.getGoals.executeActive(userId);
-      if (activeGoals.length > 0) {
-        for (const goal of activeGoals) {
-          let additionalValue = 0;
-          for (const act of toCreate) {
-            switch (goal.type) {
-              case 'distance':
-                additionalValue += act.distance / 1000; // km
-                break;
-              case 'time':
-                additionalValue += act.moving_time / 3600; // hours
-                break;
-              case 'elevation':
-                additionalValue += act.total_elevation_gain ?? 0; // meters
-                break;
-              case 'activities_count':
-                additionalValue += 1;
-                break;
-            }
-          }
-          if (additionalValue > 0) {
-            await this.updateGoalProgress.execute(goal.id, additionalValue);
-            goalsUpdated++;
-          }
-        }
+      for (const goal of activeGoals) {
+        await this.recomputeGoalProgress.execute(goal.id);
+        goalsUpdated++;
       }
     }
 

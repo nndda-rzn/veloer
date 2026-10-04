@@ -17,6 +17,12 @@ router.get('/:id', authMiddleware, (req, res, next) => {
 router.patch('/:id', authMiddleware, (req, res, next) => {
   void controller.update(req, res).catch(next);
 });
+router.post('/:id/recalculate', authMiddleware, (req, res, next) => {
+  void controller.recalculate(req, res).catch(next);
+});
+router.patch('/:id/progress', authMiddleware, (req, res, next) => {
+  void controller.adjustProgress(req, res).catch(next);
+});
 router.delete('/:id', authMiddleware, (req, res, next) => {
   void controller.delete(req, res).catch(next);
 });

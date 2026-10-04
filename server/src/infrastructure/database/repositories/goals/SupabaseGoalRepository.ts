@@ -56,29 +56,87 @@ export class SupabaseGoalRepository implements GoalRepository {
     return result as Goal;
   }
 
-  async updateProgress(id: string, additionalValue: number): Promise<void> {
+  async recomputeProgress(id: string): Promise<Goal | null> {
     const supabase = getSupabaseClient();
     const { data: goal, error: fetchError } = await supabase
       .from('goals')
-      .select('current_value, target_value, status')
+      .select('*')
       .eq('id', id)
       .single();
-    if (fetchError) throw new Error(`Failed to fetch goal for progress: ${fetchError.message}`);
+    if (fetchError) return null;
 
-    const newValue = (goal.current_value || 0) + additionalValue;
+    const g = goal as Goal;
+    const derived = await this.activityValueInRange(g.user_id, g.type, g.start_date, g.end_date);
+    const manual = Number(g.manual_adjustment || 0);
+    const newValue = derived + manual;
+
     const updateData: Partial<Goal> = { current_value: newValue };
+    // Auto-complete when the target is reached; reopen if it dropped below.
+    if (newValue >= g.target_value) updateData.status = 'completed';
+    else if (g.status === 'completed') updateData.status = 'active';
 
-    if (newValue >= goal.target_value) {
-      updateData.status = 'completed';
-    }
+    const { data: result, error } = await supabase
+      .from('goals')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw new Error(`Failed to recompute goal progress: ${error.message}`);
+    return result as Goal;
+  }
 
-    const { error } = await supabase.from('goals').update(updateData).eq('id', id);
-    if (error) throw new Error(`Failed to update goal progress: ${error.message}`);
+  async adjustProgress(id: string, delta: number): Promise<Goal | null> {
+    const supabase = getSupabaseClient();
+    const { data: goal, error } = await supabase
+      .from('goals')
+      .select('manual_adjustment')
+      .eq('id', id)
+      .single();
+    if (error) return null;
+
+    const nextManual =
+      Number((goal as { manual_adjustment: number }).manual_adjustment || 0) + delta;
+    const { error: updateError } = await supabase
+      .from('goals')
+      .update({ manual_adjustment: nextManual })
+      .eq('id', id);
+    if (updateError) throw new Error(`Failed to adjust goal: ${updateError.message}`);
+
+    return this.recomputeProgress(id);
   }
 
   async delete(id: string): Promise<void> {
     const supabase = getSupabaseClient();
     const { error } = await supabase.from('goals').delete().eq('id', id);
     if (error) throw new Error(`Failed to delete goal: ${error.message}`);
+  }
+
+  /** Sum activity metrics within a date range for the given goal type. */
+  private async activityValueInRange(
+    userId: string,
+    type: Goal['type'],
+    startDate: string,
+    endDate: string,
+  ): Promise<number> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('activities')
+      .select('distance, moving_time, total_elevation_gain')
+      .eq('user_id', userId)
+      .gte('start_date', `${startDate}T00:00:00`)
+      .lte('start_date', `${endDate}T23:59:59`);
+    if (error) throw new Error(`Failed to fetch activities for goal: ${error.message}`);
+
+    const rows = data || [];
+    switch (type) {
+      case 'distance':
+        return rows.reduce((s, a) => s + Number(a.distance) / 1000, 0); // km
+      case 'time':
+        return rows.reduce((s, a) => s + Number(a.moving_time) / 3600, 0); // hours
+      case 'elevation':
+        return rows.reduce((s, a) => s + Number(a.total_elevation_gain || 0), 0); // m
+      case 'activities_count':
+        return rows.length;
+    }
   }
 }
