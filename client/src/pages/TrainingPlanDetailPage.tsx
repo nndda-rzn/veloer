@@ -31,7 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MoreHorizontal, Trash2, RotateCcw, LineChart } from 'lucide-react';
+import { MoreHorizontal, Trash2, RotateCcw, LineChart, Plus } from 'lucide-react';
 import { formatDate } from '@/shared/lib/utils';
 import type {
   TrainingPlan,
@@ -80,6 +80,13 @@ export function TrainingPlanDetailPage() {
 
   const handleSelectSlot = (date: Date) => {
     setFormDate(date.toISOString().split('T')[0]);
+    setEditWorkout(null);
+    setShowForm(true);
+  };
+
+  /** Open the form for today. The plan page has no other way to add a session. */
+  const handleAddSession = () => {
+    setFormDate(new Date().toISOString().split('T')[0]);
     setEditWorkout(null);
     setShowForm(true);
   };
@@ -201,32 +208,41 @@ export function TrainingPlanDetailPage() {
           title={plan.title}
           description={`${formatDate(plan.start_date)} – ${formatDate(plan.end_date)} · FTP ${plan.ftp_baseline}W`}
           action={
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={<Button variant="outline" size="sm" aria-label="Plan actions" />}
-              >
-                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                Plan actions
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => void handleReschedule()} disabled={rescheduling}>
-                    <RotateCcw aria-hidden="true" />
-                    Reschedule missed
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate(`/training-plans/${plan.id}/retrospective`)}
-                  >
-                    <LineChart aria-hidden="true" />
-                    Retrospective
-                  </DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive" onClick={() => setShowDeletePlan(true)}>
-                    <Trash2 aria-hidden="true" />
-                    Delete plan
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <Button onClick={handleAddSession}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Add session
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={<Button variant="outline" size="sm" aria-label="Plan actions" />}
+                >
+                  <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                  Plan actions
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onClick={() => void handleReschedule()}
+                      disabled={rescheduling}
+                    >
+                      <RotateCcw aria-hidden="true" />
+                      Reschedule missed
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/training-plans/${plan.id}/retrospective`)}
+                    >
+                      <LineChart aria-hidden="true" />
+                      Retrospective
+                    </DropdownMenuItem>
+                    <DropdownMenuItem variant="destructive" onClick={() => setShowDeletePlan(true)}>
+                      <Trash2 aria-hidden="true" />
+                      Delete plan
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           }
         />
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -251,6 +267,8 @@ export function TrainingPlanDetailPage() {
             onOpen={setSelectedWorkout}
             onMarkComplete={handleMarkComplete}
             onMarkSkipped={handleMarkSkipped}
+            onAddSession={handleAddSession}
+            onBrowseTemplates={() => navigate('/training-plans')}
           />
         </div>
         <div className="space-y-4">

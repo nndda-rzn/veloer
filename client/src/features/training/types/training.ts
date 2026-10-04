@@ -147,7 +147,14 @@ export const WORKOUT_TYPE_COLORS: Record<WorkoutType, string> = {
   mobility: '#475569',
 };
 
-export type TemplateKey = 'BASE_BUILD_4W' | 'FTP_BUILDER_6W' | 'CENTURY_PREP_8W' | 'GRAN_FONDO_12W';
+export type TemplateKey =
+  | 'BASE_BUILD_4W'
+  | 'FTP_BUILDER_6W'
+  | 'CENTURY_PREP_8W'
+  | 'GRAN_FONDO_12W'
+  | 'STRENGTH_FOCUS_4W'
+  | 'BALANCED_6W'
+  | 'ENDURANCE_STRENGTH_6W';
 
 export interface TemplateInfo {
   key: TemplateKey;
@@ -195,6 +202,34 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
     goal_type: 'gran_fondo',
     workouts_per_week: 5,
     focus: 'Periodized peak performance',
+  },
+  {
+    key: 'STRENGTH_FOCUS_4W',
+    title: 'Strength Focus · 4 Weeks',
+    description: 'Three lifting days plus two rides. Build strength without losing the bike.',
+    weeks: 4,
+    goal_type: 'custom',
+    workouts_per_week: 5,
+    focus: 'Strength focus',
+  },
+  {
+    key: 'BALANCED_6W',
+    title: 'Balanced · 6 Weeks',
+    description: 'Two lifting days and three rides a week. Even split for general fitness.',
+    weeks: 6,
+    goal_type: 'custom',
+    workouts_per_week: 5,
+    focus: 'Balanced strength + cycling',
+  },
+  {
+    key: 'ENDURANCE_STRENGTH_6W',
+    title: 'Endurance + Strength · 6 Weeks',
+    description:
+      'Four rides with two lifting days. Keeps riding the priority while adding strength.',
+    weeks: 6,
+    goal_type: 'custom',
+    workouts_per_week: 6,
+    focus: 'Endurance with strength',
   },
 ];
 
