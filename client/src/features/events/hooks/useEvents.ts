@@ -8,6 +8,7 @@ interface UseEventsReturn {
   error: string | null;
   refetch: () => void;
   createEvent: (data: EventFormData) => Promise<void>;
+  updateEvent: (id: string, data: Partial<EventFormData>) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
 }
 
@@ -33,10 +34,15 @@ export function useEvents(upcoming?: boolean): UseEventsReturn {
     setRefetchFlag((f) => f + 1);
   }, []);
 
+  const updateEvent = useCallback(async (id: string, data: Partial<EventFormData>) => {
+    await eventApi.update(id, data);
+    setRefetchFlag((f) => f + 1);
+  }, []);
+
   const deleteEvent = useCallback(async (id: string) => {
     await eventApi.delete(id);
     setRefetchFlag((f) => f + 1);
   }, []);
 
-  return { events, loading, error, refetch, createEvent, deleteEvent };
+  return { events, loading, error, refetch, createEvent, updateEvent, deleteEvent };
 }

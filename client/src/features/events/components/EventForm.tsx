@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { EventFormData } from '../types/event';
+import type { Event, EventFormData } from '../types/event';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { selectClass } from '@/shared/lib/form-styles';
 
 interface EventFormProps {
+  event?: Event | null;
+  defaultDate?: string;
   onSubmit: (data: EventFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,16 +23,17 @@ const eventTypes: { value: EventFormData['type']; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-export function EventForm({ onSubmit, onCancel }: EventFormProps) {
+export function EventForm({ event, defaultDate, onSubmit, onCancel }: EventFormProps) {
+  const isEdit = Boolean(event);
   const [formData, setFormData] = useState<EventFormData>({
-    name: '',
-    type: 'gran_fondo',
-    date: new Date().toISOString().slice(0, 10),
-    location: '',
-    distance: null,
-    registration_fee: null,
-    status: 'registered',
-    notes: '',
+    name: event?.name ?? '',
+    type: event?.type ?? 'gran_fondo',
+    date: event?.date ?? defaultDate ?? new Date().toISOString().slice(0, 10),
+    location: event?.location ?? '',
+    distance: event?.distance ?? null,
+    registration_fee: event?.registration_fee ?? null,
+    status: event?.status ?? 'registered',
+    notes: event?.notes ?? '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -54,7 +57,7 @@ export function EventForm({ onSubmit, onCancel }: EventFormProps) {
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Event</DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit Event' : 'Add Event'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
@@ -151,12 +154,32 @@ export function EventForm({ onSubmit, onCancel }: EventFormProps) {
             />
           </div>
 
+          {isEdit && (
+            <div className="space-y-1.5">
+              <Label htmlFor="status">Status</Label>
+              <select
+                id="status"
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value as EventFormData['status'] })
+                }
+                className={selectClass}
+              >
+                <option value="registered">Registered</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="dns">DNS (did not start)</option>
+                <option value="dnf">DNF (did not finish)</option>
+              </select>
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={onCancel}>
               Cancel
             </Button>
             <Button type="submit" loading={saving}>
-              {saving ? 'Saving…' : 'Add'}
+              {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add'}
             </Button>
           </div>
         </form>
