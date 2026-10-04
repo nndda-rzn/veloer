@@ -1,5 +1,11 @@
 import type { Activity } from '../types/activity';
-import { formatDistance, formatDuration, formatSpeed, formatDateTime } from '@/shared/lib/utils';
+import {
+  formatDistance,
+  formatDuration,
+  formatSpeed,
+  formatDateTime,
+  formatElevation,
+} from '@/shared/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { activityTypeAccent } from '../lib/activity-type-style';
@@ -31,14 +37,12 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
     m('Elapsed Time', formatDuration(activity.elapsed_time)),
     m(
       'Elevation Gain',
-      activity.total_elevation_gain != null
-        ? `${activity.total_elevation_gain.toFixed(0)} m`
-        : null,
+      activity.total_elevation_gain != null ? formatElevation(activity.total_elevation_gain) : null,
     ),
     m('Avg Speed', activity.avg_speed ? formatSpeed(activity.avg_speed) : null),
     m('Max Speed', activity.max_speed ? formatSpeed(activity.max_speed) : null),
-    m('Elev. High', activity.elev_high != null ? `${activity.elev_high.toFixed(0)} m` : null),
-    m('Elev. Low', activity.elev_low != null ? `${activity.elev_low.toFixed(0)} m` : null),
+    m('Elev. High', activity.elev_high != null ? formatElevation(activity.elev_high) : null),
+    m('Elev. Low', activity.elev_low != null ? formatElevation(activity.elev_low) : null),
   ];
 
   const performance: Metric[] = [
