@@ -1,9 +1,12 @@
 export { BikeTable } from './components/BikeTable';
 export { BikeForm } from './components/BikeForm';
+export { BikeHero } from './components/BikeHero';
+export { ComponentCard, CATEGORY_LABELS } from './components/ComponentCard';
 export { ComponentForm } from './components/ComponentForm';
 export { LifespanIndicator } from './components/LifespanIndicator';
 export { GearStatsBar } from './components/GearStatsBar';
 export { useBikes } from './hooks/useBikes';
+export { useBikeDetail } from './hooks/useBikeDetail';
 export { bikeApi } from './api/bike.api';
 export { componentApi } from './api/component.api';
 export {

@@ -20,6 +20,9 @@ const ActivityDetailPage = lazy(() =>
 const InventoryPage = lazy(() =>
   import('@/pages/InventoryPage').then((m) => ({ default: m.InventoryPage })),
 );
+const BikeDetailPage = lazy(() =>
+  import('@/pages/BikeDetailPage').then((m) => ({ default: m.BikeDetailPage })),
+);
 const MaintenancePage = lazy(() =>
   import('@/pages/MaintenancePage').then((m) => ({ default: m.MaintenancePage })),
 );
@@ -77,6 +80,7 @@ const router = createBrowserRouter([
           { path: 'activities', element: withSuspense(<ActivitiesPage />) },
           { path: 'activities/:id', element: withSuspense(<ActivityDetailPage />) },
           { path: 'inventory', element: withSuspense(<InventoryPage />) },
+          { path: 'inventory/:id', element: withSuspense(<BikeDetailPage />) },
           { path: 'maintenance', element: withSuspense(<MaintenancePage />) },
           { path: 'finance', element: withSuspense(<FinancePage />) },
           { path: 'goals', element: withSuspense(<GoalsPage />) },

@@ -9,6 +9,9 @@ const controller = new InventoryController();
 router.patch('/:id', authMiddleware, (req, res, next) => {
   void controller.updateComponent(req, res).catch(next);
 });
+router.post('/:id/replace', authMiddleware, (req, res, next) => {
+  void controller.replaceComponent(req, res).catch(next);
+});
 router.delete('/:id', authMiddleware, (req, res, next) => {
   void controller.deleteComponent(req, res).catch(next);
 });
