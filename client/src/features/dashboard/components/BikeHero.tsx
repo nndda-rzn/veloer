@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { Bike } from '@/features/inventory';
-import type { ActivityStats } from '@/features/activity';
 import { formatDistance } from '@/shared/lib/utils';
 import { Link } from 'react-router-dom';
 import { Bike as BikeIcon } from 'lucide-react';
@@ -9,7 +8,6 @@ interface BikeHeroProps {
   displayName: string | null;
   bikes: Bike[];
   defaultBikeId: string | null;
-  activityStats: ActivityStats | null;
   loading?: boolean;
 }
 
@@ -38,13 +36,7 @@ const bikeTypeLabels: Record<Bike['type'], string> = {
   other: 'Bike',
 };
 
-export function BikeHero({
-  displayName,
-  bikes,
-  defaultBikeId,
-  activityStats,
-  loading = false,
-}: BikeHeroProps) {
+export function BikeHero({ displayName, bikes, defaultBikeId, loading = false }: BikeHeroProps) {
   const activeBikes = bikes.filter((b) => b.status === 'active');
   const defaultBike = activeBikes.find((b) => b.id === defaultBikeId) ?? activeBikes[0] ?? null;
 
@@ -81,7 +73,6 @@ export function BikeHero({
   }
 
   const bikeImage = getBikeImage(selectedBike.type);
-  const totalRides = activityStats?.count ?? 0;
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -106,9 +97,11 @@ export function BikeHero({
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Rides (7d)</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                Components due
+              </p>
               <p className="mt-0.5 text-lg font-mono font-semibold tabular-nums text-foreground">
-                {totalRides}
+                {selectedBike.maintenance_alert_count ?? 0}
               </p>
             </div>
           </div>
