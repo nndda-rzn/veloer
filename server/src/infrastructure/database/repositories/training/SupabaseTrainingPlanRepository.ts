@@ -3,6 +3,7 @@ import type { TrainingPlanRepository } from '../../../../domain/repositories/tra
 import type {
   TrainingPlan,
   TrainingPlanCreateData,
+  TrainingPlanWorkoutCounts,
 } from '../../../../domain/entities/training/TrainingPlan.js';
 import type {
   TrainingWorkout,
@@ -77,6 +78,25 @@ export class SupabaseTrainingPlanRepository implements TrainingPlanRepository {
       .eq('id', id)
       .eq('user_id', userId);
     if (error) throw new Error(`Failed to delete training plan: ${error.message}`);
+  }
+
+  async getWorkoutCountsByUser(userId: string): Promise<TrainingPlanWorkoutCounts[]> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('training_plan_workouts')
+      .select('plan_id, status')
+      .eq('user_id', userId);
+    if (error) throw new Error(`Failed to fetch workout counts: ${error.message}`);
+
+    const byPlan = new Map<string, TrainingPlanWorkoutCounts>();
+    for (const row of data || []) {
+      const planId = (row as { plan_id: string }).plan_id;
+      const entry = byPlan.get(planId) ?? { plan_id: planId, total: 0, completed: 0 };
+      entry.total += 1;
+      if ((row as { status: string }).status === 'completed') entry.completed += 1;
+      byPlan.set(planId, entry);
+    }
+    return [...byPlan.values()];
   }
 
   // ---- Workouts ----

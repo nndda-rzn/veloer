@@ -3,6 +3,7 @@ import type { TrainingPlanRepository } from '../../../domain/repositories/traini
 import type {
   TrainingPlan,
   TrainingPlanCreateData,
+  TrainingPlanSummary,
 } from '../../../domain/entities/training/TrainingPlan.js';
 
 export interface TrainingPlanCreateInput {
@@ -18,8 +19,22 @@ export interface TrainingPlanCreateInput {
 export class GetTrainingPlans {
   constructor(@inject('TrainingPlanRepository') private planRepo: TrainingPlanRepository) {}
 
-  async execute(userId: string): Promise<TrainingPlan[]> {
-    return this.planRepo.findByUser(userId);
+  async execute(userId: string): Promise<TrainingPlanSummary[]> {
+    const [plans, counts] = await Promise.all([
+      this.planRepo.findByUser(userId),
+      this.planRepo.getWorkoutCountsByUser(userId),
+    ]);
+
+    const byPlan = new Map(counts.map((c) => [c.plan_id, c]));
+
+    return plans.map((plan) => {
+      const c = byPlan.get(plan.id);
+      return {
+        ...plan,
+        workout_count: c?.total ?? 0,
+        completed_count: c?.completed ?? 0,
+      };
+    });
   }
 }
 
