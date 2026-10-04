@@ -138,6 +138,43 @@ export class SupabaseActivityRepository implements ActivityRepository {
     count: number;
   }> {
     const supabase = getSupabaseClient();
+
+    // Aggregate in the database (migration 019) so we transfer one row instead
+    // of every activity in range. If the function has not been applied yet,
+    // fall back to summing here rather than breaking the dashboard.
+    const { data, error } = await supabase.rpc('activity_stats', {
+      p_user_id: userId,
+      p_start_date: startDate ?? null,
+      p_end_date: endDate ?? null,
+    });
+
+    if (!error && data) {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row) {
+        return {
+          totalDistance: Number(row.total_distance) || 0,
+          totalMovingTime: Number(row.total_moving_time) || 0,
+          totalElevationGain: Number(row.total_elevation_gain) || 0,
+          count: Number(row.activity_count) || 0,
+        };
+      }
+    }
+
+    return this.getStatsFallback(userId, startDate, endDate);
+  }
+
+  /** Pre-migration path: aggregate in Node. Kept so deploys stay safe. */
+  private async getStatsFallback(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<{
+    totalDistance: number;
+    totalMovingTime: number;
+    totalElevationGain: number;
+    count: number;
+  }> {
+    const supabase = getSupabaseClient();
     let query = supabase
       .from('activities')
       .select('distance, moving_time, total_elevation_gain')
