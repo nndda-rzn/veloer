@@ -44,7 +44,7 @@ export function UpcomingEventsPanel({ events, loading }: UpcomingEventsPanelProp
 
   return (
     <div className="space-y-4">
-      {/* Next event — highlighted */}
+      {/* Next event: highlighted */}
       <Card className="overflow-hidden">
         <div className="h-1 w-full" style={{ backgroundColor: EVENT_TYPE_COLORS[next.type] }} />
         <CardContent className="pt-4">
