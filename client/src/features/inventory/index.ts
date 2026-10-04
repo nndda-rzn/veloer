@@ -7,6 +7,7 @@ export { LifespanIndicator } from './components/LifespanIndicator';
 export { GearStatsBar } from './components/GearStatsBar';
 export { useBikes } from './hooks/useBikes';
 export { useBikeDetail } from './hooks/useBikeDetail';
+export { useBikeActivities } from './hooks/useBikeActivities';
 export { bikeApi } from './api/bike.api';
 export { componentApi } from './api/component.api';
 export {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Pencil, Wallet, Route, TrendingUp, Wrench } from 'lucide-react';
+import { ArrowLeft, Pencil, Wallet, Route, TrendingUp, Wrench, Star } from 'lucide-react';
 import type { Bike } from '../types/inventory';
 import { formatIDR, formatDistance } from '@/shared/lib/utils';
 import { costPerKm } from '../lib/inventory-metrics';
@@ -10,7 +10,9 @@ interface BikeHeroProps {
   bike: Bike;
   componentCount: number;
   alertCount: number;
+  isDefault: boolean;
   onEdit: () => void;
+  onSetDefault: () => void;
 }
 
 const typeLabels: Record<Bike['type'], string> = {
@@ -33,7 +35,14 @@ const typeFallbackImages: Partial<Record<Bike['type'], string>> = {
   mtb: '/mountain-bike.png',
 };
 
-export function BikeHero({ bike, componentCount, alertCount, onEdit }: BikeHeroProps) {
+export function BikeHero({
+  bike,
+  componentCount,
+  alertCount,
+  isDefault,
+  onEdit,
+  onSetDefault,
+}: BikeHeroProps) {
   const cpk = costPerKm(bike.purchase_price, bike.current_km);
   const image = bike.photo_url ?? typeFallbackImages[bike.type];
 
@@ -53,6 +62,12 @@ export function BikeHero({ bike, componentCount, alertCount, onEdit }: BikeHeroP
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">{bike.name}</h1>
               <Badge variant={statusVariants[bike.status]}>{bike.status}</Badge>
+              {isDefault && (
+                <Badge variant="warning">
+                  <Star className="h-3 w-3" aria-hidden="true" />
+                  Default
+                </Badge>
+              )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
               {typeLabels[bike.type]}
@@ -86,10 +101,18 @@ export function BikeHero({ bike, componentCount, alertCount, onEdit }: BikeHeroP
           </div>
 
           <div className="flex shrink-0 flex-col items-end gap-3">
-            <Button variant="secondary" onClick={onEdit}>
-              <Pencil className="h-4 w-4" aria-hidden="true" />
-              Edit bike
-            </Button>
+            <div className="flex gap-2">
+              {!isDefault && bike.status === 'active' && (
+                <Button variant="ghost" onClick={onSetDefault}>
+                  <Star className="h-4 w-4" aria-hidden="true" />
+                  Set default
+                </Button>
+              )}
+              <Button variant="secondary" onClick={onEdit}>
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+                Edit bike
+              </Button>
+            </div>
             {image && (
               <img
                 src={image}

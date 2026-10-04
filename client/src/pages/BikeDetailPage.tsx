@@ -7,6 +7,7 @@ import {
   ComponentForm,
   BikeForm,
   useBikeDetail,
+  useBikeActivities,
   sortByWear,
   summarizeWear,
   bikeApi,
@@ -15,6 +16,9 @@ import {
 import type { Component, ComponentFormData, BikeFormData } from '@/features/inventory';
 import { MaintenanceForm, useMaintenanceLogs, MaintenanceLogList } from '@/features/maintenance';
 import type { MaintenanceLog, MaintenanceLogFormData } from '@/features/maintenance';
+import { useProfile } from '@/features/settings';
+import { weeklyKmRate, projectWear } from '@/features/inventory/lib/wear-projection';
+import { remainingKm } from '@/features/inventory';
 import { EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
@@ -28,6 +32,8 @@ export function BikeDetailPage() {
   const { bike, components, loading, error, refetch, refetchComponents, replaceComponent } =
     useBikeDetail(id);
   const { logs, loading: logsLoading, createLog, deleteLog } = useMaintenanceLogs(id ?? null);
+  const { activities } = useBikeActivities(id);
+  const { profile, save: saveProfile } = useProfile();
 
   const [showBikeForm, setShowBikeForm] = useState(false);
   const [showComponentForm, setShowComponentForm] = useState(false);
@@ -69,6 +75,24 @@ export function BikeDetailPage() {
   }, [components]);
 
   const wornFirst = useMemo(() => sortByWear(components), [components]);
+
+  const rateKmPerWeek = useMemo(() => weeklyKmRate(activities, 4), [activities]);
+
+  const projectionFor = (component: Component) => {
+    const remaining = remainingKm(
+      component.current_km,
+      component.install_km,
+      component.expected_lifespan_km,
+    );
+    if (remaining == null) return null;
+    return projectWear(remaining, rateKmPerWeek);
+  };
+
+  const isDefault = profile?.default_bike_id === bike?.id;
+  const handleSetDefault = async () => {
+    if (!bike) return;
+    await saveProfile({ default_bike_id: bike.id });
+  };
 
   if (loading) {
     return (
@@ -143,6 +167,7 @@ export function BikeDetailPage() {
         <ComponentCard
           key={component.id}
           component={component}
+          projection={projectionFor(component)}
           onEdit={(c) => {
             setEditingComponent(c);
             setShowComponentForm(true);
@@ -164,7 +189,9 @@ export function BikeDetailPage() {
         alertCount={
           (bike.maintenance_alert_count ?? 0) || wearSummary.overdue + wearSummary.dueSoon
         }
+        isDefault={isDefault}
         onEdit={() => setShowBikeForm(true)}
+        onSetDefault={handleSetDefault}
       />
 
       <Tabs defaultValue="components">
