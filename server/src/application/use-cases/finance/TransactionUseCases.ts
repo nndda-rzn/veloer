@@ -12,6 +12,7 @@ export interface TransactionInput {
   component_id?: string | null;
   event_id?: string | null;
   activity_id?: string | null;
+  maintenance_log_id?: string | null;
   payment_method?: string | null;
   merchant?: string | null;
 }
@@ -21,7 +22,7 @@ export class AddTransaction {
   constructor(@inject('TransactionRepository') private txRepo: TransactionRepository) {}
 
   async execute(userId: string, input: TransactionInput): Promise<Transaction> {
-    return this.txRepo.create({
+    const payload: Omit<Transaction, 'id' | 'created_at' | 'updated_at'> = {
       user_id: userId,
       type: input.type,
       category: input.category,
@@ -32,10 +33,33 @@ export class AddTransaction {
       component_id: input.component_id ?? null,
       event_id: input.event_id ?? null,
       activity_id: input.activity_id ?? null,
+      maintenance_log_id: input.maintenance_log_id ?? null,
       payment_method: input.payment_method ?? null,
       merchant: input.merchant ?? null,
-    });
+    };
+
+    try {
+      return await this.txRepo.create(payload);
+    } catch (err) {
+      // Migration 022 adds maintenance_log_id and is applied manually. Until it
+      // runs, a write naming the column fails; retry with the key removed so
+      // logging a service still works. The cost then is simply not linked (the
+      // same state as rows that predate the column), rather than failing outright.
+      if (!isUnknownColumnError(err, 'maintenance_log_id')) throw err;
+      const withoutLink: Record<string, unknown> = { ...payload };
+      delete withoutLink.maintenance_log_id;
+      return this.txRepo.create(withoutLink as unknown as typeof payload);
+    }
   }
+}
+
+/** True when an error is Postgres reporting an unknown column. */
+function isUnknownColumnError(err: unknown, column: string): boolean {
+  const message = err instanceof Error ? err.message : String(err);
+  return (
+    message.includes(column) &&
+    (message.includes('does not exist') || message.includes('schema cache'))
+  );
 }
 
 @injectable()
