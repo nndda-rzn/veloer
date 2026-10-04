@@ -94,3 +94,51 @@ export const GOAL_HEALTH_TONE: Record<GoalHealth, string> = {
   overdue: 'text-danger',
   inactive: 'text-muted-foreground',
 };
+
+export interface GoalSummary {
+  total: number;
+  onTrack: number;
+  behind: number;
+  complete: number;
+  overdue: number;
+}
+
+/** Count active goals by health for the page summary strip. */
+export function summarizeGoals(goals: Goal[]): GoalSummary {
+  const summary: GoalSummary = {
+    total: goals.length,
+    onTrack: 0,
+    behind: 0,
+    complete: 0,
+    overdue: 0,
+  };
+  for (const goal of goals) {
+    const { health } = goalProgress(goal);
+    if (health === 'on_track') summary.onTrack++;
+    else if (health === 'behind') summary.behind++;
+    else if (health === 'complete') summary.complete++;
+    else if (health === 'overdue') summary.overdue++;
+  }
+  return summary;
+}
+
+/**
+ * Project when the goal will be reached at the current average pace
+ * (current_value accrued since start_date). Returns null when there is not
+ * enough data or the goal is already complete.
+ */
+export function projectedCompletion(goal: Goal, today: Date = new Date()): Date | null {
+  if (goal.current_value <= 0) return null;
+  if (goal.current_value >= goal.target_value) return null;
+
+  const start = new Date(`${goal.start_date}T00:00:00`);
+  const elapsedDays = Math.max(1, Math.round((today.getTime() - start.getTime()) / 86_400_000));
+  const perDay = goal.current_value / elapsedDays;
+  if (perDay <= 0) return null;
+
+  const remaining = goal.target_value - goal.current_value;
+  const daysNeeded = Math.ceil(remaining / perDay);
+  const projected = new Date(today);
+  projected.setDate(projected.getDate() + daysNeeded);
+  return projected;
+}

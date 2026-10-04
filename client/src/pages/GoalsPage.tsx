@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { GoalCard, GoalForm, LogProgressDialog, useGoals } from '@/features/goals';
+import { GoalCard, GoalForm, LogProgressDialog, GoalsSummary, useGoals } from '@/features/goals';
 import type { Goal, GoalFormData } from '@/features/goals';
 import { goalProgress } from '@/features/goals/lib/goal-progress';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
@@ -121,6 +121,7 @@ export function GoalsPage() {
         />
       ) : (
         <div className="space-y-8">
+          <GoalsSummary goals={goals} />
           {sections.map((section) => (
             <section key={section.key} className="space-y-3">
               <div className="flex items-center gap-2">
