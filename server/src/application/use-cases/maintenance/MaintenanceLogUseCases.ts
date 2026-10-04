@@ -60,6 +60,7 @@ export class LogMaintenance {
         date: input.service_date,
         description: `[Maintenance] ${input.type}: ${input.description}`,
         bike_id: input.bike_id,
+        maintenance_log_id: log.id,
       });
     }
 

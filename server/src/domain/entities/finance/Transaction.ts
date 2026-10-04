@@ -10,6 +10,8 @@ export interface Transaction {
   component_id: string | null;
   event_id: string | null;
   activity_id: string | null;
+  /** The maintenance log that produced this cost, when it came from one. */
+  maintenance_log_id: string | null;
   payment_method: string | null;
   merchant: string | null;
   created_at: string;
