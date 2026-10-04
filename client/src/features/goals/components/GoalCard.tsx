@@ -1,4 +1,13 @@
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Plus,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+} from 'lucide-react';
 import type { Goal } from '../types/goal';
 import { ProgressRing } from './ProgressRing';
 import { formatDate } from '@/shared/lib/utils';
@@ -10,6 +19,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -23,12 +33,25 @@ import {
 
 interface GoalCardProps {
   goal: Goal;
+  onEdit: (goal: Goal) => void;
   onDelete: (goal: Goal) => void;
+  onLogProgress: (goal: Goal) => void;
+  onRecalculate: (goal: Goal) => void;
+  onSetStatus: (goal: Goal, status: Goal['status']) => void;
 }
 
-export function GoalCard({ goal, onDelete }: GoalCardProps) {
+export function GoalCard({
+  goal,
+  onEdit,
+  onDelete,
+  onLogProgress,
+  onRecalculate,
+  onSetStatus,
+}: GoalCardProps) {
   const progress = goalProgress(goal);
   const unit = goal.unit || '';
+  const isClosed =
+    goal.status === 'completed' || goal.status === 'cancelled' || goal.status === 'failed';
 
   return (
     <Card>
@@ -99,6 +122,46 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
             <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => onLogProgress(goal)}>
+                <Plus aria-hidden="true" />
+                Log progress
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onRecalculate(goal)}>
+                <RefreshCw aria-hidden="true" />
+                Recalculate from rides
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(goal)}>
+                <Pencil aria-hidden="true" />
+                Edit goal
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {!isClosed && goal.status === 'active' && (
+                <>
+                  <DropdownMenuItem onClick={() => onSetStatus(goal, 'completed')}>
+                    <CheckCircle2 aria-hidden="true" />
+                    Mark completed
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onSetStatus(goal, 'failed')}>
+                    <XCircle aria-hidden="true" />
+                    Mark failed
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onSetStatus(goal, 'cancelled')}>
+                    <XCircle aria-hidden="true" />
+                    Cancel goal
+                  </DropdownMenuItem>
+                </>
+              )}
+              {isClosed && (
+                <DropdownMenuItem onClick={() => onSetStatus(goal, 'active')}>
+                  <RotateCcw aria-hidden="true" />
+                  Reactivate
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem variant="destructive" onClick={() => onDelete(goal)}>
                 <Trash2 aria-hidden="true" />
