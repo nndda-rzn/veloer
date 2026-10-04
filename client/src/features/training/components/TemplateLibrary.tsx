@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Mountain, Zap, Bike, Trophy, ClipboardList, type LucideIcon } from 'lucide-react';
+import {
+  Mountain,
+  Zap,
+  Bike,
+  Trophy,
+  ClipboardList,
+  Dumbbell,
+  HeartPulse,
+  type LucideIcon,
+} from 'lucide-react';
 import type { TemplateKey, TemplateInfo } from '../types/training';
 import { TEMPLATE_LIST } from '../types/training';
 import { Button } from '@/components/ui/button';
@@ -24,6 +33,9 @@ const focusIcons: Record<string, LucideIcon> = {
   'FTP / Threshold': Zap,
   'Long ride endurance': Bike,
   'Periodized peak performance': Trophy,
+  'Strength focus': Dumbbell,
+  'Balanced strength + cycling': Dumbbell,
+  'Endurance with strength': HeartPulse,
 };
 
 function TemplateCard({
