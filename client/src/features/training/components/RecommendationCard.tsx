@@ -69,7 +69,7 @@ export function RecommendationCard({ recommendation: rec, onAddToPlan }: Recomme
           onClick={() => onAddToPlan(rec)}
           className="w-full rounded-lg border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          Add to Plan
+          Add to today
         </button>
       )}
     </div>

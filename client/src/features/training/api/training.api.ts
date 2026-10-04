@@ -69,9 +69,10 @@ export const trainingApi = {
   },
 
   // ---- Recommendation ----
-  async getRecommendation(): Promise<WorkoutRecommendation> {
+  async getRecommendation(date?: string): Promise<WorkoutRecommendation> {
     const { data } = await apiClient.get<WorkoutRecommendation>(
       '/api/training-plans/recommendations',
+      { params: date ? { date } : undefined },
     );
     return data;
   },

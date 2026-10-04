@@ -12,12 +12,20 @@ import { useEffect, useRef } from 'react';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
-import { ClipboardList, Sparkles } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ClipboardList, Sparkles, ChevronDown, LayoutTemplate } from 'lucide-react';
 
 export function TrainingPlansPage() {
   const navigate = useNavigate();
-  const { plans, loading, error, createPlan, deletePlan, refetch } = usePlans();
+  const { plans, loading, error, createPlan, updatePlan, deletePlan, refetch } = usePlans();
   const [showForm, setShowForm] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<TrainingPlan | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showSmartPlan, setShowSmartPlan] = useState(false);
   const [templateError, setTemplateError] = useState<string | null>(null);
@@ -42,15 +50,16 @@ export function TrainingPlansPage() {
   }, []);
 
   const handleCreate = async (data: TrainingPlanFormData) => {
-    await createPlan(data);
+    if (editingPlan) {
+      await updatePlan(editingPlan.id, data);
+    } else {
+      await createPlan(data);
+    }
     setShowForm(false);
+    setEditingPlan(null);
   };
 
   const [deletingPlan, setDeletingPlan] = useState<TrainingPlan | null>(null);
-
-  const handleDelete = async (plan: TrainingPlan) => {
-    setDeletingPlan(plan);
-  };
 
   const confirmDelete = async () => {
     if (deletingPlan) {
@@ -97,20 +106,36 @@ export function TrainingPlansPage() {
         title="Training Plans"
         description="Plan and schedule your cycling training"
         action={
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                Start from
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onSelect={() => void handleOpenSmartPlan()}
+                    disabled={analysisLoading}
+                  >
+                    <Sparkles aria-hidden="true" />
+                    Smart Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setShowTemplates(true)}>
+                    <LayoutTemplate aria-hidden="true" />
+                    Template
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
-              variant="secondary"
-              onClick={() => void handleOpenSmartPlan()}
-              disabled={analysisLoading}
-              loading={analysisLoading}
+              onClick={() => {
+                setEditingPlan(null);
+                setShowForm(true);
+              }}
             >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              {analysisLoading ? 'Analyzing…' : 'Smart Plan'}
+              New Plan
             </Button>
-            <Button variant="outline" onClick={() => setShowTemplates(true)}>
-              From Template
-            </Button>
-            <Button onClick={() => setShowForm(true)}>New Plan</Button>
           </div>
         }
       />
@@ -125,11 +150,7 @@ export function TrainingPlansPage() {
         </div>
       )}
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {error}
-        </div>
-      )}
+      {error && <Alert variant="error">{error}</Alert>}
 
       {!loading && !error && plans.length === 0 && (
         <EmptyState
@@ -141,13 +162,17 @@ export function TrainingPlansPage() {
       )}
 
       {!loading && plans.length > 0 && (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
           {plans.map((plan) => (
             <TrainingPlanCard
               key={plan.id}
               plan={plan}
               onClick={(p) => navigate(`/training-plans/${p.id}`)}
-              onDelete={handleDelete}
+              onEdit={(p) => {
+                setEditingPlan(p);
+                setShowForm(true);
+              }}
+              onDelete={setDeletingPlan}
             />
           ))}
         </div>
@@ -155,9 +180,13 @@ export function TrainingPlansPage() {
 
       {showForm && (
         <TrainingPlanForm
+          plan={editingPlan ?? undefined}
           defaultFtp={defaultFtp}
           onSubmit={handleCreate}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingPlan(null);
+          }}
         />
       )}
 

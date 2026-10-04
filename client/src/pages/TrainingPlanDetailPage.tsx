@@ -13,6 +13,7 @@ import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
 import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/shared/components/feedback/Toaster';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ import type {
 export function TrainingPlanDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { pushToast } = useToast();
   const [plan, setPlan] = useState<TrainingPlan | null>(null);
   const [planLoading, setPlanLoading] = useState(true);
   const [selectedWorkout, setSelectedWorkout] = useState<TrainingWorkout | null>(null);
@@ -38,6 +40,7 @@ export function TrainingPlanDetailPage() {
   const [editWorkout, setEditWorkout] = useState<TrainingWorkout | null>(null);
   const [showLinker, setShowLinker] = useState(false);
   const [deletingWorkout, setDeletingWorkout] = useState<TrainingWorkout | null>(null);
+  const [rescheduling, setRescheduling] = useState(false);
 
   const {
     workouts,
@@ -101,6 +104,24 @@ export function TrainingPlanDetailPage() {
     setShowLinker(true);
   };
 
+  const handleReschedule = async () => {
+    setRescheduling(true);
+    try {
+      const result = await trainingApi.rescheduleMissed(id ?? '');
+      await reschedule();
+      pushToast(
+        result.missed === 0
+          ? 'No missed workouts to reschedule'
+          : `${result.rescheduled} of ${result.missed} missed workout${result.missed === 1 ? '' : 's'} rescheduled`,
+        { level: result.missed === 0 ? 'info' : 'success' },
+      );
+    } catch {
+      pushToast('Could not reschedule missed workouts', { level: 'error' });
+    } finally {
+      setRescheduling(false);
+    }
+  };
+
   const handleAddRecommendation = async (rec: WorkoutRecommendation) => {
     const today = new Date().toISOString().split('T')[0];
     await createWorkout({
@@ -146,7 +167,11 @@ export function TrainingPlanDetailPage() {
           description={`${plan.start_date} – ${plan.end_date} • FTP ${plan.ftp_baseline}W`}
           action={
             <>
-              <Button variant="secondary" onClick={() => reschedule()}>
+              <Button
+                variant="secondary"
+                onClick={() => void handleReschedule()}
+                loading={rescheduling}
+              >
                 Reschedule Missed
               </Button>
               <Button
