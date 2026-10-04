@@ -83,13 +83,13 @@ export function ActivityDetailPage() {
 
         <TabsContent value="overview" className="space-y-6">
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-foreground">Route Map</h4>
+            <h4 className="mb-2 text-base font-semibold text-foreground">Route Map</h4>
             <ActivityMap encodedPolyline={activity.polyline} />
           </div>
 
           <Card>
             <CardContent>
-              <h4 className="mb-3 text-sm font-semibold text-foreground">Bike Assignment</h4>
+              <h4 className="mb-3 text-base font-semibold text-foreground">Bike Assignment</h4>
               <ActivityBikeLinker
                 activityId={activity.id}
                 currentBikeId={activity.bike_id}
@@ -101,17 +101,17 @@ export function ActivityDetailPage() {
 
         <TabsContent value="training" className="space-y-6">
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-foreground">Training Metrics</h4>
+            <h4 className="mb-2 text-base font-semibold text-foreground">Training Metrics</h4>
             <TrainingLoadSummary activity={activity} ftp={profile?.ftp ?? null} />
           </div>
 
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-foreground">Zone Distribution</h4>
+            <h4 className="mb-2 text-base font-semibold text-foreground">Zone Distribution</h4>
             <ZoneChart activityId={activity.id} />
           </div>
 
           <div>
-            <h4 className="mb-2 text-sm font-semibold text-foreground">Lap Breakdown</h4>
+            <h4 className="mb-2 text-base font-semibold text-foreground">Lap Breakdown</h4>
             <LapBreakdown activityId={activity.id} />
           </div>
         </TabsContent>

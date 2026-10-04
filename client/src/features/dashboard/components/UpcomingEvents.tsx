@@ -39,7 +39,7 @@ export function UpcomingEvents({ events, loading }: UpcomingEventsProps) {
     <Card>
       <CardContent>
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Upcoming Events</h3>
+          <h3 className="text-base font-semibold text-foreground">Upcoming Events</h3>
           <Link
             to="/events"
             className="text-xs font-medium text-primary hover:text-primary-dark hover:underline"

@@ -39,7 +39,7 @@ export function CategoryChart({ summary }: CategoryChartProps) {
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <h4 className="mb-2 text-sm font-semibold text-foreground">Expenses by Category</h4>
+      <h4 className="mb-2 text-base font-semibold text-foreground">Expenses by Category</h4>
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie

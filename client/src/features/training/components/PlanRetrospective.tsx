@@ -83,7 +83,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Completion donut */}
         <div className="rounded-xl border border-border bg-card p-4">
-          <h3 className="mb-3 text-sm font-semibold text-foreground">Workout Status</h3>
+          <h3 className="mb-3 text-base font-semibold text-foreground">Workout Status</h3>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
@@ -107,7 +107,7 @@ export function PlanRetrospectiveView({ data }: PlanRetrospectiveProps) {
 
         {/* Weekly TSS compliance */}
         <div className="rounded-xl border border-border bg-card p-4">
-          <h3 className="mb-3 text-sm font-semibold text-foreground">
+          <h3 className="mb-3 text-base font-semibold text-foreground">
             Weekly TSS: Planned vs Actual
           </h3>
           <ResponsiveContainer width="100%" height={200}>

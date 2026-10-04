@@ -26,7 +26,7 @@ export function MaintenanceAlerts({ dueSchedules, loading }: MaintenanceAlertsPr
   return (
     <Alert variant="warning" live="polite">
       <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-semibold">
+        <h3 className="flex items-center gap-2 text-base font-semibold">
           <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
           Maintenance Due ({dueSchedules.length})
         </h3>

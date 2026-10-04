@@ -71,7 +71,7 @@ export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartP
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <h3 className="mb-3 text-sm font-semibold text-foreground">Training Load (8 weeks)</h3>
+      <h3 className="mb-3 text-base font-semibold text-foreground">Training Load (8 weeks)</h3>
       {chart}
     </div>
   );

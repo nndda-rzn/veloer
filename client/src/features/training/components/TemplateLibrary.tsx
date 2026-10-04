@@ -45,10 +45,10 @@ function TemplateCard({
       }`}
     >
       <div className="mb-1 flex items-start justify-between gap-2">
-        <h3 className="text-sm font-semibold text-foreground">{template.title}</h3>
+        <h3 className="text-base font-semibold text-foreground">{template.title}</h3>
         <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
       </div>
-      <p className="mb-2 text-xs text-muted-foreground">{template.description}</p>
+      <p className="mb-2 text-sm text-muted-foreground">{template.description}</p>
       <div className="flex flex-wrap gap-1.5">
         <span className="rounded-md bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700">
           {template.goal_type.replace(/_/g, ' ')}
@@ -111,7 +111,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
         {/* Config */}
         {selectedTemplate && (
           <div className="space-y-3 rounded-lg border border-primary/20 bg-primary-50 p-4">
-            <h3 className="text-sm font-medium text-foreground">
+            <h3 className="text-base font-medium text-foreground">
               Configure: {selectedTemplate.title}
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -135,7 +135,7 @@ export function TemplateLibrary({ onSelect, onCancel }: TemplateLibraryProps) {
                 />
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               End date: ~{selectedTemplate.weeks} weeks from start • ~
               {selectedTemplate.workouts_per_week * selectedTemplate.weeks} workouts total
             </p>

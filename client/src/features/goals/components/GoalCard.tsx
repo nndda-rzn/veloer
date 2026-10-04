@@ -55,7 +55,7 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
           {formatDate(goal.start_date)} – {formatDate(goal.end_date)}
         </p>
         {goal.description && (
-          <p className="mt-1 text-xs italic text-muted-foreground">{goal.description}</p>
+          <p className="mt-1 text-sm italic text-muted-foreground">{goal.description}</p>
         )}
       </div>
       <Button variant="destructive" size="sm" onClick={() => onDelete(goal)}>
