@@ -6,7 +6,13 @@ import { Bike } from 'lucide-react';
 import { EmptyState } from '@/shared/components/ui';
 
 interface RecentActivitiesProps {
-  activities: { id: string; name: string; start_date: string; distance: number; type: string }[];
+  activities: {
+    id: string;
+    name: string;
+    start_date: string;
+    distance: number | null;
+    type: string;
+  }[];
   loading: boolean;
 }
 

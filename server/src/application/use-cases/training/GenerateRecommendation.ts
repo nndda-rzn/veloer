@@ -4,6 +4,7 @@ import type { UserProfileRepository } from '../../../domain/repositories/auth/Us
 import type { TrainingPlanRepository } from '../../../domain/repositories/training/TrainingPlanRepository.js';
 import type { WorkoutType } from '../../../domain/entities/training/TrainingWorkout.js';
 import { daysSinceLastRide } from './last-ride.js';
+import { cyclingWeeklyHours } from './weekly-hours.js';
 
 export interface RecommendationMetrics {
   ctl: number;
@@ -97,13 +98,12 @@ export class GenerateRecommendation {
 
     // Weekly totals
     const weekly_tss = days7.reduce((s, d) => s + d.tss, 0);
-    const weekly_hours =
-      activities
-        .filter((a) => {
-          const d = a.start_date.split('T')[0];
-          return days7.some((day) => day.date === d);
-        })
-        .reduce((s, a) => s + a.moving_time, 0) / 3600;
+    // Cycling hours only: this gates intensity prescriptions in decide(), so a
+    // strength session must not count toward it.
+    const weekly_hours = cyclingWeeklyHours(
+      activities,
+      days7.map((d) => d.date),
+    );
 
     // Days since last ride: cycling only. A gym session must not reset this.
     const days_since_last_ride = daysSinceLastRide(activities, today);

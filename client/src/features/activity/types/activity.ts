@@ -4,8 +4,10 @@ export interface Activity {
   strava_id: number | null;
   name: string;
   type: string;
+  discipline: 'cycling' | 'strength';
   start_date: string;
-  distance: number;
+  /** Meters; null for a strength session, which has no distance. */
+  distance: number | null;
   moving_time: number;
   elapsed_time: number;
   total_elevation_gain: number | null;
