@@ -1,55 +1,72 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { activityApi } from '../api/activity.api';
-import type { Activity, ActivityStats, ActivityListFilters } from '../types/activity';
+import type { Activity } from '../types/activity';
+import {
+  filterActivities,
+  type ActivityQuery,
+  type ActivityQueryResult,
+} from '../lib/activity-filters';
+
+/**
+ * Upper bound for the "load everything" list query. High enough that a normal
+ * rider never hits it, low enough to stay a sane payload.
+ */
+export const ACTIVITY_FETCH_LIMIT = 2000;
 
 interface UseActivitiesReturn {
+  /** Every activity on record, newest first. */
   activities: Activity[];
-  stats: ActivityStats | null;
   loading: boolean;
   error: string | null;
-  filters: ActivityListFilters;
-  setFilters: (filters: ActivityListFilters) => void;
+  /** True when the record count reached the fetch cap (data may be truncated). */
+  truncated: boolean;
   refetch: () => void;
 }
 
 export function useActivities(): UseActivitiesReturn {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [stats, setStats] = useState<ActivityStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<ActivityListFilters>({
-    limit: 20,
-    offset: 0,
-  });
-
-  const fetch = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [list, statsData] = await Promise.all([
-        activityApi.list(filters),
-        activityApi.getStats(filters.startDate, filters.endDate),
-      ]);
-      setActivities(list);
-      setStats(statsData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load activities');
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+  const [refetchFlag, setRefetchFlag] = useState(0);
 
   useEffect(() => {
-    void fetch();
-  }, [fetch]);
+    let active = true;
+    setLoading(true);
+    setError(null);
+    activityApi
+      .list({ limit: ACTIVITY_FETCH_LIMIT })
+      .then((list) => {
+        if (active) setActivities(list);
+      })
+      .catch((err) => {
+        if (active) setError(err instanceof Error ? err.message : 'Failed to load activities');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [refetchFlag]);
+
+  const refetch = useCallback(() => setRefetchFlag((f) => f + 1), []);
 
   return {
     activities,
-    stats,
     loading,
     error,
-    filters,
-    setFilters,
-    refetch: fetch,
+    truncated: activities.length >= ACTIVITY_FETCH_LIMIT,
+    refetch,
   };
+}
+
+/**
+ * Derive the filtered rows and summaries for a query from the full activity
+ * list. Pure and synchronous: switching presets or filters never refetches.
+ */
+export function useActivityQuery(
+  activities: Activity[],
+  query: ActivityQuery,
+): ActivityQueryResult {
+  return useMemo(() => filterActivities(activities, query), [activities, query]);
 }
