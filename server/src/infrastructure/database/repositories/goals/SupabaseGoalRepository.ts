@@ -71,9 +71,11 @@ export class SupabaseGoalRepository implements GoalRepository {
     const newValue = derived + manual;
 
     const updateData: Partial<Goal> = { current_value: newValue };
-    // Auto-complete when the target is reached; reopen if it dropped below.
-    if (newValue >= g.target_value) updateData.status = 'completed';
-    else if (g.status === 'completed') updateData.status = 'active';
+    // Auto-complete only an active goal whose target is reached. Never
+    // override a status the user set manually (completed/failed/cancelled).
+    if (g.status === 'active' && newValue >= g.target_value) {
+      updateData.status = 'completed';
+    }
 
     const { data: result, error } = await supabase
       .from('goals')
