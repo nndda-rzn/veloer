@@ -100,6 +100,9 @@ export function SettingsPage() {
     }
   };
 
+  /** Empty string from the uploader means "clear the previous message". */
+  const handleAvatarError = (message: string) => setAvatarError(message || null);
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -132,7 +135,7 @@ export function SettingsPage() {
             uploading={uploadingAvatar}
             onChange={(url) => setFormData((prev) => ({ ...prev, avatar_url: url }))}
             onUpload={handleAvatarUpload}
-            onError={setAvatarError}
+            onError={handleAvatarError}
           />
         </FormField>
         {avatarError && (

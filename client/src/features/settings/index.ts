@@ -2,6 +2,8 @@ export { useProfile } from './hooks/useProfile';
 export { settingsApi } from './api/settings.api';
 export { PreferencesProvider, usePreferences } from './components/PreferencesProvider';
 export { AvatarUpload } from './components/AvatarUpload';
+export { AvatarCropDialog } from './components/AvatarCropDialog';
+export { cropImageToBlob, blobToFile, AVATAR_SIZE } from './lib/crop-image';
 export {
   detectTimezone,
   localTimeIn,
