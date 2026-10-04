@@ -34,7 +34,7 @@ export function ActivityStatsBar({ stats, loading }: ActivityStatsBarProps) {
           <Card key={item.label}>
             <CardContent>
               <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-              <p className="mt-2 text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+              <p className="mt-2 text-2xl font-mono font-semibold tabular-nums tracking-tight text-foreground">
                 {item.value}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">{item.label}</p>

@@ -54,7 +54,7 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 {item.label}
               </p>
-              <p className="mt-1 text-lg font-semibold tabular-nums text-foreground">
+              <p className="mt-1 text-lg font-mono font-semibold tabular-nums text-foreground">
                 {item.value}
               </p>
             </CardContent>

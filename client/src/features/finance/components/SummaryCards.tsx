@@ -46,7 +46,9 @@ export function SummaryCards({ summary, loading }: SummaryCardsProps) {
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {card.label}
             </p>
-            <p className={`mt-1 text-2xl font-semibold tabular-nums ${card.color}`}>{card.value}</p>
+            <p className={`mt-1 text-2xl font-mono font-semibold tabular-nums ${card.color}`}>
+              {card.value}
+            </p>
           </CardContent>
         </Card>
       ))}

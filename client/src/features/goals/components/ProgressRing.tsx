@@ -48,7 +48,7 @@ export function ProgressRing({ percentage, size = 80, strokeWidth = 8 }: Progres
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-lg font-semibold tabular-nums text-foreground">
+        <span className="text-lg font-mono font-semibold tabular-nums text-foreground">
           {clamped.toFixed(0)}%
         </span>
       </div>

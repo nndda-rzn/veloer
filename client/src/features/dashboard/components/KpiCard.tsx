@@ -64,7 +64,7 @@ export function KpiCard({
           </div>
         ) : (
           <>
-            <p className="mt-2.5 text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+            <p className="mt-2.5 text-2xl font-mono font-semibold tabular-nums tracking-tight text-foreground">
               {value}
             </p>
 

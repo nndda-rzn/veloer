@@ -21,7 +21,9 @@ export function LoginPage() {
             <img src="/logo.png" alt="Veloer" width={160} height={40} className="h-10 w-auto" />
           </div>
 
-          <h1 className="font-display text-3xl leading-tight text-foreground">Welcome back</h1>
+          <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">
+            Welcome back
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Track your rides, gear, and training in one place.
           </p>
@@ -68,7 +70,7 @@ export function LoginPage() {
             height={263}
             className="max-h-[280px] w-auto object-contain"
           />
-          <p className="mt-10 font-display text-2xl text-white">Your personal cycling companion</p>
+          <p className="mt-10 text-2xl font-semibold text-white">Your personal cycling companion</p>
           <p className="mt-2 max-w-xs text-sm text-primary-200">
             From training plans to gear maintenance, all in one place.
           </p>

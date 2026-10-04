@@ -50,16 +50,35 @@ Neutrals = warm **stone** scale.
 
 ## Typography
 
-| Role      | Font             | Size / weight                          |
-| --------- | ---------------- | -------------------------------------- |
-| Display   | Instrument Serif | `font-display`, 28–32px (page titles)  |
-| Body / UI | Instrument Sans  | 14–16px, weights 400/500/600           |
-| Mono      | system mono      | `font-mono`, tabular data where needed |
+Single clean sans-serif (**Geist**) for the whole app, paired with **Geist Mono**
+for numeric data. No display/serif face — density and precision take priority in
+a dashboard (see the B2B SaaS typography rules in the research notes).
 
+| Role        | Font       | Token / class                              |
+| ----------- | ---------- | ------------------------------------------ |
+| UI / body   | Geist      | `font-sans`, weights 400/500/600/700       |
+| Data values | Geist Mono | `font-mono` + `tabular-nums` (KPI, tables) |
+
+### Type scale — Minor Third (1.2)
+
+| Token          | Size | Line-height | Weight | Use                       |
+| -------------- | ---- | ----------- | ------ | ------------------------- |
+| `text-caption` | 12px | 1.5         | 400    | metadata, small labels    |
+| `text-body-sm` | 14px | 1.5         | 400    | default dense UI (tables) |
+| `text-body`    | 16px | 1.6         | 400    | prose, descriptions       |
+| `text-h3`      | 16px | 1.4         | 600    | card titles               |
+| `text-h2`      | 20px | 1.3         | 600    | section titles            |
+| `text-h1`      | 24px | 1.2         | 600    | page titles               |
+
+- **Hierarchy rule:** size = importance, weight = kind, colour = state.
+- **Label vs value:** labels are `text-xs text-muted-foreground`; values are
+  larger/heavier (and `font-mono` when numeric) so users can scan, not read.
 - **Exactly one `<h1>` per page** (owned by `PageHeader`).
 - Headings `text-wrap: balance`; paragraphs `text-pretty`.
-- Numbers in tables/metrics use `tabular-nums`.
+- Numbers in tables/metrics use `font-mono tabular-nums`.
 - Ellipsis is `…` not `...`. Curly quotes `“ ”`.
+- Line-height is inversely proportional to size: small text breathes, large
+  headings sit tight.
 
 ---
 

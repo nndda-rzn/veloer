@@ -123,7 +123,7 @@ function IndicatorCell({
   return (
     <div className="flex flex-col gap-2">
       <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-      <p className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+      <p className="text-2xl font-mono font-semibold tabular-nums tracking-tight text-foreground">
         {item.format(item.value)}
       </p>
       <div>

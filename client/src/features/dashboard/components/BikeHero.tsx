@@ -58,7 +58,7 @@ export function BikeHero({
     return (
       <div className="rounded-xl border border-border bg-card p-6 md:p-8">
         <p className="text-sm font-medium text-primary-700">{getGreeting()}</p>
-        <h2 className="mt-1 font-display text-2xl text-foreground md:text-3xl">
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
           {displayName ?? 'Welcome back'}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -83,7 +83,7 @@ export function BikeHero({
       <div className="flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div className="min-w-0">
           <p className="text-sm font-medium text-primary-700">{getGreeting()}</p>
-          <h2 className="mt-1 font-display text-2xl leading-tight text-foreground md:text-3xl">
+          <h2 className="mt-1 text-2xl font-semibold leading-tight tracking-tight text-foreground md:text-3xl">
             {displayName ?? 'Welcome back'}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -96,13 +96,13 @@ export function BikeHero({
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
                 Total distance
               </p>
-              <p className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
+              <p className="mt-0.5 text-lg font-mono font-semibold tabular-nums text-foreground">
                 {formatDistance(selectedBike.current_km * 1000)}
               </p>
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Rides (7d)</p>
-              <p className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
+              <p className="mt-0.5 text-lg font-mono font-semibold tabular-nums text-foreground">
                 {totalRides}
               </p>
             </div>
