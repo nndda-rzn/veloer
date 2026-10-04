@@ -238,7 +238,7 @@ export function SettingsPage() {
           htmlFor="currency"
           hint="Amounts are stored in IDR. Conversion is not applied, so this is fixed."
         >
-          <Input id="currency" type="text" value="IDR — Indonesian Rupiah" readOnly disabled />
+          <Input id="currency" type="text" value="IDR – Indonesian Rupiah" readOnly disabled />
         </FormField>
 
         <FormField label="Default bike" htmlFor="default_bike_id">

@@ -12,6 +12,7 @@ import {
 import { Activity as ActivityIcon } from 'lucide-react';
 import type { TrainingLoadDataPoint } from '../types/training';
 import { EmptyState } from '@/shared/components/ui';
+import { useChartColors } from '@/shared/lib/use-chart-colors';
 
 interface TrainingLoadChartProps {
   data: TrainingLoadDataPoint[];
@@ -19,6 +20,8 @@ interface TrainingLoadChartProps {
 }
 
 export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartProps) {
+  const c = useChartColors();
+
   if (data.length === 0) {
     return (
       <EmptyState
@@ -32,30 +35,30 @@ export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartP
   const chart = (
     <ResponsiveContainer width="100%" height={embedded ? 220 : 240}>
       <ComposedChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-        <CartesianGrid stroke="#e7e5e4" strokeDasharray="3 3" vertical={false} />
+        <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 10, fill: '#78716c' }}
+          tick={{ fontSize: 10, fill: c.axis }}
           tickFormatter={formatChartDate}
           tickLine={false}
           axisLine={false}
         />
-        <YAxis tick={{ fontSize: 10, fill: '#78716c' }} tickLine={false} axisLine={false} />
+        <YAxis tick={{ fontSize: 10, fill: c.axis }} tickLine={false} axisLine={false} />
         <Tooltip
           labelFormatter={(date) => formatLongDate(String(date))}
           contentStyle={{
             borderRadius: 8,
-            border: '1px solid #e7e5e4',
+            border: `1px solid ${c.grid}`,
             fontSize: 12,
           }}
         />
         <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
-        <Bar dataKey="tss" name="Daily TSS" fill="#d6d3d1" radius={[2, 2, 0, 0]} />
+        <Bar dataKey="tss" name="Daily TSS" fill={c.bar} radius={[2, 2, 0, 0]} />
         <Line
           type="monotone"
           dataKey="ctl"
           name="CTL (Fitness)"
-          stroke="#0f6e4e"
+          stroke={c.ctl}
           dot={false}
           strokeWidth={2}
         />
@@ -63,7 +66,7 @@ export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartP
           type="monotone"
           dataKey="atl"
           name="ATL (Fatigue)"
-          stroke="#c2410c"
+          stroke={c.atl}
           dot={false}
           strokeWidth={2}
         />
