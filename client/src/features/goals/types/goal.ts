@@ -27,3 +27,6 @@ export interface GoalFormData {
   title?: string | null;
   description?: string | null;
 }
+
+/** Partial update payload, including status changes. */
+export type GoalUpdateData = Partial<GoalFormData> & { status?: Goal['status'] };

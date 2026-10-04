@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { GoalCard, GoalForm, useGoals } from '@/features/goals';
+import { GoalCard, GoalForm, LogProgressDialog, useGoals } from '@/features/goals';
 import type { Goal, GoalFormData } from '@/features/goals';
 import { goalProgress } from '@/features/goals/lib/goal-progress';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
+import { useToast } from '@/shared/components/feedback/Toaster';
 import { Target } from 'lucide-react';
 
 interface Section {
@@ -14,9 +15,22 @@ interface Section {
 }
 
 export function GoalsPage() {
-  const { goals, loading, error, createGoal, deleteGoal } = useGoals();
+  const {
+    goals,
+    loading,
+    error,
+    createGoal,
+    updateGoal,
+    deleteGoal,
+    adjustProgress,
+    recalculate,
+    setStatus,
+  } = useGoals();
+  const { pushToast } = useToast();
   const [showForm, setShowForm] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null);
+  const [loggingGoal, setLoggingGoal] = useState<Goal | null>(null);
 
   const sections: Section[] = useMemo(() => {
     const active: Goal[] = [];
@@ -29,7 +43,6 @@ export function GoalsPage() {
       else archived.push(goal);
     }
 
-    // Active goals: most urgent (fewest days left) first.
     active.sort((a, b) => goalProgress(a).daysRemaining - goalProgress(b).daysRemaining);
 
     return [
@@ -40,8 +53,13 @@ export function GoalsPage() {
   }, [goals]);
 
   const handleSubmit = async (data: GoalFormData) => {
-    await createGoal(data);
+    if (editingGoal) {
+      await updateGoal(editingGoal.id, data);
+    } else {
+      await createGoal(data);
+    }
     setShowForm(false);
+    setEditingGoal(null);
   };
 
   const confirmDelete = async () => {
@@ -51,12 +69,39 @@ export function GoalsPage() {
     }
   };
 
+  const handleRecalculate = async (goal: Goal) => {
+    try {
+      await recalculate(goal.id);
+      pushToast('Goal recalculated from your rides', { level: 'success' });
+    } catch {
+      pushToast('Could not recalculate goal', { level: 'error' });
+    }
+  };
+
+  const handleSetStatus = async (goal: Goal, status: Goal['status']) => {
+    try {
+      await setStatus(goal.id, status);
+      pushToast(`Goal marked ${status}`, { level: 'success' });
+    } catch {
+      pushToast('Could not update goal status', { level: 'error' });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Goals"
         description="Your cycling goals and training progress"
-        action={<Button onClick={() => setShowForm(true)}>Create Goal</Button>}
+        action={
+          <Button
+            onClick={() => {
+              setEditingGoal(null);
+              setShowForm(true);
+            }}
+          >
+            Create Goal
+          </Button>
+        }
       />
 
       {error && <Alert variant="error">{error}</Alert>}
@@ -86,7 +131,18 @@ export function GoalsPage() {
               </div>
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
                 {section.goals.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} onDelete={setDeletingGoal} />
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onEdit={(g) => {
+                      setEditingGoal(g);
+                      setShowForm(true);
+                    }}
+                    onDelete={setDeletingGoal}
+                    onLogProgress={setLoggingGoal}
+                    onRecalculate={(g) => void handleRecalculate(g)}
+                    onSetStatus={(g, s) => void handleSetStatus(g, s)}
+                  />
                 ))}
               </div>
             </section>
@@ -94,7 +150,27 @@ export function GoalsPage() {
         </div>
       )}
 
-      {showForm && <GoalForm onSubmit={handleSubmit} onCancel={() => setShowForm(false)} />}
+      {showForm && (
+        <GoalForm
+          goal={editingGoal}
+          onSubmit={handleSubmit}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingGoal(null);
+          }}
+        />
+      )}
+
+      {loggingGoal && (
+        <LogProgressDialog
+          goal={loggingGoal}
+          onSubmit={async (delta) => {
+            await adjustProgress(loggingGoal.id, delta);
+            setLoggingGoal(null);
+          }}
+          onCancel={() => setLoggingGoal(null)}
+        />
+      )}
 
       <ConfirmDialog
         open={deletingGoal !== null}

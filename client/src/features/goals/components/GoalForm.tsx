@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { GoalFormData } from '../types/goal';
+import type { Goal, GoalFormData } from '../types/goal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { selectClass } from '@/shared/lib/form-styles';
 
 interface GoalFormProps {
+  goal?: Goal | null;
   onSubmit: (data: GoalFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -16,50 +17,103 @@ const goalTypes: { value: GoalFormData['type']; label: string; unit: string }[] 
   { value: 'distance', label: 'Distance', unit: 'km' },
   { value: 'time', label: 'Time', unit: 'hours' },
   { value: 'elevation', label: 'Elevation', unit: 'm' },
-  { value: 'activities_count', label: 'Activities Count', unit: 'count' },
+  { value: 'activities_count', label: 'Activities count', unit: 'count' },
 ];
 
 const periods: { value: GoalFormData['period']; label: string }[] = [
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
   { value: 'yearly', label: 'Yearly' },
-  { value: 'custom', label: 'Custom' },
+  { value: 'custom', label: 'Custom range' },
 ];
 
-function getDateOffset(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
+function toISO(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
-  const [formData, setFormData] = useState<GoalFormData>({
-    type: 'distance',
-    target_value: 100,
-    unit: 'km',
-    period: 'monthly',
-    start_date: getDateOffset(0),
-    end_date: getDateOffset(30),
-    title: '',
-    description: '',
+/** Compute start/end dates for a period, anchored on today. */
+function periodRange(period: GoalFormData['period']): { start: string; end: string } {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = today.getMonth();
+  switch (period) {
+    case 'weekly': {
+      const dow = (today.getDay() + 6) % 7; // Monday = 0
+      const monday = new Date(y, m, today.getDate() - dow);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return { start: toISO(monday), end: toISO(sunday) };
+    }
+    case 'monthly':
+      return { start: toISO(new Date(y, m, 1)), end: toISO(new Date(y, m + 1, 0)) };
+    case 'yearly':
+      return { start: toISO(new Date(y, 0, 1)), end: toISO(new Date(y, 11, 31)) };
+    default:
+      return { start: toISO(today), end: toISO(new Date(y, m, today.getDate() + 30)) };
+  }
+}
+
+export function GoalForm({ goal, onSubmit, onCancel }: GoalFormProps) {
+  const isEdit = Boolean(goal);
+  const [formData, setFormData] = useState<GoalFormData>(() => {
+    if (goal) {
+      return {
+        type: goal.type,
+        target_value: goal.target_value,
+        unit: goal.unit,
+        period: goal.period,
+        start_date: goal.start_date,
+        end_date: goal.end_date,
+        title: goal.title ?? '',
+        description: goal.description ?? '',
+      };
+    }
+    const range = periodRange('monthly');
+    return {
+      type: 'distance',
+      target_value: 100,
+      unit: 'km',
+      period: 'monthly',
+      start_date: range.start,
+      end_date: range.end,
+      title: '',
+      description: '',
+    };
   });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleTypeChange = (type: GoalFormData['type']) => {
     const found = goalTypes.find((t) => t.value === type);
-    setFormData({ ...formData, type, unit: found?.unit ?? 'km' });
+    setFormData((f) => ({ ...f, type, unit: found?.unit ?? f.unit }));
+  };
+
+  const handlePeriodChange = (period: GoalFormData['period']) => {
+    // Auto-fill the date range for fixed periods; leave custom untouched.
+    if (period === 'custom') {
+      setFormData((f) => ({ ...f, period }));
+    } else {
+      const range = periodRange(period);
+      setFormData((f) => ({ ...f, period, start_date: range.start, end_date: range.end }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.end_date < formData.start_date) {
+      setError('End date must be after start date.');
+      return;
+    }
     setSaving(true);
+    setError(null);
     try {
       await onSubmit({
         ...formData,
         title: formData.title || null,
         description: formData.description || null,
       });
-    } finally {
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save goal.');
       setSaving(false);
     }
   };
@@ -68,9 +122,11 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Goal</DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit Goal' : 'Create Goal'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+
           <div className="space-y-1.5">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -103,9 +159,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
               <select
                 id="period"
                 value={formData.period}
-                onChange={(e) =>
-                  setFormData({ ...formData, period: e.target.value as GoalFormData['period'] })
-                }
+                onChange={(e) => handlePeriodChange(e.target.value as GoalFormData['period'])}
                 className={selectClass}
               >
                 {periods.map((p) => (
@@ -142,26 +196,33 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="start_date">Start Date *</Label>
+              <Label htmlFor="start_date">Start date *</Label>
               <Input
                 id="start_date"
                 type="date"
                 required
                 value={formData.start_date}
+                disabled={formData.period !== 'custom'}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="end_date">End Date *</Label>
+              <Label htmlFor="end_date">End date *</Label>
               <Input
                 id="end_date"
                 type="date"
                 required
                 value={formData.end_date}
+                disabled={formData.period !== 'custom'}
                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
               />
             </div>
           </div>
+          {formData.period !== 'custom' && (
+            <p className="text-xs text-muted-foreground">
+              Dates are set automatically from the period. Choose “Custom range” to edit them.
+            </p>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="description">Description</Label>
@@ -178,7 +239,7 @@ export function GoalForm({ onSubmit, onCancel }: GoalFormProps) {
               Cancel
             </Button>
             <Button type="submit" loading={saving}>
-              {saving ? 'Saving…' : 'Create'}
+              {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create'}
             </Button>
           </div>
         </form>
