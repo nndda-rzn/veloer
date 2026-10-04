@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlans, trainingApi } from '@/features/training';
 import { TrainingPlanCard } from '@/features/training/components/TrainingPlanCard';
+import { ActivePlanHero } from '@/features/training/components/ActivePlanHero';
 import { TrainingPlanForm } from '@/features/training/components/TrainingPlanForm';
 import { TemplateLibrary } from '@/features/training/components/TemplateLibrary';
 import { SmartPlanModal } from '@/features/training/components/SmartPlanModal';
 import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
+import { isCurrentPlan } from '@/features/training/lib/plan-progress';
 import { settingsApi } from '@/features/settings';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
@@ -100,6 +102,14 @@ export function TrainingPlansPage() {
     refetch();
   };
 
+  const { activePlan, otherPlans } = useMemo(() => {
+    const active = plans.find((p) => isCurrentPlan(p)) ?? plans.find((p) => p.status === 'active');
+    return {
+      activePlan: active ?? null,
+      otherPlans: plans.filter((p) => p.id !== active?.id),
+    };
+  }, [plans]);
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -162,19 +172,30 @@ export function TrainingPlansPage() {
       )}
 
       {!loading && plans.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-          {plans.map((plan) => (
-            <TrainingPlanCard
-              key={plan.id}
-              plan={plan}
-              onClick={(p) => navigate(`/training-plans/${p.id}`)}
-              onEdit={(p) => {
-                setEditingPlan(p);
-                setShowForm(true);
-              }}
-              onDelete={setDeletingPlan}
-            />
-          ))}
+        <div className="space-y-6">
+          {activePlan && <ActivePlanHero plan={activePlan} />}
+
+          {otherPlans.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold text-foreground">
+                {activePlan ? 'Other plans' : 'All plans'}
+              </h2>
+              <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+                {otherPlans.map((plan) => (
+                  <TrainingPlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onClick={(p) => navigate(`/training-plans/${p.id}`)}
+                    onEdit={(p) => {
+                      setEditingPlan(p);
+                      setShowForm(true);
+                    }}
+                    onDelete={setDeletingPlan}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
 
