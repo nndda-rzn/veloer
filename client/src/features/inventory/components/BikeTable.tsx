@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import type { Bike, Component } from '../types/inventory';
 import { formatIDR } from '@/shared/lib/utils';
-import { lifespanBarColor } from '../lib/lifespan';
+import { wearPercent, lifespanBarColor } from '../lib/lifespan';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,8 +91,9 @@ function BikeThumbnail({ bike }: { bike: Bike }) {
 }
 
 function lifespanPercent(component: Component): number {
-  if (!component.expected_lifespan_km || component.expected_lifespan_km === 0) return 0;
-  return Math.min(100, (component.current_km / component.expected_lifespan_km) * 100);
+  return (
+    wearPercent(component.current_km, component.install_km, component.expected_lifespan_km) ?? 0
+  );
 }
 
 export function BikeTable({
@@ -357,7 +358,7 @@ export function BikeTable({
                                         <div className="flex items-center gap-2">
                                           <div className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
                                             <div
-                                              className={`h-full rounded-full ${lifespanBarColor(component.current_km, component.expected_lifespan_km)}`}
+                                              className={`h-full rounded-full ${lifespanBarColor(component.current_km, component.install_km, component.expected_lifespan_km)}`}
                                               style={{ width: `${pct}%` }}
                                             />
                                           </div>

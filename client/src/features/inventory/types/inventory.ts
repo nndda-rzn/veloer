@@ -51,7 +51,8 @@ export interface ComponentFormData {
   brand?: string | null;
   model?: string | null;
   install_date: string;
-  install_km: number;
+  /** Odometer at install. Omit to default to the bike's current km. */
+  install_km?: number | null;
   expected_lifespan_km?: number | null;
   notes?: string | null;
 }

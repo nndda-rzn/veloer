@@ -14,9 +14,8 @@ export interface ComponentRepository {
   findByBikeId(bikeId: string): Promise<Component[]>;
   findById(id: string): Promise<Component | null>;
   findActiveByBikeId(bikeId: string): Promise<Component[]>;
-  create(
-    data: Omit<Component, 'id' | 'created_at' | 'updated_at' | 'current_km'>,
-  ): Promise<Component>;
+  /** `current_km` is required: it mirrors the bike odometer at creation time. */
+  create(data: Omit<Component, 'id' | 'created_at' | 'updated_at'>): Promise<Component>;
   update(id: string, data: Partial<Component>): Promise<Component | null>;
   delete(id: string): Promise<void>;
   updateCurrentKm(bikeId: string, additionalKm: number): Promise<void>;
