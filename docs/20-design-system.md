@@ -44,6 +44,18 @@ Neutrals = warm **stone** scale.
 | `--info`         | `#1d4ed8` | 6.70:1 ✅         | `blue-50`    |
 | `--color-strava` | `#fc4c02` | (logo only)       | —            |
 
+### Discipline accent
+
+| Token              | Value     | Contrast on white | Use                                                        |
+| ------------------ | --------- | ----------------- | ---------------------------------------------------------- |
+| `--color-strength` | `#475569` | 7.58:1 ✅         | Strength discipline (workout chips, calendar, detail rail) |
+
+`--color-strength` marks the **strength discipline** and sits outside the semantic
+set so it never reads as success/warning/error. It is always paired with the
+`Dumbbell` icon and a text label – colour is never the only signal. Cycling uses
+the existing type palette (ride-green and friends); strength uses this one steel
+value for every strength workout type.
+
 **Rule:** never signal hierarchy with a second hue — use opacity (`text-muted-foreground`) or weight.
 
 ---

@@ -8,11 +8,27 @@ export type WorkoutType =
   | 'anaerobic'
   | 'sprint'
   | 'race'
-  | 'interval';
+  | 'interval'
+  | 'lower'
+  | 'upper'
+  | 'full_body'
+  | 'core'
+  | 'mobility';
 
 export type WorkoutStatus = 'planned' | 'completed' | 'skipped' | 'missed';
 export type PlanStatus = 'active' | 'completed' | 'archived';
 export type PlanGoalType = 'ftp' | 'endurance' | 'century' | 'gran_fondo' | 'custom';
+
+/** The two training disciplines. Defined here so types do not import from lib. */
+export type Discipline = 'cycling' | 'strength';
+
+/** One entry in a strength workout's optional exercise list. */
+export interface WorkoutExercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight_kg: number | null;
+}
 
 export interface TrainingPlan {
   id: string;
@@ -36,6 +52,7 @@ export interface TrainingWorkout {
   plan_id: string;
   user_id: string;
   scheduled_date: string;
+  discipline: Discipline;
   workout_type: WorkoutType;
   title: string;
   description: string | null;
@@ -50,6 +67,8 @@ export interface TrainingWorkout {
   interval_power_pct_ftp: number | null;
   rest_duration_seconds: number | null;
   rest_power_pct_ftp: number | null;
+  /** Optional strength exercise list; null for cycling. */
+  exercises: WorkoutExercise[] | null;
   status: WorkoutStatus;
   actual_activity_id: string | null;
   actual_tss: number | null;
@@ -72,6 +91,7 @@ export interface TrainingPlanFormData {
 
 export interface WorkoutFormData {
   scheduled_date: string;
+  discipline?: Discipline;
   workout_type: WorkoutType;
   title: string;
   description?: string | null;
@@ -86,6 +106,7 @@ export interface WorkoutFormData {
   interval_power_pct_ftp?: number | null;
   rest_duration_seconds?: number | null;
   rest_power_pct_ftp?: number | null;
+  exercises?: WorkoutExercise[] | null;
   notes?: string | null;
 }
 
@@ -100,6 +121,11 @@ export const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
   sprint: 'Sprint',
   race: 'Race',
   interval: 'Interval',
+  lower: 'Lower body',
+  upper: 'Upper body',
+  full_body: 'Full body',
+  core: 'Core',
+  mobility: 'Mobility',
 };
 
 export const WORKOUT_TYPE_COLORS: Record<WorkoutType, string> = {
@@ -113,6 +139,12 @@ export const WORKOUT_TYPE_COLORS: Record<WorkoutType, string> = {
   sprint: '#be185d',
   race: '#1c1917',
   interval: '#4f46e5',
+  // Strength: one steel accent for the whole discipline (see --color-strength).
+  lower: '#475569',
+  upper: '#475569',
+  full_body: '#475569',
+  core: '#475569',
+  mobility: '#475569',
 };
 
 export type TemplateKey = 'BASE_BUILD_4W' | 'FTP_BUILDER_6W' | 'CENTURY_PREP_8W' | 'GRAN_FONDO_12W';

@@ -8,6 +8,7 @@ import type {
 export interface WorkoutCreateInput {
   plan_id: string;
   scheduled_date: string;
+  discipline?: TrainingWorkout['discipline'];
   workout_type: TrainingWorkout['workout_type'];
   title: string;
   description?: string | null;
@@ -22,6 +23,7 @@ export interface WorkoutCreateInput {
   interval_power_pct_ftp?: number | null;
   rest_duration_seconds?: number | null;
   rest_power_pct_ftp?: number | null;
+  exercises?: TrainingWorkout['exercises'];
   notes?: string | null;
 }
 
@@ -52,6 +54,7 @@ export class CreateWorkout {
       plan_id: input.plan_id,
       user_id: userId,
       scheduled_date: input.scheduled_date,
+      discipline: input.discipline ?? 'cycling',
       workout_type: input.workout_type,
       title: input.title,
       description: input.description ?? null,
@@ -66,6 +69,7 @@ export class CreateWorkout {
       interval_power_pct_ftp: input.interval_power_pct_ftp ?? null,
       rest_duration_seconds: input.rest_duration_seconds ?? null,
       rest_power_pct_ftp: input.rest_power_pct_ftp ?? null,
+      exercises: input.exercises ?? null,
       notes: input.notes ?? null,
       status: 'planned',
     };

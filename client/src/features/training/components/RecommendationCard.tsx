@@ -1,5 +1,5 @@
 import type { WorkoutRecommendation } from '../types/training';
-import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
+import { WorkoutTypeChip } from './WorkoutTypeChip';
 
 interface RecommendationCardProps {
   recommendation: WorkoutRecommendation;
@@ -7,19 +7,13 @@ interface RecommendationCardProps {
 }
 
 export function RecommendationCard({ recommendation: rec, onAddToPlan }: RecommendationCardProps) {
-  const color = WORKOUT_TYPE_COLORS[rec.workout_type];
   const { metrics } = rec;
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <span
-            className="inline-block rounded-md px-2 py-0.5 text-xs font-medium"
-            style={{ backgroundColor: `${color}1a`, color }}
-          >
-            {WORKOUT_TYPE_LABELS[rec.workout_type]}
-          </span>
+          <WorkoutTypeChip type={rec.workout_type} />
           <h3 className="mt-1.5 font-semibold text-foreground">{rec.title}</h3>
           <p className="text-sm text-muted-foreground">{rec.description}</p>
         </div>
