@@ -4,6 +4,7 @@ import {
   LogMaintenance,
   GetMaintenanceHistory,
   DeleteMaintenanceLog,
+  BikeNotFoundError,
 } from '../../application/use-cases/maintenance/MaintenanceLogUseCases.js';
 import {
   AddSchedule,
@@ -23,8 +24,16 @@ export class MaintenanceController {
     }
     const { bikeId } = req.params;
     const getHistory = container.resolve(GetMaintenanceHistory);
-    const logs = await getHistory.executeByBikeId(String(bikeId));
-    res.json(logs);
+    try {
+      const logs = await getHistory.executeByBikeId(String(bikeId), req.user.userId);
+      res.json(logs);
+    } catch (err) {
+      if (err instanceof BikeNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async createLog(req: Request, res: Response): Promise<void> {
@@ -33,8 +42,16 @@ export class MaintenanceController {
       return;
     }
     const logMaintenance = container.resolve(LogMaintenance);
-    const log = await logMaintenance.execute(req.user.userId, req.body);
-    res.status(201).json(log);
+    try {
+      const log = await logMaintenance.execute(req.user.userId, req.body);
+      res.status(201).json(log);
+    } catch (err) {
+      if (err instanceof BikeNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async deleteLog(req: Request, res: Response): Promise<void> {
@@ -44,7 +61,7 @@ export class MaintenanceController {
     }
     const { id } = req.params;
     const deleteLog = container.resolve(DeleteMaintenanceLog);
-    const deleted = await deleteLog.execute(String(id));
+    const deleted = await deleteLog.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Maintenance log not found' });
       return;
@@ -61,8 +78,16 @@ export class MaintenanceController {
     }
     const { bikeId } = req.params;
     const getSchedules = container.resolve(GetSchedules);
-    const schedules = await getSchedules.executeByBikeId(String(bikeId));
-    res.json(schedules);
+    try {
+      const schedules = await getSchedules.executeByBikeId(String(bikeId), req.user.userId);
+      res.json(schedules);
+    } catch (err) {
+      if (err instanceof BikeNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async createSchedule(req: Request, res: Response): Promise<void> {
@@ -71,8 +96,16 @@ export class MaintenanceController {
       return;
     }
     const addSchedule = container.resolve(AddSchedule);
-    const schedule = await addSchedule.execute(req.body);
-    res.status(201).json(schedule);
+    try {
+      const schedule = await addSchedule.execute(req.user.userId, req.body);
+      res.status(201).json(schedule);
+    } catch (err) {
+      if (err instanceof BikeNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async updateSchedule(req: Request, res: Response): Promise<void> {
@@ -82,7 +115,7 @@ export class MaintenanceController {
     }
     const { id } = req.params;
     const updateScheduleUseCase = container.resolve(UpdateSchedule);
-    const schedule = await updateScheduleUseCase.execute(String(id), req.body);
+    const schedule = await updateScheduleUseCase.execute(String(id), req.user.userId, req.body);
     if (!schedule) {
       res.status(404).json({ error: 'Not Found', message: 'Schedule not found' });
       return;
@@ -97,7 +130,7 @@ export class MaintenanceController {
     }
     const { id } = req.params;
     const deleteSchedule = container.resolve(DeleteSchedule);
-    const deleted = await deleteSchedule.execute(String(id));
+    const deleted = await deleteSchedule.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Schedule not found' });
       return;

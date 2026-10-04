@@ -20,6 +20,28 @@ export const componentApi = {
     return result;
   },
 
+  async replace(
+    id: string,
+    input: Partial<
+      Pick<
+        ComponentFormData,
+        | 'name'
+        | 'brand'
+        | 'model'
+        | 'install_date'
+        | 'install_km'
+        | 'expected_lifespan_km'
+        | 'notes'
+      >
+    > = {},
+  ): Promise<{ replaced: Component; replacement: Component }> {
+    const { data } = await apiClient.post<{ replaced: Component; replacement: Component }>(
+      `/api/components/${id}/replace`,
+      input,
+    );
+    return data;
+  },
+
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/api/components/${id}`);
   },

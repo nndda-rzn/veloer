@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ArrowDown,
   ArrowUp,
@@ -314,9 +315,12 @@ export function BikeTable({
                           <div className="flex items-center gap-3">
                             <BikeThumbnail bike={bike} />
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-foreground">
+                              <Link
+                                to={`/inventory/${bike.id}`}
+                                className="truncate text-sm font-semibold text-foreground hover:text-primary"
+                              >
                                 {bike.name}
-                              </p>
+                              </Link>
                               <p className="truncate text-xs text-muted-foreground">
                                 {bike.brand ?? '–'} {bike.model ?? ''}
                               </p>

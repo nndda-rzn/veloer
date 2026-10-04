@@ -10,6 +10,12 @@ import { selectClass } from '@/shared/lib/form-styles';
 interface MaintenanceFormProps {
   bikeId: string;
   currentKm: number;
+  /** Preselect a component (used by the "Log service" action on a component). */
+  defaultComponentId?: string | null;
+  /** Prefill the description. */
+  defaultDescription?: string;
+  /** Prefill the log type. */
+  defaultType?: MaintenanceLogFormData['type'];
   onSubmit: (data: MaintenanceLogFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -22,13 +28,22 @@ const logTypes: { value: MaintenanceLogFormData['type']; label: string }[] = [
   { value: 'tuning', label: 'Tuning' },
 ];
 
-export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: MaintenanceFormProps) {
+export function MaintenanceForm({
+  bikeId,
+  currentKm,
+  defaultComponentId = null,
+  defaultDescription = '',
+  defaultType = 'routine',
+  onSubmit,
+  onCancel,
+}: MaintenanceFormProps) {
   const [formData, setFormData] = useState<MaintenanceLogFormData>({
     bike_id: bikeId,
+    component_id: defaultComponentId,
     service_date: new Date().toISOString().slice(0, 10),
     service_km: Math.round(currentKm),
-    type: 'routine',
-    description: '',
+    type: defaultType,
+    description: defaultDescription,
     cost: null,
     performed_by: 'self',
     shop_name: null,
