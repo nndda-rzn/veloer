@@ -78,5 +78,3 @@ function summarize(segments: CategoryWear[]): string {
   );
   return `Component condition: ${parts.join(', ')}`;
 }
-
-export { SEGMENT_FILL };
