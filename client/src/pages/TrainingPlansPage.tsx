@@ -173,7 +173,16 @@ export function TrainingPlansPage() {
 
       {!loading && plans.length > 0 && (
         <div className="space-y-6">
-          {activePlan && <ActivePlanHero plan={activePlan} />}
+          {activePlan && (
+            <ActivePlanHero
+              plan={activePlan}
+              onEdit={(p) => {
+                setEditingPlan(p);
+                setShowForm(true);
+              }}
+              onDelete={setDeletingPlan}
+            />
+          )}
 
           {otherPlans.length > 0 && (
             <section className="space-y-3">
