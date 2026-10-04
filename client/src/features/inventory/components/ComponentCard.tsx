@@ -6,10 +6,12 @@ import {
   CheckCircle2,
   XCircle,
   MoreHorizontal,
+  Clock,
 } from 'lucide-react';
 import type { Component } from '../types/inventory';
 import { formatDate } from '@/shared/lib/utils';
 import { wearPercent, remainingKm, lifespanBar, lifespanTextColor } from '../lib/lifespan';
+import type { WearProjection } from '../lib/wear-projection';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,6 +41,8 @@ const statusVariants: Record<Component['status'], 'success' | 'neutral' | 'dange
 
 interface ComponentCardProps {
   component: Component;
+  /** Optional estimate of when this component will reach end of lifespan. */
+  projection?: WearProjection | null;
   onEdit: (component: Component) => void;
   onDelete: (component: Component) => void;
   onReplace: (component: Component) => void;
@@ -48,6 +52,7 @@ interface ComponentCardProps {
 
 export function ComponentCard({
   component,
+  projection,
   onEdit,
   onDelete,
   onReplace,
@@ -158,6 +163,14 @@ export function ComponentCard({
               ? `${remaining.toFixed(0)} km remaining`
               : `${Math.abs(remaining ?? 0).toFixed(0)} km overdue`}
           </p>
+          {projection && (
+            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" aria-hidden="true" />≈{' '}
+              {Math.max(1, Math.round(projection.weeksRemaining))} week
+              {Math.round(projection.weeksRemaining) === 1 ? '' : 's'} left at{' '}
+              {projection.rateKmPerWeek.toFixed(0)} km/wk
+            </p>
+          )}
         </div>
       ) : (
         <p className="mt-3 text-xs text-muted-foreground">No lifespan set</p>
