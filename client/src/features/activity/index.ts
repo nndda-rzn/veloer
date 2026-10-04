@@ -1,6 +1,7 @@
 export { ActivityList } from './components/ActivityList';
 export { ActivityFilters } from './components/ActivityFilters';
 export { ActivityStatsBar } from './components/ActivityStatsBar';
+export { ActivityVolumeSparkline } from './components/ActivityVolumeSparkline';
 export { ActivityDetail } from './components/ActivityDetail';
 export { ActivityMap } from './components/ActivityMap';
 export { ActivityBikeLinker } from './components/ActivityBikeLinker';

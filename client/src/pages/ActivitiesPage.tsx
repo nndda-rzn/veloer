@@ -3,6 +3,7 @@ import {
   ActivityList,
   ActivityFilters,
   ActivityStatsBar,
+  ActivityVolumeSparkline,
   useActivities,
   useActivityQuery,
   useSync,
@@ -90,6 +91,8 @@ export function ActivitiesPage() {
       )}
 
       <ActivityStatsBar summary={result.summary} previous={result.previous} loading={loading} />
+
+      {!loading && activities.length > 0 && <ActivityVolumeSparkline activities={activities} />}
 
       <Card>
         <CardContent>
