@@ -9,6 +9,7 @@ interface UseBikesReturn {
   refetch: () => void;
   createBike: (data: BikeFormData) => Promise<Bike>;
   updateBike: (id: string, data: Partial<BikeFormData>) => Promise<void>;
+  updateStatus: (id: string, status: Bike['status']) => Promise<void>;
   deleteBike: (id: string) => Promise<void>;
 }
 
@@ -40,10 +41,15 @@ export function useBikes(): UseBikesReturn {
     setRefetchFlag((f) => f + 1);
   }, []);
 
+  const updateStatus = useCallback(async (id: string, status: Bike['status']) => {
+    await bikeApi.update(id, { status });
+    setRefetchFlag((f) => f + 1);
+  }, []);
+
   const deleteBike = useCallback(async (id: string) => {
     await bikeApi.delete(id);
     setRefetchFlag((f) => f + 1);
   }, []);
 
-  return { bikes, loading, error, refetch, createBike, updateBike, deleteBike };
+  return { bikes, loading, error, refetch, createBike, updateBike, updateStatus, deleteBike };
 }

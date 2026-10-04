@@ -1,5 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { BikeTable, BikeForm, ComponentForm, useBikes } from '@/features/inventory';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  BikeTable,
+  BikeForm,
+  ComponentForm,
+  GearStatsBar,
+  useBikes,
+  summarizeGear,
+} from '@/features/inventory';
 import { componentApi } from '@/features/inventory/api/component.api';
 import type { Bike, BikeFormData, Component, ComponentFormData } from '@/features/inventory';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
@@ -14,6 +21,7 @@ export function InventoryPage() {
     error,
     createBike,
     updateBike,
+    updateStatus,
     deleteBike,
     refetch: refetchBikes,
   } = useBikes();
@@ -21,6 +29,10 @@ export function InventoryPage() {
   const [showBikeForm, setShowBikeForm] = useState(false);
   const [editingBike, setEditingBike] = useState<Bike | null>(null);
   const [deletingBike, setDeletingBike] = useState<Bike | null>(null);
+  const [statusChange, setStatusChange] = useState<{
+    bike: Bike;
+    status: Bike['status'];
+  } | null>(null);
 
   const [showComponentForm, setShowComponentForm] = useState(false);
   const [editingComponent, setEditingComponent] = useState<Component | null>(null);
@@ -92,6 +104,14 @@ export function InventoryPage() {
     await fetchComponents(bikes.map((b) => b.id));
   };
 
+  const gearSummary = useMemo(() => summarizeGear(bikes), [bikes]);
+
+  const confirmStatusChange = async () => {
+    if (!statusChange) return;
+    await updateStatus(statusChange.bike.id, statusChange.status);
+    setStatusChange(null);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -107,6 +127,8 @@ export function InventoryPage() {
 
       {error && <Alert variant="error">{error}</Alert>}
 
+      {!loading && bikes.length > 0 && <GearStatsBar summary={gearSummary} loading={loading} />}
+
       {!loading && bikes.length === 0 ? (
         <EmptyState
           icon={Plus}
@@ -121,6 +143,7 @@ export function InventoryPage() {
           loading={loading}
           onEdit={handleEditBike}
           onDelete={setDeletingBike}
+          onStatusChange={(bike, status) => setStatusChange({ bike, status })}
           onEditComponent={handleEditComponent}
           onDeleteComponent={setDeletingComponent}
           onAddComponent={handleAddComponent}
@@ -174,6 +197,21 @@ export function InventoryPage() {
         title="Delete component"
         description={`Are you sure you want to delete “${deletingComponent?.name ?? ''}”? This action cannot be undone.`}
         onConfirm={() => (deletingComponent ? handleDeleteComponent(deletingComponent) : undefined)}
+      />
+
+      {/* Bike status change confirmation */}
+      <ConfirmDialog
+        open={statusChange !== null}
+        onOpenChange={(open) => !open && setStatusChange(null)}
+        title={statusChange?.status === 'sold' ? 'Mark bike as sold' : 'Change bike status'}
+        description={
+          statusChange
+            ? `Set “${statusChange.bike.name}” to ${statusChange.status}. You can change this again at any time.`
+            : ''
+        }
+        confirmLabel={statusChange ? `Mark ${statusChange.status}` : 'Confirm'}
+        variant={statusChange?.status === 'active' ? 'default' : 'danger'}
+        onConfirm={confirmStatusChange}
       />
     </div>
   );

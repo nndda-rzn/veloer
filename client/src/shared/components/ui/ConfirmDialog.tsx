@@ -16,6 +16,7 @@ interface ConfirmDialogProps {
   description: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  variant?: 'danger' | 'default';
   loading?: boolean;
   onConfirm: () => void | Promise<void>;
 }
@@ -31,6 +32,7 @@ export function ConfirmDialog({
   description,
   confirmLabel = 'Delete',
   cancelLabel = 'Cancel',
+  variant = 'danger',
   loading = false,
   onConfirm,
 }: ConfirmDialogProps) {
@@ -43,7 +45,7 @@ export function ConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
-          <AlertDialogAction variant="danger" loading={loading} onClick={() => void onConfirm()}>
+          <AlertDialogAction variant={variant} loading={loading} onClick={() => void onConfirm()}>
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
