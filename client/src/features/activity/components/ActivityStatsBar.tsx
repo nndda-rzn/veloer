@@ -8,7 +8,7 @@ import {
   ArrowDownRight,
   Minus,
 } from 'lucide-react';
-import { formatDistance, formatDuration } from '@/shared/lib/utils';
+import { formatDistance, formatDuration, formatElevation } from '@/shared/lib/utils';
 import { pctChange, trendDirection, type TrendDirection } from '@/shared/lib/metrics';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -79,10 +79,10 @@ export function ActivityStatsBar({ summary, previous, loading }: ActivityStatsBa
       key: 'elevation',
       label: 'Elevation',
       icon: TrendingUp,
-      value: `${summary.elevationGain.toFixed(0)} m`,
+      value: formatElevation(summary.elevationGain),
       current: summary.elevationGain,
       prev: previous?.elevationGain ?? null,
-      formatDelta: (v) => `${v.toFixed(0)} m`,
+      formatDelta: (v) => formatElevation(v),
     },
   ];
 

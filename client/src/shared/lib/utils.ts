@@ -1,9 +1,17 @@
+import { getFormatting } from './format-prefs';
+
+const METERS_PER_MILE = 1609.344;
+const METERS_PER_FOOT = 0.3048;
+
 /**
- * Format distance in meters to kilometers
+ * Format distance in meters, honouring the rider's unit preference.
  */
 export function formatDistance(meters: number): string {
-  const km = meters / 1000;
-  return `${km.toFixed(1)} km`;
+  const { units } = getFormatting();
+  if (units === 'imperial') {
+    return `${(meters / METERS_PER_MILE).toFixed(1)} mi`;
+  }
+  return `${(meters / 1000).toFixed(1)} km`;
 }
 
 /**
@@ -20,15 +28,34 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * Format speed from m/s to km/h
+ * Format speed from m/s, honouring the rider's unit preference.
  */
 export function formatSpeed(metersPerSecond: number): string {
-  const kmh = metersPerSecond * 3.6;
-  return `${kmh.toFixed(1)} km/h`;
+  const { units } = getFormatting();
+  if (units === 'imperial') {
+    return `${(metersPerSecond * 2.236936).toFixed(1)} mph`;
+  }
+  return `${(metersPerSecond * 3.6).toFixed(1)} km/h`;
 }
 
 /**
- * Format IDR currency
+ * Format an elevation in meters, honouring the rider's unit preference.
+ * Elevation was previously hardcoded to metres at each call site.
+ */
+export function formatElevation(meters: number): string {
+  const { units } = getFormatting();
+  if (units === 'imperial') {
+    return `${(meters / METERS_PER_FOOT).toFixed(0)} ft`;
+  }
+  return `${meters.toFixed(0)} m`;
+}
+
+/**
+ * Format IDR currency.
+ *
+ * Amounts are stored in IDR throughout the database, so this is intentionally
+ * not configurable: showing a different currency without a conversion rate
+ * would misstate the value by orders of magnitude.
  */
 export function formatIDR(amount: number): string {
   return new Intl.NumberFormat('id-ID', {
@@ -40,28 +67,32 @@ export function formatIDR(amount: number): string {
 }
 
 /**
- * Format date to readable format
+ * Format date to readable format, in the rider's timezone.
  */
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
+  const { timezone } = getFormatting();
   return d.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: timezone,
   });
 }
 
 /**
- * Format date with time
+ * Format date with time, in the rider's timezone.
  */
 export function formatDateTime(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
+  const { timezone } = getFormatting();
   return d.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: timezone,
   });
 }
 

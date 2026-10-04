@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import type { ActivityStats } from '@/features/activity';
-import { formatDistance, formatDuration } from '@/shared/lib/utils';
+import { formatDistance, formatDuration, formatElevation } from '@/shared/lib/utils';
 import { pctChange, trendDirection } from '../lib/metrics';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -65,7 +65,7 @@ export function MomentumBar({ current, previous, windowDays, loading }: Momentum
       key: 'elevation',
       label: 'Elevation',
       value: current.totalElevationGain,
-      format: (v) => `${v.toFixed(0)} m`,
+      format: (v) => formatElevation(v),
     },
   ];
 

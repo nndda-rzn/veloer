@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { settingsApi } from '../api/settings.api';
 import type { UserProfile, ProfileFormData } from '../types/settings';
 
@@ -10,29 +11,40 @@ interface UseProfileReturn {
   save: (data: ProfileFormData) => Promise<void>;
 }
 
+/**
+ * Read and update the rider's profile.
+ *
+ * Shares the ['profile'] query key with PreferencesProvider, so the sidebar,
+ * settings page and dashboard all read one cached request instead of each
+ * firing their own.
+ */
 export function useProfile(): UseProfileReturn {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    settingsApi
-      .getProfile()
-      .then(setProfile)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load profile'))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => settingsApi.getProfile(),
+  });
 
-  const save = useCallback(async (data: ProfileFormData) => {
-    setSaving(true);
-    try {
-      const updated = await settingsApi.updateProfile(data);
-      setProfile(updated);
-    } finally {
-      setSaving(false);
-    }
-  }, []);
+  const save = useCallback(
+    async (formData: ProfileFormData) => {
+      setSaving(true);
+      try {
+        const updated = await settingsApi.updateProfile(formData);
+        queryClient.setQueryData(['profile'], updated);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [queryClient],
+  );
 
-  return { profile, loading, error, saving, save };
+  return {
+    profile: data ?? null,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : null,
+    saving,
+    save,
+  };
 }

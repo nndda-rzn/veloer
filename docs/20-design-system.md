@@ -103,6 +103,32 @@ a dashboard (see the B2B SaaS typography rules in the research notes).
 | Loading      | Skeleton blocks `animate-pulse bg-secondary`, matching final size.          |
 | Icons        | Lucide, 16–20px, monochrome (`text-muted-foreground`).                      |
 
+### Shared patterns (use these instead of rebuilding)
+
+| Pattern        | Where                                   | Replaces                                 |
+| -------------- | --------------------------------------- | ---------------------------------------- |
+| `Section`      | `shared/components/ui/Section.tsx`      | Card walls on form pages (Settings)      |
+| `FormField`    | `shared/components/ui/FormField.tsx`    | Hand-rolled label + input + hint + error |
+| `Skeleton*`    | `shared/components/ui/Skeleton.tsx`     | Ad-hoc `animate-pulse` blocks            |
+| `PageHeader`   | `shared/components/ui/PageHeader.tsx`   | Per-page title markup                    |
+| `EmptyState`   | `shared/components/ui/EmptyState.tsx`   | Per-page empty markup                    |
+| `TableToolbar` | `shared/components/ui/TableToolbar.tsx` | Per-table search/sort/pagination chrome  |
+
+### Deliberate decisions
+
+- **Native `<select>` for short lists.** Accessibility guidance is consistent that
+  a native select beats a scripted dropdown: it brings keyboard, screen-reader
+  and platform picker behaviour for free. `selectClass` keeps them visually
+  consistent. Do not replace them with a custom component to "tidy up" — that
+  trades real accessibility for cosmetic uniformity. A searchable control is only
+  justified for very long lists (e.g. timezones, ~400 options).
+- **Currency is fixed to IDR.** Amounts are stored in IDR in the database, so
+  showing another currency without a conversion rate would misstate values.
+- **Formatting preferences are a module store, not a hook.** `formatDistance`,
+  `formatDate` and friends are called from 80+ places; a hook would force every
+  call site to change. `configureFormatting()` + `PreferencesProvider` keeps the
+  call sites untouched (the approach established i18n libraries take).
+
 ---
 
 ## Motion

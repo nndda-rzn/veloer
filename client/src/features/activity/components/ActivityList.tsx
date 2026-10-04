@@ -7,6 +7,7 @@ import {
   formatSpeed,
   formatDate,
   formatActivityType,
+  formatElevation,
 } from '@/shared/lib/utils';
 import { useTableControls } from '@/shared/lib/useTableControls';
 import { activityTypeAccent } from '../lib/activity-type-style';
@@ -241,7 +242,7 @@ function ActivityRow({ activity }: { activity: Activity }) {
       </TableCell>
       <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
         {activity.total_elevation_gain != null
-          ? `${activity.total_elevation_gain.toFixed(0)} m`
+          ? formatElevation(activity.total_elevation_gain)
           : '–'}
       </TableCell>
       <TableCell className="whitespace-nowrap text-right">
@@ -285,7 +286,7 @@ function ActivityCard({ activity }: { activity: Activity }) {
           <span className="tabular-nums">{formatSpeed(activity.avg_speed)}</span>
         ) : null}
         {activity.total_elevation_gain != null ? (
-          <span className="tabular-nums">{activity.total_elevation_gain.toFixed(0)} m</span>
+          <span className="tabular-nums">{formatElevation(activity.total_elevation_gain)}</span>
         ) : null}
         {activity.tss != null ? (
           <span className="ml-auto">
