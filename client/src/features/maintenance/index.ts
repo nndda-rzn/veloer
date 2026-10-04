@@ -9,3 +9,10 @@ export type {
   MaintenanceLogFormData,
   ScheduleFormData,
 } from './types/maintenance';
+export {
+  MAINTENANCE_TYPE_LABELS,
+  MAINTENANCE_TYPE_VARIANTS,
+  MAINTENANCE_TYPE_DOT,
+  groupLogsByMonth,
+  formatMonthLabel,
+} from './lib/maintenance-style';

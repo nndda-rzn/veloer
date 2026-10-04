@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   MaintenanceLogList,
   MaintenanceForm,
@@ -9,7 +9,9 @@ import { useBikes } from '@/features/inventory';
 import type { Bike } from '@/features/inventory';
 import type { MaintenanceLog, MaintenanceLogFormData } from '@/features/maintenance';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
+import { Card, CardContent } from '@/components/ui/card';
 import { selectClass } from '@/shared/lib/form-styles';
+import { formatDate, formatIDR } from '@/shared/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
 import { Wrench } from 'lucide-react';
@@ -30,6 +32,12 @@ export function MaintenancePage() {
       setSelectedBike(bikes[0]);
     }
   }, [bikes, selectedBike]);
+
+  const summary = useMemo(() => {
+    const totalCost = logs.reduce((sum, log) => sum + (log.cost ?? 0), 0);
+    const lastService = logs.map((log) => log.service_date).sort((a, b) => b.localeCompare(a))[0];
+    return { count: logs.length, totalCost, lastService };
+  }, [logs]);
 
   const handleDelete = async (log: MaintenanceLog) => {
     setDeletingLog(log);
@@ -85,6 +93,41 @@ export function MaintenancePage() {
           </div>
 
           {error && <Alert variant="error">{error}</Alert>}
+
+          {selectedBike && !loading && logs.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Card>
+                <CardContent>
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Service records
+                  </p>
+                  <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-foreground">
+                    {summary.count}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent>
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Total spent
+                  </p>
+                  <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-foreground">
+                    {formatIDR(summary.totalCost)}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent>
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Last service
+                  </p>
+                  <p className="mt-1.5 text-2xl font-semibold text-foreground">
+                    {summary.lastService ? formatDate(summary.lastService) : '–'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {selectedBike && (
             <MaintenanceLogList logs={logs} loading={loading} onDelete={handleDelete} />
