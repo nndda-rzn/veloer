@@ -13,7 +13,7 @@ import { NextWorkoutPanel } from '@/features/training/components/NextWorkoutPane
 import { WeeklySummary } from '@/features/training/components/WeeklySummary';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
-import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
+import { PageHeader, ConfirmDialog, Skeleton } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/shared/components/feedback/Toaster';
 import {
@@ -170,8 +170,8 @@ export function TrainingPlanDetailPage() {
   if (planLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-64 animate-pulse rounded bg-secondary" />
-        <div className="h-96 animate-pulse rounded-xl bg-secondary" />
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-96 rounded-xl" />
       </div>
     );
   }

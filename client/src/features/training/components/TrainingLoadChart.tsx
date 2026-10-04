@@ -9,7 +9,9 @@ import {
   Legend,
   Bar,
 } from 'recharts';
+import { Activity as ActivityIcon } from 'lucide-react';
 import type { TrainingLoadDataPoint } from '../types/training';
+import { EmptyState } from '@/shared/components/ui';
 
 interface TrainingLoadChartProps {
   data: TrainingLoadDataPoint[];
@@ -19,9 +21,11 @@ interface TrainingLoadChartProps {
 export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-border bg-card">
-        <p className="text-sm text-muted-foreground">No training data available</p>
-      </div>
+      <EmptyState
+        icon={ActivityIcon}
+        title="No training load yet"
+        description="Sync sessions with power or heart rate to build the curve."
+      />
     );
   }
 
