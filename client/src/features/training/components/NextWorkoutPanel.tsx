@@ -1,4 +1,4 @@
-import { Play, SkipForward, Check } from 'lucide-react';
+import { Play, SkipForward, Check, Plus, LayoutTemplate } from 'lucide-react';
 import type { TrainingWorkout } from '../types/training';
 import { WORKOUT_TYPE_COLORS } from '../types/training';
 import { isStrengthType } from '../lib/discipline';
@@ -11,6 +11,9 @@ interface NextWorkoutPanelProps {
   onOpen: (workout: TrainingWorkout) => void;
   onMarkComplete: (id: string) => void;
   onMarkSkipped: (id: string) => void;
+  /** Opens the workout form (the plan page has no other add affordance). */
+  onAddSession: () => void;
+  onBrowseTemplates: () => void;
 }
 
 function relativeDay(dateStr: string): string {
@@ -30,6 +33,8 @@ export function NextWorkoutPanel({
   onOpen,
   onMarkComplete,
   onMarkSkipped,
+  onAddSession,
+  onBrowseTemplates,
 }: NextWorkoutPanelProps) {
   if (!workout) {
     return (
@@ -39,8 +44,18 @@ export function NextWorkoutPanel({
             Next workout
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Nothing scheduled. Add a workout or start from a template.
+            Nothing scheduled. Add a session or start from a template.
           </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button onClick={onAddSession}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Add session
+            </Button>
+            <Button variant="outline" onClick={onBrowseTemplates}>
+              <LayoutTemplate className="h-4 w-4" aria-hidden="true" />
+              Browse templates
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
