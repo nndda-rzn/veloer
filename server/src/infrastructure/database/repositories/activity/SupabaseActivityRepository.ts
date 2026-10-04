@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import type { ActivityRepository } from '../../../../domain/repositories/activity/ActivityRepository.js';
 import type { Activity } from '../../../../domain/entities/activity/Activity.js';
+import type { Discipline } from '../../../../domain/entities/activity/discipline.js';
 import { getSupabaseClient } from '../../supabase-client.js';
 
 // Columns returned by list queries. `polyline` is intentionally excluded: it is
@@ -11,6 +12,7 @@ const LIST_COLUMNS = [
   'strava_id',
   'name',
   'type',
+  'discipline',
   'start_date',
   'distance',
   'moving_time',
@@ -47,6 +49,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
       bikeId?: string;
       startDate?: string;
       endDate?: string;
+      discipline?: Discipline;
     },
   ): Promise<Activity[]> {
     const supabase = getSupabaseClient();
@@ -57,6 +60,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
       .order('start_date', { ascending: false });
 
     if (options?.bikeId) query = query.eq('bike_id', options.bikeId);
+    if (options?.discipline) query = query.eq('discipline', options.discipline);
     if (options?.startDate) query = query.gte('start_date', options.startDate);
     if (options?.endDate) query = query.lte('start_date', options.endDate);
     if (options?.limit) query = query.limit(options.limit);
@@ -178,7 +182,10 @@ export class SupabaseActivityRepository implements ActivityRepository {
     let query = supabase
       .from('activities')
       .select('distance, moving_time, total_elevation_gain')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      // Cycling only: a strength session has no distance and must not count
+      // toward ride volume.
+      .eq('discipline', 'cycling');
 
     if (startDate) query = query.gte('start_date', startDate);
     if (endDate) query = query.lte('start_date', endDate);

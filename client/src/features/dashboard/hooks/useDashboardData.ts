@@ -165,7 +165,7 @@ interface RecentActivitySlim {
   id: string;
   name: string;
   start_date: string;
-  distance: number;
+  distance: number | null;
   type: string;
 }
 

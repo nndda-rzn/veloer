@@ -41,7 +41,7 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
     () => ({
       date: (a: Activity, b: Activity) => a.start_date.localeCompare(b.start_date),
       name: (a: Activity, b: Activity) => a.name.localeCompare(b.name),
-      distance: (a: Activity, b: Activity) => a.distance - b.distance,
+      distance: (a: Activity, b: Activity) => (a.distance ?? 0) - (b.distance ?? 0),
       duration: (a: Activity, b: Activity) => a.moving_time - b.moving_time,
       elevation: (a: Activity, b: Activity) =>
         (a.total_elevation_gain ?? 0) - (b.total_elevation_gain ?? 0),

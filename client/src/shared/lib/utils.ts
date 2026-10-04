@@ -5,8 +5,11 @@ const METERS_PER_FOOT = 0.3048;
 
 /**
  * Format distance in meters, honouring the rider's unit preference.
+ * Returns an en dash when there is no distance (a strength session has none),
+ * so a missing distance never reads as "0.0 km" or "NaN km".
  */
-export function formatDistance(meters: number): string {
+export function formatDistance(meters: number | null | undefined): string {
+  if (meters == null) return '–';
   const { units } = getFormatting();
   if (units === 'imperial') {
     return `${(meters / METERS_PER_MILE).toFixed(1)} mi`;

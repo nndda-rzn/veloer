@@ -1,4 +1,5 @@
 import type { Activity } from '../../entities/activity/Activity.js';
+import type { Discipline } from '../../entities/activity/discipline.js';
 
 export interface ActivityRepository {
   findByUserId(
@@ -9,6 +10,7 @@ export interface ActivityRepository {
       bikeId?: string;
       startDate?: string;
       endDate?: string;
+      discipline?: Discipline;
     },
   ): Promise<Activity[]>;
   findById(id: string): Promise<Activity | null>;
