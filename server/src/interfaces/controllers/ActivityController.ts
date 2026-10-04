@@ -115,6 +115,16 @@ export class ActivityController {
       return;
     }
 
+    // A strength session is never tied to a bike: it has no distance to add to
+    // the bike's odometer.
+    if (activity.discipline === 'strength') {
+      res.status(400).json({
+        error: 'Bad Request',
+        message: 'A strength session cannot be linked to a bike.',
+      });
+      return;
+    }
+
     const repo = container.resolve<ActivityRepository>('ActivityRepository');
     await repo.updateBikeId(String(id), bikeId || null);
 
