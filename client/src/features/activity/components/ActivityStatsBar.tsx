@@ -103,6 +103,9 @@ export function ActivityStatsBar({ summary, previous, loading }: ActivityStatsBa
       {metrics.map((m) => (
         <MetricCard key={m.key} metric={m} />
       ))}
+      <p className="col-span-2 text-xs text-muted-foreground md:col-span-4">
+        Rides only · strength sessions are not counted here
+      </p>
     </div>
   );
 }
