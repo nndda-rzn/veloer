@@ -1,7 +1,10 @@
 import { useRef, useState } from 'react';
+import type { Area } from 'react-easy-crop';
 import { Camera, Loader2, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { AvatarCropDialog } from './AvatarCropDialog';
+import { blobToFile, cropImageToBlob } from '../lib/crop-image';
 
 interface AvatarUploadProps {
   /** Current image URL, or null. */
@@ -28,11 +31,11 @@ function getInitials(name: string): string {
 }
 
 /**
- * Avatar with a photo upload and an initials fallback.
+ * Avatar with photo upload, an initials fallback, and a crop step.
  *
- * The previous version asked for an "Avatar URL" as free text, which is not
- * something a rider should have to produce. This uses the same storage path as
- * bike photos.
+ * The crop step matters: without it the avatar was cropped from the centre
+ * automatically, so a landscape photo could lose its subject and the rider
+ * would only see the damage after saving.
  */
 export function AvatarUpload({
   value,
@@ -43,9 +46,10 @@ export function AvatarUpload({
   onError,
 }: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [pendingSrc, setPendingSrc] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const handleSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (inputRef.current) inputRef.current.value = '';
     if (!file) return;
@@ -59,9 +63,23 @@ export function AvatarUpload({
       return;
     }
 
+    onError('');
+    // Hand the picked file to the cropper as a local object URL.
+    setPendingSrc(URL.createObjectURL(file));
+  };
+
+  const closeCropper = () => {
+    if (pendingSrc) URL.revokeObjectURL(pendingSrc);
+    setPendingSrc(null);
+  };
+
+  const handleCropConfirm = async (area: Area) => {
+    if (!pendingSrc) return;
     setBusy(true);
     try {
-      await onUpload(file);
+      const blob = await cropImageToBlob(pendingSrc, area);
+      await onUpload(blobToFile(blob));
+      closeCropper();
     } catch {
       onError('Upload failed. Please try again.');
     } finally {
@@ -111,11 +129,20 @@ export function AvatarUpload({
           ref={inputRef}
           type="file"
           accept={ACCEPTED.join(',')}
-          onChange={(e) => void handleSelect(e)}
+          onChange={handleSelect}
           className="sr-only"
           aria-label="Upload profile photo"
         />
       </div>
+
+      {pendingSrc && (
+        <AvatarCropDialog
+          imageSrc={pendingSrc}
+          onCancel={closeCropper}
+          onConfirm={handleCropConfirm}
+          saving={busy}
+        />
+      )}
     </div>
   );
 }
