@@ -47,7 +47,6 @@ export interface UseDashboardData {
   financeSummary: FinanceSummary | null;
   financeLoading: boolean;
   budgets: Budget[];
-  budgetsLoading: boolean;
   activeGoals: Goal[];
   goalsLoading: boolean;
   upcomingEvents: Event[];
@@ -58,7 +57,6 @@ export interface UseDashboardData {
   loadHistoryLoading: boolean;
   fitness: FitnessAnalysis | null;
   fitnessLoading: boolean;
-  initialLoading: boolean;
   error: string | null;
 }
 
@@ -146,7 +144,6 @@ export function useDashboardData(): UseDashboardData {
     financeSummary: financeQuery.data ?? null,
     financeLoading: financeQuery.isLoading,
     budgets: budgetsQuery.data ?? [],
-    budgetsLoading: budgetsQuery.isLoading,
     activeGoals: goalsQuery.data ?? [],
     goalsLoading: goalsQuery.isLoading,
     upcomingEvents: eventsQuery.data ?? [],
@@ -157,11 +154,6 @@ export function useDashboardData(): UseDashboardData {
     loadHistoryLoading: loadHistoryQuery.isLoading,
     fitness: fitnessQuery.data ?? null,
     fitnessLoading: fitnessQuery.isLoading,
-    initialLoading:
-      statsQuery.isLoading &&
-      recentQuery.isLoading &&
-      bikesQuery.isLoading &&
-      profileQuery.isLoading,
     error:
       queryErrors.length > 0
         ? 'Some dashboard data could not be loaded. Refresh to try again.'
