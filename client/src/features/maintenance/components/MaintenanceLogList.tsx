@@ -108,7 +108,7 @@ export function MaintenanceLogList({ logs, loading, onDelete }: MaintenanceLogLi
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuGroup>
-                        <DropdownMenuItem variant="destructive" onSelect={() => onDelete(log)}>
+                        <DropdownMenuItem variant="destructive" onClick={() => onDelete(log)}>
                           <Trash2 aria-hidden="true" />
                           Delete log
                         </DropdownMenuItem>

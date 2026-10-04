@@ -221,10 +221,7 @@ export function TrainingPlanDetailPage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      variant="destructive"
-                      onSelect={() => setShowDeletePlan(true)}
-                    >
+                    <DropdownMenuItem variant="destructive" onClick={() => setShowDeletePlan(true)}>
                       <Trash2 aria-hidden="true" />
                       Delete plan
                     </DropdownMenuItem>

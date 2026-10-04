@@ -100,7 +100,7 @@ export function GoalCard({ goal, onDelete }: GoalCardProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive" onSelect={() => onDelete(goal)}>
+              <DropdownMenuItem variant="destructive" onClick={() => onDelete(goal)}>
                 <Trash2 aria-hidden="true" />
                 Delete goal
               </DropdownMenuItem>

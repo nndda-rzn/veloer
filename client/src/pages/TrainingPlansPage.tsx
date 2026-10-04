@@ -125,13 +125,13 @@ export function TrainingPlansPage() {
               <DropdownMenuContent align="end">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    onSelect={() => void handleOpenSmartPlan()}
+                    onClick={() => void handleOpenSmartPlan()}
                     disabled={analysisLoading}
                   >
                     <Sparkles aria-hidden="true" />
                     Smart Plan
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setShowTemplates(true)}>
+                  <DropdownMenuItem onClick={() => setShowTemplates(true)}>
                     <LayoutTemplate aria-hidden="true" />
                     Template
                   </DropdownMenuItem>

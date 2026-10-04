@@ -129,7 +129,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onSelect={() => {
+              onClick={() => {
                 onNavigate?.();
                 navigate('/settings');
               }}
@@ -138,7 +138,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               Profile &amp; Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onSelect={() => void handleLogout()}>
+            <DropdownMenuItem variant="destructive" onClick={() => void handleLogout()}>
               <LogOut aria-hidden="true" />
               Sign out
             </DropdownMenuItem>
