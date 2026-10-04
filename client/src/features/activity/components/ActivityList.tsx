@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Activity } from '../types/activity';
 import {
@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/table';
 import { Bike } from 'lucide-react';
 import { EmptyState, TableToolbar, SortableHead, TablePagination } from '@/shared/components/ui';
-import { selectClass } from '@/shared/lib/form-styles';
 
 interface ActivityListProps {
+  /** Activities already narrowed by the page-level date/type/bike filters. */
   activities: Activity[];
   loading: boolean;
 }
@@ -30,15 +30,6 @@ interface ActivityListProps {
 type SortKey = 'date' | 'name' | 'distance' | 'duration' | 'elevation';
 
 export function ActivityList({ activities, loading }: ActivityListProps) {
-  const [typeFilter, setTypeFilter] = useState<'all' | string>('all');
-
-  const types = useMemo(() => [...new Set(activities.map((a) => a.type))].sort(), [activities]);
-
-  const rows = useMemo(
-    () => activities.filter((a) => typeFilter === 'all' || a.type === typeFilter),
-    [activities, typeFilter],
-  );
-
   const comparators = useMemo(
     () => ({
       date: (a: Activity, b: Activity) => a.start_date.localeCompare(b.start_date),
@@ -52,7 +43,7 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
   );
 
   const table = useTableControls<Activity, SortKey>({
-    rows,
+    rows: activities,
     searchText: (a) => `${a.name} ${a.type}`,
     comparators,
     initialSort: { key: 'date', dir: 'desc' },
@@ -72,8 +63,8 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
     return (
       <EmptyState
         icon={Bike}
-        title="No activities yet"
-        description="Sync from Strava to see your cycling activities here."
+        title="No activities in this range"
+        description="Try a wider date range, or sync from Strava to pull in new rides."
       />
     );
   }
@@ -84,21 +75,6 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
         query={table.query}
         onQueryChange={table.setQuery}
         placeholder="Search activities…"
-        filters={
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            aria-label="Filter by activity type"
-            className={`${selectClass} h-9 w-auto`}
-          >
-            <option value="all">All types</option>
-            {types.map((t) => (
-              <option key={t} value={t}>
-                {formatActivityType(t)}
-              </option>
-            ))}
-          </select>
-        }
         rangeStart={table.rangeStart}
         rangeEnd={table.rangeEnd}
         total={table.total}
@@ -108,7 +84,7 @@ export function ActivityList({ activities, loading }: ActivityListProps) {
         <EmptyState
           icon={Bike}
           title="No matching activities"
-          description="Try adjusting your search or filters."
+          description="Try adjusting your search."
         />
       ) : (
         <Table>

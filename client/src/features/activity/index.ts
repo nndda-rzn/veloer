@@ -8,7 +8,7 @@ export { LapBreakdown } from './components/LapBreakdown';
 export { ZoneChart } from './components/ZoneChart';
 export { TrainingLoadSummary } from './components/TrainingLoadSummary';
 export { LastSyncIndicator } from './components/LastSyncIndicator';
-export { useActivities } from './hooks/useActivities';
+export { useActivities, useActivityQuery, ACTIVITY_FETCH_LIMIT } from './hooks/useActivities';
 export { useActivityDetail } from './hooks/useActivityDetail';
 export { SyncProvider, useSync } from './hooks/useSync';
 export { activityApi } from './api/activity.api';
@@ -21,3 +21,17 @@ export type {
   ActivityZone,
 } from './types/activity';
 export type { SyncStatus } from './hooks/useSync';
+export {
+  ALL,
+  DATE_PRESETS,
+  defaultActivityQuery,
+  filterActivities,
+  resolveRange,
+  summarizeActivities,
+  activityTypeOptions,
+  activityBikeIds,
+  type ActivityQuery,
+  type ActivityQueryResult,
+  type ActivitySummary,
+  type DatePreset,
+} from './lib/activity-filters';

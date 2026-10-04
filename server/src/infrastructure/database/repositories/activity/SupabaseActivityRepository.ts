@@ -3,6 +3,40 @@ import type { ActivityRepository } from '../../../../domain/repositories/activit
 import type { Activity } from '../../../../domain/entities/activity/Activity.js';
 import { getSupabaseClient } from '../../supabase-client.js';
 
+// Columns returned by list queries. `polyline` is intentionally excluded: it is
+// only needed on the detail screen and would bloat the list payload.
+const LIST_COLUMNS = [
+  'id',
+  'user_id',
+  'strava_id',
+  'name',
+  'type',
+  'start_date',
+  'distance',
+  'moving_time',
+  'elapsed_time',
+  'total_elevation_gain',
+  'avg_speed',
+  'max_speed',
+  'avg_hr',
+  'max_hr',
+  'bike_id',
+  'avg_cadence',
+  'max_cadence',
+  'avg_watts',
+  'max_watts',
+  'weighted_avg_watts',
+  'kilojoules',
+  'device_watts',
+  'avg_temp',
+  'calories',
+  'elev_high',
+  'elev_low',
+  'tss',
+  'created_at',
+  'updated_at',
+].join(', ');
+
 @injectable()
 export class SupabaseActivityRepository implements ActivityRepository {
   async findByUserId(
@@ -18,7 +52,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
     const supabase = getSupabaseClient();
     let query = supabase
       .from('activities')
-      .select('*')
+      .select(LIST_COLUMNS)
       .eq('user_id', userId)
       .order('start_date', { ascending: false });
 
@@ -31,7 +65,7 @@ export class SupabaseActivityRepository implements ActivityRepository {
 
     const { data, error } = await query;
     if (error) throw new Error(`Failed to fetch activities: ${error.message}`);
-    return (data || []) as Activity[];
+    return (data || []) as unknown as Activity[];
   }
 
   async findById(id: string): Promise<Activity | null> {
