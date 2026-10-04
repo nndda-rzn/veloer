@@ -21,6 +21,7 @@ const initialQuery: ActivityQuery = {
   range: { start: '', end: '' },
   type: 'all',
   bikeId: 'all',
+  discipline: 'all',
 };
 
 export function ActivitiesPage() {

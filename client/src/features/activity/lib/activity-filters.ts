@@ -1,4 +1,5 @@
 import type { Activity } from '../types/activity';
+import { isStrength } from './discipline';
 import {
   inRange,
   lastDaysNDays,
@@ -17,6 +18,8 @@ export interface ActivityQuery {
   range: DateRange;
   type: string;
   bikeId: string;
+  /** 'cycling' | 'strength' | ALL */
+  discipline: string;
 }
 
 export const ALL = 'all';
@@ -26,6 +29,7 @@ export const defaultActivityQuery: ActivityQuery = {
   range: { start: '', end: '' },
   type: ALL,
   bikeId: ALL,
+  discipline: ALL,
 };
 
 export interface DatePresetOption {
@@ -91,8 +95,13 @@ export function summarizeActivities(activities: Activity[]): ActivitySummary {
   let elevationGain = 0;
   let tss = 0;
   let hasTss = false;
+  let count = 0;
 
   for (const a of activities) {
+    // Cycling only: the summary describes riding, so a strength session must
+    // not add distance, time or a ride count.
+    if (isStrength(a)) continue;
+    count += 1;
     distance += Number(a.distance) || 0;
     movingTime += Number(a.moving_time) || 0;
     elevationGain += Number(a.total_elevation_gain) || 0;
@@ -102,7 +111,6 @@ export function summarizeActivities(activities: Activity[]): ActivitySummary {
     }
   }
 
-  const count = activities.length;
   return {
     count,
     distance,
@@ -130,6 +138,8 @@ export function filterActivities(
       if (range && !inRange(a.start_date, range)) return false;
       if (query.type !== ALL && a.type !== query.type) return false;
       if (query.bikeId !== ALL && a.bike_id !== query.bikeId) return false;
+      if (query.discipline !== ALL && (a.discipline ?? 'cycling') !== query.discipline)
+        return false;
       return true;
     })
     .sort((a, b) => b.start_date.localeCompare(a.start_date));
@@ -144,7 +154,8 @@ export function filterActivities(
         (a) =>
           inRange(a.start_date, prevRange) &&
           (query.type === ALL || a.type === query.type) &&
-          (query.bikeId === ALL || a.bike_id === query.bikeId),
+          (query.bikeId === ALL || a.bike_id === query.bikeId) &&
+          (query.discipline === ALL || (a.discipline ?? 'cycling') === query.discipline),
       ),
     );
   }
