@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Pencil, Wallet, Route, TrendingUp, Wrench, Star } from 'lucide-react';
+import { ArrowLeft, Pencil, Star } from 'lucide-react';
 import type { Bike } from '../types/inventory';
-import { formatIDR, formatDistance } from '@/shared/lib/utils';
+import { formatIDR, formatDate } from '@/shared/lib/utils';
 import { costPerKm } from '../lib/inventory-metrics';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,9 @@ interface BikeHeroProps {
   componentCount: number;
   alertCount: number;
   isDefault: boolean;
+  /** Record line, sourced from maintenance logs. */
+  serviceCount: number;
+  serviceCost: number | null;
   onEdit: () => void;
   onSetDefault: () => void;
 }
@@ -40,11 +43,14 @@ export function BikeHero({
   componentCount,
   alertCount,
   isDefault,
+  serviceCount,
+  serviceCost,
   onEdit,
   onSetDefault,
 }: BikeHeroProps) {
   const cpk = costPerKm(bike.purchase_price, bike.current_km);
   const image = bike.photo_url ?? typeFallbackImages[bike.type];
+  const spec = [bike.brand, bike.model, typeLabels[bike.type]].filter(Boolean).join(' · ');
 
   return (
     <div className="space-y-4">
@@ -56,11 +62,11 @@ export function BikeHero({
         Bikes &amp; Gear
       </Link>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
         <div className="flex flex-col gap-6 p-6 md:flex-row md:items-start md:justify-between">
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">{bike.name}</h1>
+              <h1 className="text-h1 font-semibold tracking-tight text-foreground">{bike.name}</h1>
               <Badge variant={statusVariants[bike.status]}>{bike.status}</Badge>
               {isDefault && (
                 <Badge variant="warning">
@@ -69,38 +75,51 @@ export function BikeHero({
                 </Badge>
               )}
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {typeLabels[bike.type]}
-              {bike.brand ? ` · ${bike.brand} ${bike.model ?? ''}`.trimEnd() : ''}
-            </p>
+            {spec && <p className="mt-1 text-sm text-muted-foreground">{spec}</p>}
 
-            <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
-              <Stat
-                icon={Route}
-                label="Total distance"
-                value={formatDistance(bike.current_km * 1000)}
-              />
-              <Stat icon={Wallet} label="Cost / km" value={cpk != null ? formatIDR(cpk) : '–'} />
-              <Stat
-                icon={TrendingUp}
+            {/* Primary figure: the odometer. */}
+            <div className="mt-6 flex items-baseline gap-2">
+              <span className="font-mono text-3xl font-semibold tabular-nums tracking-tight text-foreground">
+                {bike.current_km.toFixed(0)}
+              </span>
+              <span className="text-sm text-muted-foreground">km ridden</span>
+            </div>
+
+            {/* Supporting spec row. */}
+            <dl className="mt-5 grid grid-cols-2 gap-x-8 gap-y-3 border-t border-border pt-5 sm:grid-cols-4">
+              <Spec label="Cost / km" value={cpk != null ? formatIDR(cpk) : '–'} />
+              <Spec
                 label="Purchase"
                 value={bike.purchase_price != null ? formatIDR(bike.purchase_price) : '–'}
               />
-              <Stat icon={Wrench} label="Components" value={String(componentCount)} />
-              <Stat
-                icon={Wrench}
-                label="Alerts"
-                value={String(alertCount)}
-                tone={alertCount > 0 ? 'warning' : undefined}
+              <Spec
+                label="Purchased"
+                value={bike.purchase_date ? formatDate(bike.purchase_date) : '–'}
               />
-            </div>
+              <Spec
+                label="Components"
+                value={String(componentCount)}
+                tone={alertCount > 0 ? 'warning' : undefined}
+                hint={alertCount > 0 ? `${alertCount} need attention` : undefined}
+              />
+            </dl>
+
+            {/* Record line: service history, the trust signal. */}
+            <p className="mt-4 text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">
+                {serviceCount} {serviceCount === 1 ? 'service' : 'services'} logged
+              </span>
+              {serviceCost != null && serviceCost > 0 && (
+                <> · {formatIDR(serviceCost)} spent on upkeep</>
+              )}
+            </p>
 
             {bike.notes && (
-              <p className="mt-4 max-w-prose text-sm text-muted-foreground">{bike.notes}</p>
+              <p className="mt-3 max-w-prose text-sm text-muted-foreground">{bike.notes}</p>
             )}
           </div>
 
-          <div className="flex shrink-0 flex-col items-end gap-3">
+          <div className="flex shrink-0 flex-col items-stretch gap-3 md:items-end">
             <div className="flex gap-2">
               {!isDefault && bike.status === 'active' && (
                 <Button variant="ghost" onClick={onSetDefault}>
@@ -127,30 +146,28 @@ export function BikeHero({
   );
 }
 
-function Stat({
-  icon: Icon,
+function Spec({
   label,
   value,
   tone,
+  hint,
 }: {
-  icon: typeof Route;
   label: string;
   value: string;
   tone?: 'warning';
+  hint?: string;
 }) {
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        <span className="text-xs uppercase tracking-wider">{label}</span>
-      </div>
-      <p
-        className={`mt-1 font-mono text-lg font-semibold tabular-nums ${
+      <dt className="text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
+      <dd
+        className={`mt-0.5 font-mono text-base font-semibold tabular-nums ${
           tone === 'warning' ? 'text-amber-700' : 'text-foreground'
         }`}
       >
         {value}
-      </p>
+      </dd>
+      {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
     </div>
   );
 }

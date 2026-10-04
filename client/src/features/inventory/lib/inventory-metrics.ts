@@ -1,4 +1,4 @@
-import type { Bike, Component } from '../types/inventory';
+import type { Component } from '../types/inventory';
 import { wearKm, wearPercent } from './lifespan';
 
 /** Cost per kilometre in IDR, or null when price or distance is unknown. */
@@ -6,38 +6,6 @@ export function costPerKm(purchasePrice: number | null, currentKm: number): numb
   if (purchasePrice == null || purchasePrice <= 0) return null;
   if (currentKm <= 0) return null;
   return purchasePrice / currentKm;
-}
-
-export interface GearSummary {
-  activeCount: number;
-  totalCount: number;
-  totalKm: number;
-  /** Sum of purchase price across bikes that have one recorded. */
-  totalValue: number;
-  /** Bikes with at least one maintenance alert. */
-  bikesWithAlerts: number;
-}
-
-export function summarizeGear(bikes: Bike[]): GearSummary {
-  let totalKm = 0;
-  let totalValue = 0;
-  let activeCount = 0;
-  let bikesWithAlerts = 0;
-
-  for (const b of bikes) {
-    totalKm += Number(b.current_km) || 0;
-    if (b.purchase_price != null) totalValue += Number(b.purchase_price) || 0;
-    if (b.status === 'active') activeCount += 1;
-    if ((b.maintenance_alert_count ?? 0) > 0) bikesWithAlerts += 1;
-  }
-
-  return {
-    activeCount,
-    totalCount: bikes.length,
-    totalKm,
-    totalValue,
-    bikesWithAlerts,
-  };
 }
 
 export type WearBand = 'good' | 'warning' | 'danger' | 'overdue' | 'unknown';

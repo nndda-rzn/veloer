@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  BikeTable,
-  BikeForm,
-  ComponentForm,
-  GearStatsBar,
-  useBikes,
-  summarizeGear,
-} from '@/features/inventory';
+import { BikeCard, BikeForm, FleetHealthStrip, useBikes, fleetHealth } from '@/features/inventory';
 import { componentApi } from '@/features/inventory/api/component.api';
-import type { Bike, BikeFormData, Component, ComponentFormData } from '@/features/inventory';
+import { useProfile } from '@/features/settings';
+import type { Bike, BikeFormData, Component } from '@/features/inventory';
 import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { selectClass } from '@/shared/lib/form-styles';
+import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
+
+type SortKey = 'name' | 'current_km' | 'purchase_price' | 'alerts';
+type StatusFilter = 'all' | Bike['status'];
 
 export function InventoryPage() {
   const {
@@ -25,6 +25,7 @@ export function InventoryPage() {
     deleteBike,
     refetch: refetchBikes,
   } = useBikes();
+  const { profile } = useProfile();
   const [componentsByBike, setComponentsByBike] = useState<Record<string, Component[]>>({});
   const [showBikeForm, setShowBikeForm] = useState(false);
   const [editingBike, setEditingBike] = useState<Bike | null>(null);
@@ -34,10 +35,9 @@ export function InventoryPage() {
     status: Bike['status'];
   } | null>(null);
 
-  const [showComponentForm, setShowComponentForm] = useState(false);
-  const [editingComponent, setEditingComponent] = useState<Component | null>(null);
-  const [activeBikeForComponent, setActiveBikeForComponent] = useState<Bike | null>(null);
-  const [deletingComponent, setDeletingComponent] = useState<Component | null>(null);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState<StatusFilter>('all');
+  const [sortKey, setSortKey] = useState<SortKey>('name');
 
   // Fetch components for all bikes
   const fetchComponents = useCallback(async (bikeIds: string[]) => {
@@ -77,34 +77,12 @@ export function InventoryPage() {
     refetchBikes();
   };
 
-  // --- Component handlers ---
-  const handleAddComponent = (bike: Bike) => {
-    setActiveBikeForComponent(bike);
-    setEditingComponent(null);
-    setShowComponentForm(true);
+  const handleDeleteBike = async () => {
+    if (!deletingBike) return;
+    await deleteBike(deletingBike.id);
+    setDeletingBike(null);
+    refetchBikes();
   };
-  const handleEditComponent = (component: Component) => {
-    setActiveBikeForComponent(bikes.find((b) => b.id === component.bike_id) ?? null);
-    setEditingComponent(component);
-    setShowComponentForm(true);
-  };
-  const handleComponentSubmit = async (data: ComponentFormData) => {
-    if (editingComponent) {
-      await componentApi.update(editingComponent.id, data);
-    } else {
-      await componentApi.create(data);
-    }
-    setShowComponentForm(false);
-    setEditingComponent(null);
-    await fetchComponents(bikes.map((b) => b.id));
-  };
-  const handleDeleteComponent = async (component: Component) => {
-    await componentApi.delete(component.id);
-    setDeletingComponent(null);
-    await fetchComponents(bikes.map((b) => b.id));
-  };
-
-  const gearSummary = useMemo(() => summarizeGear(bikes), [bikes]);
 
   const confirmStatusChange = async () => {
     if (!statusChange) return;
@@ -112,11 +90,32 @@ export function InventoryPage() {
     setStatusChange(null);
   };
 
+  const health = useMemo(() => fleetHealth(bikes, componentsByBike), [bikes, componentsByBike]);
+
+  const visibleBikes = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const filtered = bikes.filter((b) => {
+      if (status !== 'all' && b.status !== status) return false;
+      if (!q) return true;
+      return `${b.name} ${b.brand ?? ''} ${b.model ?? ''} ${b.type}`.toLowerCase().includes(q);
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortKey === 'name') return a.name.localeCompare(b.name);
+      if (sortKey === 'current_km') return b.current_km - a.current_km;
+      if (sortKey === 'alerts')
+        return (b.maintenance_alert_count ?? 0) - (a.maintenance_alert_count ?? 0);
+      return (b.purchase_price ?? 0) - (a.purchase_price ?? 0);
+    });
+  }, [bikes, query, status, sortKey]);
+
+  const isDefaultBike = (bike: Bike) => profile?.default_bike_id === bike.id;
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Bikes & Gear"
-        description="Manage your bikes and components"
+        description="Your garage — bikes, components and wear at a glance"
         action={
           <Button onClick={handleAddBike}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -127,7 +126,7 @@ export function InventoryPage() {
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      {!loading && bikes.length > 0 && <GearStatsBar summary={gearSummary} loading={loading} />}
+      {!loading && bikes.length > 0 && <FleetHealthStrip health={health} />}
 
       {!loading && bikes.length === 0 ? (
         <EmptyState
@@ -137,17 +136,69 @@ export function InventoryPage() {
           action={{ label: 'Add Bike', onClick: handleAddBike }}
         />
       ) : (
-        <BikeTable
-          bikes={bikes}
-          componentsByBike={componentsByBike}
-          loading={loading}
-          onEdit={handleEditBike}
-          onDelete={setDeletingBike}
-          onStatusChange={(bike, status) => setStatusChange({ bike, status })}
-          onEditComponent={handleEditComponent}
-          onDeleteComponent={setDeletingComponent}
-          onAddComponent={handleAddComponent}
-        />
+        <>
+          {bikes.length > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search bikes…"
+                  aria-label="Search bikes"
+                  className="h-9 w-full sm:w-64"
+                />
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as StatusFilter)}
+                  aria-label="Filter by status"
+                  className={cn(selectClass, 'h-9 w-auto')}
+                >
+                  <option value="all">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="retired">Retired</option>
+                  <option value="sold">Sold</option>
+                </select>
+                <select
+                  value={sortKey}
+                  onChange={(e) => setSortKey(e.target.value as SortKey)}
+                  aria-label="Sort bikes"
+                  className={cn(selectClass, 'h-9 w-auto')}
+                >
+                  <option value="name">Name</option>
+                  <option value="current_km">Odometer</option>
+                  <option value="alerts">Needs attention</option>
+                  <option value="purchase_price">Value</option>
+                </select>
+              </div>
+              <p className="text-xs tabular-nums text-muted-foreground">
+                {visibleBikes.length} of {bikes.length}
+              </p>
+            </div>
+          )}
+
+          {visibleBikes.length === 0 && bikes.length > 0 ? (
+            <EmptyState
+              icon={Plus}
+              title="No bikes match your filters"
+              description="Try a different search or status."
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {visibleBikes.map((bike) => (
+                <BikeCard
+                  key={bike.id}
+                  bike={bike}
+                  components={componentsByBike[bike.id] ?? []}
+                  isDefault={isDefaultBike(bike)}
+                  onEdit={handleEditBike}
+                  onDelete={setDeletingBike}
+                  onStatusChange={(b, s) => setStatusChange({ bike: b, status: s })}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Bike Form Modal */}
@@ -162,41 +213,13 @@ export function InventoryPage() {
         />
       )}
 
-      {/* Component Form Modal */}
-      {showComponentForm && activeBikeForComponent && (
-        <ComponentForm
-          bikeId={activeBikeForComponent.id}
-          component={editingComponent}
-          onSubmit={handleComponentSubmit}
-          onCancel={() => {
-            setShowComponentForm(false);
-            setEditingComponent(null);
-          }}
-        />
-      )}
-
       {/* Delete Bike Confirmation */}
       <ConfirmDialog
         open={deletingBike !== null}
         onOpenChange={(open) => !open && setDeletingBike(null)}
         title="Delete bike"
-        description={`Are you sure you want to delete “${deletingBike?.name ?? ''}”? This action cannot be undone.`}
-        onConfirm={async () => {
-          if (deletingBike) {
-            await deleteBike(deletingBike.id);
-            setDeletingBike(null);
-            refetchBikes();
-          }
-        }}
-      />
-
-      {/* Delete Component Confirmation */}
-      <ConfirmDialog
-        open={deletingComponent !== null}
-        onOpenChange={(open) => !open && setDeletingComponent(null)}
-        title="Delete component"
-        description={`Are you sure you want to delete “${deletingComponent?.name ?? ''}”? This action cannot be undone.`}
-        onConfirm={() => (deletingComponent ? handleDeleteComponent(deletingComponent) : undefined)}
+        description={`Are you sure you want to delete “${deletingBike?.name ?? ''}”? This will also remove its components. This action cannot be undone.`}
+        onConfirm={handleDeleteBike}
       />
 
       {/* Bike status change confirmation */}
