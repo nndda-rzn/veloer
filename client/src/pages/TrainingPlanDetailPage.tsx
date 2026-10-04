@@ -30,7 +30,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Trash2, RotateCcw, LineChart } from 'lucide-react';
+import { formatDate } from '@/shared/lib/utils';
 import type {
   TrainingPlan,
   TrainingWorkout,
@@ -197,38 +198,34 @@ export function TrainingPlanDetailPage() {
         </Link>
         <PageHeader
           title={plan.title}
-          description={`${plan.start_date} – ${plan.end_date} • FTP ${plan.ftp_baseline}W`}
+          description={`${formatDate(plan.start_date)} – ${formatDate(plan.end_date)} · FTP ${plan.ftp_baseline}W`}
           action={
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => void handleReschedule()}
-                loading={rescheduling}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={<Button variant="outline" size="sm" aria-label="Plan actions" />}
               >
-                Reschedule Missed
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/training-plans/${plan.id}/retrospective`)}
-              >
-                Retrospective
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={<Button variant="ghost" size="icon" aria-label="Plan actions" />}
-                >
-                  <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem variant="destructive" onClick={() => setShowDeletePlan(true)}>
-                      <Trash2 aria-hidden="true" />
-                      Delete plan
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
+                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                Plan actions
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => void handleReschedule()} disabled={rescheduling}>
+                    <RotateCcw aria-hidden="true" />
+                    Reschedule missed
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate(`/training-plans/${plan.id}/retrospective`)}
+                  >
+                    <LineChart aria-hidden="true" />
+                    Retrospective
+                  </DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive" onClick={() => setShowDeletePlan(true)}>
+                    <Trash2 aria-hidden="true" />
+                    Delete plan
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           }
         />
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

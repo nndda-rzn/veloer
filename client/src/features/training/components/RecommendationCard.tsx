@@ -1,5 +1,6 @@
 import type { WorkoutRecommendation } from '../types/training';
 import { WorkoutTypeChip } from './WorkoutTypeChip';
+import { Button } from '@/components/ui/button';
 
 interface RecommendationCardProps {
   recommendation: WorkoutRecommendation;
@@ -59,12 +60,9 @@ export function RecommendationCard({ recommendation: rec, onAddToPlan }: Recomme
       </div>
 
       {onAddToPlan && (
-        <button
-          onClick={() => onAddToPlan(rec)}
-          className="w-full rounded-lg border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
+        <Button variant="outline" className="w-full" onClick={() => onAddToPlan(rec)}>
           Add to today
-        </button>
+        </Button>
       )}
     </div>
   );
