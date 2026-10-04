@@ -27,6 +27,50 @@ const periods: { value: GoalFormData['period']; label: string }[] = [
   { value: 'custom', label: 'Custom range' },
 ];
 
+interface QuickTemplate {
+  label: string;
+  type: GoalFormData['type'];
+  target_value: number;
+  unit: string;
+  period: GoalFormData['period'];
+  title: string;
+}
+
+const QUICK_TEMPLATES: QuickTemplate[] = [
+  {
+    label: '500 km / month',
+    type: 'distance',
+    target_value: 500,
+    unit: 'km',
+    period: 'monthly',
+    title: 'Ride 500 km this month',
+  },
+  {
+    label: '2000 km / year',
+    type: 'distance',
+    target_value: 2000,
+    unit: 'km',
+    period: 'yearly',
+    title: 'Ride 2000 km this year',
+  },
+  {
+    label: '10 h / week',
+    type: 'time',
+    target_value: 10,
+    unit: 'hours',
+    period: 'weekly',
+    title: 'Train 10 hours this week',
+  },
+  {
+    label: '100 rides / year',
+    type: 'activities_count',
+    target_value: 100,
+    unit: 'count',
+    period: 'yearly',
+    title: '100 rides this year',
+  },
+];
+
 function toISO(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
@@ -98,6 +142,20 @@ export function GoalForm({ goal, onSubmit, onCancel }: GoalFormProps) {
     }
   };
 
+  const applyTemplate = (tpl: QuickTemplate) => {
+    const range = periodRange(tpl.period);
+    setFormData((f) => ({
+      ...f,
+      type: tpl.type,
+      target_value: tpl.target_value,
+      unit: tpl.unit,
+      period: tpl.period,
+      title: f.title || tpl.title,
+      start_date: range.start,
+      end_date: range.end,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.end_date < formData.start_date) {
@@ -126,6 +184,25 @@ export function GoalForm({ goal, onSubmit, onCancel }: GoalFormProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+
+          {!isEdit && (
+            <div className="space-y-1.5">
+              <Label>Quick templates</Label>
+              <div className="flex flex-wrap gap-1.5">
+                {QUICK_TEMPLATES.map((tpl) => (
+                  <Button
+                    key={tpl.label}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => applyTemplate(tpl)}
+                  >
+                    {tpl.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="title">Title</Label>
