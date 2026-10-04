@@ -47,6 +47,12 @@
   --color-danger: #b91c1c;
   --color-info: #1d4ed8;
 
+  /* Strength accent: slate. Distinguished from cycling's ride-green, and
+     outside the semantic set so it never reads as success/warning/error.
+     Always paired with the Dumbbell icon and a label (colour is never the
+     only signal). */
+  --color-strength: #475569;
+
   /* Strava brand -------------------------------------------------------- */
   --color-strava: #fc4c02;
   --color-strava-dark: #c93c02;
