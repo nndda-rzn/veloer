@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { trainingApi } from '@/features/training';
 import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS, isStrengthType } from '@/features/training';
 import type { TrainingWorkout } from '@/features/training';
+import { CalendarDays } from 'lucide-react';
+import { EmptyState, Skeleton } from '@/shared/components/ui';
 
 export function UpcomingWorkoutsWidget() {
+  const navigate = useNavigate();
   const [workouts, setWorkouts] = useState<TrainingWorkout[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +44,7 @@ export function UpcomingWorkoutsWidget() {
     return (
       <div className="space-y-2">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-12 animate-pulse rounded-xl bg-secondary" />
+          <Skeleton key={i} className="h-12 rounded-xl" />
         ))}
       </div>
     );
@@ -49,12 +52,12 @@ export function UpcomingWorkoutsWidget() {
 
   if (workouts.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-4 text-center">
-        <p className="text-xs text-muted-foreground">No upcoming workouts</p>
-        <Link to="/training-plans" className="mt-1 block text-xs text-primary hover:underline">
-          Create a training plan
-        </Link>
-      </div>
+      <EmptyState
+        icon={CalendarDays}
+        title="No upcoming workouts"
+        description="Create a training plan to schedule sessions."
+        action={{ label: 'Training plans', onClick: () => navigate('/training-plans') }}
+      />
     );
   }
 

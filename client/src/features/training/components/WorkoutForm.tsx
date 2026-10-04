@@ -12,6 +12,8 @@ import { cleanExercises } from '../lib/exercises';
 import { DisciplineToggle } from './DisciplineToggle';
 import { ExerciseListEditor } from './ExerciseListEditor';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import { FormField } from '@/shared/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -150,7 +152,11 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
           </DialogDescription>
         </DialogHeader>
 
-        {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && (
+          <Alert variant="error" live="assertive">
+            {error}
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Discipline decides which fields follow */}
@@ -218,10 +224,13 @@ export function WorkoutForm({ workout, defaultDate, onSubmit, onCancel }: Workou
 
           {/* Strength: optional exercise list */}
           {isStrength && (
-            <div className="space-y-2">
-              <Label>Exercises (optional)</Label>
+            <FormField
+              label="Exercises"
+              optional
+              hint="Add sets, reps and weight if you want to track load."
+            >
               <ExerciseListEditor value={exercises} onChange={setExercises} />
-            </div>
+            </FormField>
           )}
 
           {/* Cycling: target metrics + intervals */}

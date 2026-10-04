@@ -3,6 +3,8 @@ import type { TrainingPlan, TrainingPlanFormData, PlanGoalType } from '../types/
 import { PLAN_GOAL_TYPE_LABELS } from '../types/training';
 import { selectClass } from '@/shared/lib/form-styles';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import { FormField } from '@/shared/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -73,7 +75,11 @@ export function TrainingPlanForm({
           <DialogDescription>Set up a training plan with FTP-based targets.</DialogDescription>
         </DialogHeader>
 
-        {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && (
+          <Alert variant="error" live="assertive">
+            {error}
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
@@ -124,8 +130,11 @@ export function TrainingPlanForm({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="plan-ftp">FTP Baseline (watts)</Label>
+          <FormField
+            label="FTP Baseline (watts)"
+            htmlFor="plan-ftp"
+            hint="Your FTP at the start of this plan. Used for TSS targets."
+          >
             <Input
               id="plan-ftp"
               type="number"
@@ -134,10 +143,7 @@ export function TrainingPlanForm({
               value={ftpBaseline}
               onChange={(e) => setFtpBaseline(Number(e.target.value))}
             />
-            <p className="text-xs text-muted-foreground">
-              Your FTP at the start of this plan. Used for TSS targets.
-            </p>
-          </div>
+          </FormField>
 
           <div className="space-y-1.5">
             <Label htmlFor="plan-desc">Description (optional)</Label>

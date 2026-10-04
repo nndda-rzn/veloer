@@ -54,7 +54,7 @@ describe('WorkoutForm · strength mode', () => {
 
     // The strength-specific controls are present.
     expect(screen.getByLabelText('Duration (min)')).toBeInTheDocument();
-    expect(screen.getByText('Exercises (optional)')).toBeInTheDocument();
+    expect(screen.getByText('Exercises')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Squat')).toBeInTheDocument();
   });
 
@@ -99,12 +99,12 @@ describe('WorkoutForm · strength mode', () => {
     // Switch to cycling: cycling fields appear, exercises disappear.
     await userEvent.click(screen.getByRole('button', { name: 'Cycling' }));
     expect(screen.getByLabelText('Power (W)')).toBeInTheDocument();
-    expect(screen.queryByText('Exercises (optional)')).toBeNull();
+    expect(screen.queryByText('Exercises')).toBeNull();
 
     // Switch back to strength: cycling fields are gone again.
     await userEvent.click(screen.getByRole('button', { name: 'Strength' }));
     expect(screen.queryByLabelText('Power (W)')).toBeNull();
-    expect(screen.getByText('Exercises (optional)')).toBeInTheDocument();
+    expect(screen.getByText('Exercises')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
     const payload = onSubmit.mock.calls[0][0];
@@ -128,7 +128,7 @@ describe('WorkoutForm · strength mode', () => {
     );
 
     expect(screen.getByLabelText('Power (W)')).toBeInTheDocument();
-    expect(screen.queryByText('Exercises (optional)')).toBeNull();
+    expect(screen.queryByText('Exercises')).toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
     const payload = onSubmit.mock.calls[0][0];

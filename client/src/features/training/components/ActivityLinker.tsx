@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { activityApi } from '@/features/activity';
 import type { Activity } from '@/features/activity';
+import { filterLinkable } from '../lib/filter-linkable';
 import { Button } from '@/components/ui/button';
 import { selectClass } from '@/shared/lib/form-styles';
 
@@ -9,6 +10,8 @@ interface ActivityLinkerProps {
   planId: string;
   scheduledDate: string;
   currentActivityId: string | null;
+  /** A strength workout can only be linked to a strength session. */
+  workoutIsStrength: boolean;
   onLink: (workoutId: string, activityId: string) => Promise<void>;
 }
 
@@ -16,6 +19,7 @@ export function ActivityLinker({
   workoutId,
   scheduledDate,
   currentActivityId,
+  workoutIsStrength,
   onLink,
 }: ActivityLinkerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -36,9 +40,9 @@ export function ActivityLinker({
         endDate: to.toISOString().split('T')[0],
         limit: 20,
       })
-      .then(setActivities)
+      .then((rows) => setActivities(filterLinkable(rows, workoutIsStrength)))
       .catch(() => {});
-  }, [scheduledDate]);
+  }, [scheduledDate, workoutIsStrength]);
 
   const handleLink = async () => {
     if (!selected) return;
@@ -49,6 +53,15 @@ export function ActivityLinker({
       setLoading(false);
     }
   };
+
+  if (activities.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No matching {workoutIsStrength ? 'strength sessions' : 'rides'} within ±2 days of this
+        workout.
+      </p>
+    );
+  }
 
   return (
     <div className="flex gap-2">

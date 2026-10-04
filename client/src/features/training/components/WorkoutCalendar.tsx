@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import type { TrainingWorkout } from '../types/training';
 import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS } from '../types/training';
 import { isStrengthType } from '../lib/discipline';
+import { useChartColors } from '@/shared/lib/use-chart-colors';
 import { useState } from 'react';
 
 const localizer = dateFnsLocalizer({
@@ -31,6 +32,7 @@ interface WorkoutCalendarProps {
 }
 
 export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: WorkoutCalendarProps) {
+  const c = useChartColors();
   const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
 
@@ -59,7 +61,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
     const isMissed = workout.status === 'missed';
     return {
       style: {
-        backgroundColor: isDone ? '#0f6e4e' : isMissed ? '#a8a29e' : color,
+        backgroundColor: isDone ? c.success : isMissed ? c.missed : color,
         borderColor: 'transparent',
         borderRadius: '4px',
         color: '#fff',
