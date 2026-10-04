@@ -12,6 +12,8 @@ interface MaintenanceFormProps {
   currentKm: number;
   /** Preselect a component (used by the "Log service" action on a component). */
   defaultComponentId?: string | null;
+  /** Components to attribute the service to. Omit when the caller has none. */
+  components?: { id: string; name: string }[];
   /** Prefill the description. */
   defaultDescription?: string;
   /** Prefill the log type. */
@@ -32,6 +34,7 @@ export function MaintenanceForm({
   bikeId,
   currentKm,
   defaultComponentId = null,
+  components = [],
   defaultDescription = '',
   defaultType = 'routine',
   onSubmit,
@@ -116,6 +119,25 @@ export function MaintenanceForm({
               ))}
             </select>
           </div>
+
+          {components.length > 0 && (
+            <div className="space-y-1.5">
+              <Label htmlFor="component_id">Component</Label>
+              <select
+                id="component_id"
+                value={formData.component_id ?? ''}
+                onChange={(e) => setFormData({ ...formData, component_id: e.target.value || null })}
+                className={selectClass}
+              >
+                <option value="">Whole bike</option>
+                {components.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="description">Description *</Label>
