@@ -1,10 +1,12 @@
+export type Discipline = 'cycling' | 'strength';
+
 export interface Activity {
   id: string;
   user_id: string;
   strava_id: number | null;
   name: string;
   type: string;
-  discipline: 'cycling' | 'strength';
+  discipline: Discipline;
   start_date: string;
   /** Meters; null for a strength session, which has no distance. */
   distance: number | null;

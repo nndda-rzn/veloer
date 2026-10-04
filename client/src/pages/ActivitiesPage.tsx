@@ -54,7 +54,7 @@ export function ActivitiesPage() {
     <div className="space-y-6">
       <PageHeader
         title="Activities"
-        description="Your cycling activities synced from Strava"
+        description="Your rides and strength sessions synced from Strava"
         action={
           <Button onClick={() => void sync().catch(() => undefined)} loading={isSyncing}>
             <RefreshCw
