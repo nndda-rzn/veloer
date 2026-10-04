@@ -1,11 +1,14 @@
+import type { Discipline } from './discipline.js';
+
 export interface Activity {
   id: string;
   user_id: string;
   strava_id: number | null;
   name: string;
   type: string;
+  discipline: Discipline;
   start_date: string;
-  distance: number; // meters
+  distance: number | null; // meters; null for strength (no distance)
   moving_time: number; // seconds
   elapsed_time: number; // seconds
   total_elevation_gain: number | null; // meters

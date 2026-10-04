@@ -6,6 +6,11 @@ import type { StravaPort } from '../../ports/StravaPort.js';
 import { RefreshStravaToken } from '../auth/RefreshStravaToken.js';
 import { GetGoals, RecomputeGoalProgress } from '../goals/GoalUseCases.js';
 import type { Activity } from '../../../domain/entities/activity/Activity.js';
+import {
+  disciplineForStravaType,
+  STRENGTH_STRAVA_TYPES,
+} from '../../../domain/entities/activity/discipline.js';
+import { computeStrengthTss } from '../../../domain/entities/activity/training-load.js';
 
 export interface SyncResult {
   synced: number;
@@ -64,9 +69,10 @@ export class SyncStravaActivities {
       perPage: 30,
     });
 
-    // Filter only Ride and VirtualRide types
-    const rideActivities = stravaActivities.filter(
-      (a) => a.type === 'Ride' || a.type === 'VirtualRide',
+    // Keep rides and strength sessions; drop everything else (runs, swims, ...).
+    const relevant = stravaActivities.filter(
+      (a) =>
+        a.type === 'Ride' || a.type === 'VirtualRide' || STRENGTH_STRAVA_TYPES.includes(a.type),
     );
 
     let synced = 0;
@@ -74,7 +80,7 @@ export class SyncStravaActivities {
     let workoutsLinked = 0;
     const toCreate: Omit<Activity, 'id' | 'created_at' | 'updated_at'>[] = [];
 
-    for (const sa of rideActivities) {
+    for (const sa of relevant) {
       // Check if already synced
       const existing = await this.activityRepo.findByStravaId(sa.id);
       if (existing) {
@@ -82,35 +88,51 @@ export class SyncStravaActivities {
         continue;
       }
 
-      // Compute TSS:
-      // 1. Power-based TSS if NP and FTP available (most accurate)
-      // 2. hrTSS fallback if HR and LTHR available (HR-only rides)
-      // 3. Estimate LTHR from max_hr if LTHR not set (80% of max HR typical threshold)
+      const discipline = disciplineForStravaType(sa.type);
       const lthr = profile?.lthr ?? null;
-      const np = sa.weighted_average_watts || null;
-      let tss: number | null = null;
 
-      if (np && ftp && ftp > 0) {
-        // Power-based TSS (most accurate)
-        tss = (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100;
-      } else if (sa.average_heartrate && sa.moving_time > 0) {
-        // hrTSS fallback using Coggan formula
-        const avgHr = sa.average_heartrate;
-        const effectiveLthr =
-          lthr ?? (sa.max_heartrate ? Math.round(sa.max_heartrate * 0.88) : null);
-        if (effectiveLthr && effectiveLthr > 0) {
-          const hrif = avgHr / effectiveLthr; // HR Intensity Factor
-          tss = (sa.moving_time / 3600) * hrif * hrif * 100;
+      let tss: number | null = null;
+      if (discipline === 'strength') {
+        // Strength has no power; load can only come from heart rate, and is
+        // null (unknown) when there is none.
+        tss = computeStrengthTss({
+          moving_time: sa.moving_time,
+          avg_hr: sa.average_heartrate,
+          max_hr: sa.max_heartrate,
+          lthr,
+        });
+      } else {
+        // Compute TSS:
+        // 1. Power-based TSS if NP and FTP available (most accurate)
+        // 2. hrTSS fallback if HR and LTHR available (HR-only rides)
+        // 3. Estimate LTHR from max_hr if LTHR not set (80% of max HR typical threshold)
+        const np = sa.weighted_average_watts || null;
+        if (np && ftp && ftp > 0) {
+          // Power-based TSS (most accurate)
+          tss = (sa.moving_time / 3600) * Math.pow(np / ftp, 2) * 100;
+        } else if (sa.average_heartrate && sa.moving_time > 0) {
+          // hrTSS fallback using Coggan formula
+          const avgHr = sa.average_heartrate;
+          const effectiveLthr =
+            lthr ?? (sa.max_heartrate ? Math.round(sa.max_heartrate * 0.88) : null);
+          if (effectiveLthr && effectiveLthr > 0) {
+            const hrif = avgHr / effectiveLthr; // HR Intensity Factor
+            tss = (sa.moving_time / 3600) * hrif * hrif * 100;
+          }
         }
       }
+
+      const isStrength = discipline === 'strength';
 
       toCreate.push({
         user_id: userId,
         strava_id: sa.id,
         name: sa.name,
         type: sa.type,
+        discipline,
         start_date: sa.start_date,
-        distance: sa.distance,
+        // A strength session has no distance; store NULL rather than 0.
+        distance: isStrength ? null : sa.distance,
         moving_time: sa.moving_time,
         elapsed_time: sa.elapsed_time,
         total_elevation_gain: sa.total_elevation_gain,
@@ -119,6 +141,7 @@ export class SyncStravaActivities {
         avg_hr: sa.average_heartrate || null,
         max_hr: sa.max_heartrate || null,
         polyline: sa.map?.summary_polyline || null,
+        // Strength is never linked to a bike.
         bike_id: null,
         avg_cadence: sa.average_cadence || null,
         max_cadence: sa.max_cadence || null,
@@ -148,7 +171,9 @@ export class SyncStravaActivities {
           actDate,
         );
 
-        // Derive intensity zone from NP/FTP ratio (falls back to avg_watts if no NP)
+        const isStrength = activity.discipline === 'strength';
+
+        // Cycling only: derive intensity zone from NP/FTP ratio (falls back to avg_watts).
         const actNp = activity.weighted_avg_watts ?? activity.avg_watts ?? null;
         const actIntensity = actNp && ftp && ftp > 0 ? actNp / ftp : null;
         const actZone = actIntensity != null ? this.intensityZone(actIntensity) : null;
@@ -158,6 +183,9 @@ export class SyncStravaActivities {
 
         for (const w of plannedWorkouts) {
           if (w.status !== 'planned' || w.target_duration_minutes == null) continue;
+          // A strength session only matches a planned strength workout, and a
+          // ride only matches a planned cycling workout.
+          if (w.discipline !== activity.discipline) continue;
 
           const durationDiffSec = Math.abs(activity.moving_time - w.target_duration_minutes * 60);
           if (durationDiffSec >= 1800) continue; // outside ±30 min: skip entirely
@@ -169,8 +197,12 @@ export class SyncStravaActivities {
             score += 3; // within ±15 min
           else score += 1; // within ±30 min
 
-          // Workout type vs intensity zone scoring
-          if (actZone != null && this.zoneMatchesWorkoutType(actZone, w.workout_type)) {
+          // Workout type vs intensity zone scoring (cycling only; strength has no power)
+          if (
+            !isStrength &&
+            actZone != null &&
+            this.zoneMatchesWorkoutType(actZone, w.workout_type)
+          ) {
             score += 3;
           }
 
@@ -209,7 +241,7 @@ export class SyncStravaActivities {
     return {
       synced,
       skipped,
-      total: rideActivities.length,
+      total: relevant.length,
       goalsUpdated,
       workoutsLinked,
     };
