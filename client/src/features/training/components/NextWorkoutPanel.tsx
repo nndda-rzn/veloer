@@ -1,6 +1,8 @@
 import { Play, SkipForward, Check } from 'lucide-react';
 import type { TrainingWorkout } from '../types/training';
-import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS } from '../types/training';
+import { WORKOUT_TYPE_COLORS } from '../types/training';
+import { isStrengthType } from '../lib/discipline';
+import { WorkoutTypeChip } from './WorkoutTypeChip';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -45,6 +47,7 @@ export function NextWorkoutPanel({
   }
 
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
+  const isStrength = isStrengthType(workout.workout_type);
 
   return (
     <Card className="overflow-hidden">
@@ -62,16 +65,15 @@ export function NextWorkoutPanel({
             >
               {workout.title}
             </button>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              <span
-                className="inline-block rounded-md px-1.5 py-0.5 text-xs font-medium"
-                style={{ backgroundColor: `${color}1a`, color }}
-              >
-                {WORKOUT_TYPE_LABELS[workout.workout_type]}
-              </span>
-              {workout.target_duration_minutes ? ` · ${workout.target_duration_minutes} min` : ''}
-              {workout.target_tss ? ` · TSS ${workout.target_tss}` : ''}
-              {workout.target_avg_power ? ` · ${workout.target_avg_power}W` : ''}
+            <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+              <WorkoutTypeChip type={workout.workout_type} />
+              {workout.target_duration_minutes ? (
+                <span>· {workout.target_duration_minutes} min</span>
+              ) : null}
+              {!isStrength && workout.target_tss ? <span>· TSS {workout.target_tss}</span> : null}
+              {!isStrength && workout.target_avg_power ? (
+                <span>· {workout.target_avg_power}W</span>
+              ) : null}
             </p>
           </div>
         </div>

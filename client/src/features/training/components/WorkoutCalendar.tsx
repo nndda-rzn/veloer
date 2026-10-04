@@ -5,6 +5,7 @@ import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import type { TrainingWorkout } from '../types/training';
 import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS } from '../types/training';
+import { isStrengthType } from '../lib/discipline';
 import { useState } from 'react';
 
 const localizer = dateFnsLocalizer({
@@ -37,9 +38,12 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
     () =>
       workouts.map((w) => {
         const d = new Date(w.scheduled_date + 'T00:00:00');
+        const prefix = isStrengthType(w.workout_type)
+          ? 'Strength'
+          : WORKOUT_TYPE_LABELS[w.workout_type];
         return {
           id: w.id,
-          title: `${WORKOUT_TYPE_LABELS[w.workout_type]}: ${w.title}`,
+          title: `${prefix}: ${w.title}`,
           start: d,
           end: d,
           resource: w,

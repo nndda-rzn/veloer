@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { trainingApi } from '@/features/training';
-import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS } from '@/features/training';
+import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS, isStrengthType } from '@/features/training';
 import type { TrainingWorkout } from '@/features/training';
 
 export function UpcomingWorkoutsWidget() {
@@ -62,6 +62,7 @@ export function UpcomingWorkoutsWidget() {
     <div className="space-y-2">
       {workouts.map((w) => {
         const color = WORKOUT_TYPE_COLORS[w.workout_type];
+        const isStrength = isStrengthType(w.workout_type);
         const date = new Date(w.scheduled_date + 'T00:00:00');
         const dayLabel = date.toLocaleDateString('en-US', {
           weekday: 'short',
@@ -81,11 +82,11 @@ export function UpcomingWorkoutsWidget() {
             <div className="flex-1 min-w-0">
               <p className="truncate text-sm font-medium text-foreground">{w.title}</p>
               <p className="text-xs text-muted-foreground">
-                {dayLabel} • {WORKOUT_TYPE_LABELS[w.workout_type]}
-                {w.target_duration_minutes ? ` • ${w.target_duration_minutes}min` : ''}
+                {dayLabel} · {WORKOUT_TYPE_LABELS[w.workout_type]}
+                {w.target_duration_minutes ? ` · ${w.target_duration_minutes}min` : ''}
               </p>
             </div>
-            {w.target_tss && (
+            {!isStrength && w.target_tss && (
               <span className="flex-shrink-0 text-xs text-muted-foreground">
                 TSS {w.target_tss}
               </span>

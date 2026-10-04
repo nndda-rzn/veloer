@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import type { TrainingWorkout, WorkoutStatus } from '../types/training';
-import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
 import { formatDate, formatEnumLabel } from '@/shared/lib/utils';
+import { WORKOUT_TYPE_COLORS } from '../types/training';
+import { isStrengthType } from '../lib/discipline';
+import { formatExercise } from '../lib/exercises';
+import { WorkoutTypeChip } from './WorkoutTypeChip';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
@@ -43,6 +46,7 @@ export function WorkoutDetail({
   onLinkActivity,
 }: WorkoutDetailProps) {
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
+  const isStrength = isStrengthType(workout.workout_type);
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -53,12 +57,7 @@ export function WorkoutDetail({
         <div className="p-4" style={{ borderBottom: `3px solid ${color}` }}>
           <div className="flex items-start justify-between">
             <div>
-              <span
-                className="inline-block rounded-md px-2 py-0.5 text-xs font-medium"
-                style={{ backgroundColor: `${color}1a`, color }}
-              >
-                {WORKOUT_TYPE_LABELS[workout.workout_type]}
-              </span>
+              <WorkoutTypeChip type={workout.workout_type} />
               <h2 className="mt-1 text-lg font-semibold text-foreground">{workout.title}</h2>
               <p className="text-sm text-muted-foreground">{formatDate(workout.scheduled_date)}</p>
             </div>
@@ -71,7 +70,8 @@ export function WorkoutDetail({
             <p className="text-sm text-muted-foreground">{workout.description}</p>
           )}
 
-          {/* Target metrics */}
+          {/* Target metrics. Strength has no power/cadence/TSS targets, so only
+              duration applies. */}
           <div>
             <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Targets
@@ -83,28 +83,53 @@ export function WorkoutDetail({
                   workout.target_duration_minutes ? `${workout.target_duration_minutes} min` : null
                 }
               />
-              <MetricRow label="TSS" value={workout.target_tss} />
-              <MetricRow
-                label="Power"
-                value={workout.target_avg_power ? `${workout.target_avg_power} W` : null}
-              />
-              <MetricRow
-                label="HR"
-                value={workout.target_avg_hr ? `${workout.target_avg_hr} bpm` : null}
-              />
-              <MetricRow
-                label="Cadence"
-                value={
-                  workout.target_cadence_min && workout.target_cadence_max
-                    ? `${workout.target_cadence_min}–${workout.target_cadence_max} rpm`
-                    : null
-                }
-              />
+              {!isStrength && <MetricRow label="TSS" value={workout.target_tss} />}
+              {!isStrength && (
+                <MetricRow
+                  label="Power"
+                  value={workout.target_avg_power ? `${workout.target_avg_power} W` : null}
+                />
+              )}
+              {!isStrength && (
+                <MetricRow
+                  label="HR"
+                  value={workout.target_avg_hr ? `${workout.target_avg_hr} bpm` : null}
+                />
+              )}
+              {!isStrength && (
+                <MetricRow
+                  label="Cadence"
+                  value={
+                    workout.target_cadence_min && workout.target_cadence_max
+                      ? `${workout.target_cadence_min}–${workout.target_cadence_max} rpm`
+                      : null
+                  }
+                />
+              )}
             </div>
           </div>
 
-          {/* Interval structure */}
-          {workout.intervals_count && workout.intervals_count > 0 && (
+          {/* Strength exercise list (optional) */}
+          {isStrength && workout.exercises && workout.exercises.length > 0 && (
+            <div>
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Exercises
+              </h3>
+              <div className="divide-y divide-border rounded-lg border border-border bg-secondary px-3">
+                {workout.exercises.map((exercise, index) => (
+                  <div
+                    key={`${exercise.name}-${index}`}
+                    className="py-1.5 text-sm tabular-nums text-foreground"
+                  >
+                    {formatExercise(exercise)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Interval structure (cycling only) */}
+          {!isStrength && workout.intervals_count && workout.intervals_count > 0 && (
             <div>
               <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Intervals
