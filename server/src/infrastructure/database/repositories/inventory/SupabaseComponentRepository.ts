@@ -35,9 +35,7 @@ export class SupabaseComponentRepository implements ComponentRepository {
     return data as Component;
   }
 
-  async create(
-    data: Omit<Component, 'id' | 'created_at' | 'updated_at' | 'current_km'>,
-  ): Promise<Component> {
+  async create(data: Omit<Component, 'id' | 'created_at' | 'updated_at'>): Promise<Component> {
     const supabase = getSupabaseClient();
     const { data: result, error } = await supabase
       .from('components')

@@ -133,8 +133,16 @@ export class InventoryController {
       return;
     }
     const addComponent = container.resolve(AddComponent);
-    const component = await addComponent.execute(req.body);
-    res.status(201).json(component);
+    try {
+      const component = await addComponent.execute(req.user.userId, req.body);
+      res.status(201).json(component);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'BIKE_NOT_FOUND') {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async updateComponent(req: Request, res: Response): Promise<void> {

@@ -7,6 +7,8 @@ export interface UpdateComponentInput {
   category?: Component['category'];
   brand?: string | null;
   model?: string | null;
+  install_date?: string;
+  install_km?: number;
   expected_lifespan_km?: number | null;
   status?: Component['status'];
   notes?: string | null;

@@ -30,7 +30,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
     brand: component?.brand ?? '',
     model: component?.model ?? '',
     install_date: component?.install_date ?? new Date().toISOString().slice(0, 10),
-    install_km: component?.install_km ?? 0,
+    install_km: component?.install_km ?? null,
     expected_lifespan_km: component?.expected_lifespan_km ?? null,
     notes: component?.notes ?? '',
   });
@@ -44,6 +44,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
         ...formData,
         brand: formData.brand || null,
         model: formData.model || null,
+        install_km: formData.install_km ?? null,
         expected_lifespan_km: formData.expected_lifespan_km || null,
         notes: formData.notes || null,
       });
@@ -126,8 +127,14 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 id="install_km"
                 type="number"
                 min="0"
-                value={formData.install_km}
-                onChange={(e) => setFormData({ ...formData, install_km: Number(e.target.value) })}
+                value={formData.install_km ?? ''}
+                placeholder="Bike odometer"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    install_km: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
               />
             </div>
           </div>
