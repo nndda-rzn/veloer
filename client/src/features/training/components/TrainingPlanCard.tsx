@@ -62,11 +62,11 @@ export function TrainingPlanCard({ plan, onClick, onEdit, onDelete }: TrainingPl
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
-                <DropdownMenuItem onSelect={() => onEdit(plan)}>
+                <DropdownMenuItem onClick={() => onEdit(plan)}>
                   <Pencil aria-hidden="true" />
                   Edit plan
                 </DropdownMenuItem>
-                <DropdownMenuItem variant="destructive" onSelect={() => onDelete(plan)}>
+                <DropdownMenuItem variant="destructive" onClick={() => onDelete(plan)}>
                   <Trash2 aria-hidden="true" />
                   Delete plan
                 </DropdownMenuItem>
