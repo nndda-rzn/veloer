@@ -13,7 +13,11 @@ interface ActivityFiltersProps {
 }
 
 export function ActivityFilters({ query, onChange, types, bikes }: ActivityFiltersProps) {
-  const isFiltered = query.preset !== '30d' || query.type !== ALL || query.bikeId !== ALL;
+  const isFiltered =
+    query.preset !== '30d' ||
+    query.type !== ALL ||
+    query.bikeId !== ALL ||
+    query.discipline !== ALL;
 
   return (
     <div className="flex flex-col gap-3">
@@ -41,6 +45,17 @@ export function ActivityFilters({ query, onChange, types, bikes }: ActivityFilte
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
+        <select
+          value={query.discipline}
+          onChange={(e) => onChange({ ...query, discipline: e.target.value })}
+          aria-label="Filter by discipline"
+          className={cn(selectClass, 'h-9 w-auto')}
+        >
+          <option value={ALL}>All disciplines</option>
+          <option value="cycling">Cycling</option>
+          <option value="strength">Strength</option>
+        </select>
+
         <select
           value={query.type}
           onChange={(e) => onChange({ ...query, type: e.target.value })}
@@ -100,7 +115,13 @@ export function ActivityFilters({ query, onChange, types, bikes }: ActivityFilte
             variant="ghost"
             size="sm"
             onClick={() =>
-              onChange({ preset: '30d', range: { start: '', end: '' }, type: ALL, bikeId: ALL })
+              onChange({
+                preset: '30d',
+                range: { start: '', end: '' },
+                type: ALL,
+                bikeId: ALL,
+                discipline: ALL,
+              })
             }
           >
             Reset

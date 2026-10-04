@@ -23,8 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Bike, Rows3, CalendarDays } from 'lucide-react';
+import { Bike, Dumbbell, Rows3, CalendarDays } from 'lucide-react';
 import { EmptyState, TableToolbar, SortableHead, TablePagination } from '@/shared/components/ui';
+import { isStrength } from '../lib/discipline';
 
 interface ActivityListProps {
   /** Activities already narrowed by the page-level date/type/bike filters. */
@@ -214,6 +215,7 @@ function LoadBadge({ tss }: { tss: number | null }) {
 
 function ActivityRow({ activity }: { activity: Activity }) {
   const accent = activityTypeAccent(activity.type);
+  const strength = isStrength(activity);
   return (
     <TableRow>
       <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
@@ -228,20 +230,28 @@ function ActivityRow({ activity }: { activity: Activity }) {
           >
             {activity.name}
           </Link>
-          <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
+          {strength ? (
+            <Badge variant="neutral">
+              <Dumbbell aria-hidden="true" />
+              Strength
+            </Badge>
+          ) : (
+            <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
+          )}
         </div>
       </TableCell>
       <TableCell className="whitespace-nowrap text-right text-sm font-semibold tabular-nums text-foreground">
-        {formatDistance(activity.distance)}
+        {/* A strength session has no distance; show an en dash, never "0.0 km". */}
+        {strength ? '–' : formatDistance(activity.distance)}
       </TableCell>
       <TableCell className="whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground">
         {formatDuration(activity.moving_time)}
       </TableCell>
       <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
-        {activity.avg_speed ? formatSpeed(activity.avg_speed) : '–'}
+        {!strength && activity.avg_speed ? formatSpeed(activity.avg_speed) : '–'}
       </TableCell>
       <TableCell className="hidden whitespace-nowrap text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
-        {activity.total_elevation_gain != null
+        {!strength && activity.total_elevation_gain != null
           ? formatElevation(activity.total_elevation_gain)
           : '–'}
       </TableCell>
@@ -254,6 +264,7 @@ function ActivityRow({ activity }: { activity: Activity }) {
 
 function ActivityCard({ activity }: { activity: Activity }) {
   const accent = activityTypeAccent(activity.type);
+  const strength = isStrength(activity);
   return (
     <Link
       to={`/activities/${activity.id}`}
@@ -267,25 +278,29 @@ function ActivityCard({ activity }: { activity: Activity }) {
           />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-foreground">{activity.name}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {formatDate(activity.start_date)} · {formatActivityType(activity.type)}
+            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+              {strength && <Dumbbell className="h-3 w-3" aria-hidden="true" />}
+              {formatDate(activity.start_date)} ·{' '}
+              {strength ? 'Strength' : formatActivityType(activity.type)}
             </p>
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <p className="text-sm font-semibold tabular-nums text-foreground">
-            {formatDistance(activity.distance)}
-          </p>
+          {!strength && (
+            <p className="text-sm font-semibold tabular-nums text-foreground">
+              {formatDistance(activity.distance)}
+            </p>
+          )}
           <p className="text-xs tabular-nums text-muted-foreground">
             {formatDuration(activity.moving_time)}
           </p>
         </div>
       </div>
       <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-        {activity.avg_speed ? (
+        {!strength && activity.avg_speed ? (
           <span className="tabular-nums">{formatSpeed(activity.avg_speed)}</span>
         ) : null}
-        {activity.total_elevation_gain != null ? (
+        {!strength && activity.total_elevation_gain != null ? (
           <span className="tabular-nums">{formatElevation(activity.total_elevation_gain)}</span>
         ) : null}
         {activity.tss != null ? (

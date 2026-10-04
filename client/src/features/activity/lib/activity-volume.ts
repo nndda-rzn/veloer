@@ -1,4 +1,5 @@
 import type { Activity } from '../types/activity';
+import { isStrength } from './discipline';
 import { addDays, isoDateOnly } from '@/shared/lib/metrics';
 
 export interface WeeklyVolume {
@@ -36,6 +37,9 @@ export function weeklyVolume(
     const endIso = isoDateOnly(addDays(weekStart, 6));
 
     const inWeek = activities.filter((a) => {
+      // Rides only: the sparkline shows cycling distance, so a strength session
+      // must not appear in the bucket or its count.
+      if (isStrength(a)) return false;
       const day = a.start_date.slice(0, 10);
       return day >= startIso && day <= endIso;
     });

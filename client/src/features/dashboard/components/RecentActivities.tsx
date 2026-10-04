@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
-import { formatDistance, formatDate, formatActivityType } from '@/shared/lib/utils';
+import { formatDistance, formatDuration, formatDate, formatActivityType } from '@/shared/lib/utils';
+import { isStrength } from '@/features/activity/lib/discipline';
+import type { Discipline } from '@/features/activity';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Bike } from 'lucide-react';
+import { Bike, Dumbbell } from 'lucide-react';
 import { EmptyState } from '@/shared/components/ui';
 
 interface RecentActivitiesProps {
@@ -11,7 +13,9 @@ interface RecentActivitiesProps {
     name: string;
     start_date: string;
     distance: number | null;
+    moving_time: number;
     type: string;
+    discipline: Discipline;
   }[];
   loading: boolean;
 }
@@ -40,28 +44,42 @@ export function RecentActivities({ activities, loading }: RecentActivitiesProps)
   return (
     <Card>
       <ul className="divide-y divide-border">
-        {activities.map((activity) => (
-          <li
-            key={activity.id}
-            className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-secondary"
-          >
-            <div className="min-w-0 flex-1">
-              <Link
-                to={`/activities/${activity.id}`}
-                className="truncate text-sm font-medium text-foreground hover:text-primary"
-              >
-                {activity.name}
-              </Link>
-              <p className="text-xs text-muted-foreground">{formatDate(activity.start_date)}</p>
-            </div>
-            <div className="ml-4 flex flex-shrink-0 items-center gap-3">
-              <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
-              <span className="text-sm font-semibold text-foreground">
-                {formatDistance(activity.distance)}
-              </span>
-            </div>
-          </li>
-        ))}
+        {activities.map((activity) => {
+          const strength = isStrength(activity);
+          return (
+            <li
+              key={activity.id}
+              className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-secondary"
+            >
+              <div className="min-w-0 flex-1">
+                <Link
+                  to={`/activities/${activity.id}`}
+                  className="truncate text-sm font-medium text-foreground hover:text-primary"
+                >
+                  {activity.name}
+                </Link>
+                <p className="text-xs text-muted-foreground">{formatDate(activity.start_date)}</p>
+              </div>
+              <div className="ml-4 flex flex-shrink-0 items-center gap-3">
+                {strength ? (
+                  <Badge variant="neutral">
+                    <Dumbbell aria-hidden="true" />
+                    Strength
+                  </Badge>
+                ) : (
+                  <Badge variant="neutral">{formatActivityType(activity.type)}</Badge>
+                )}
+                {/* A strength session has no distance; show its duration instead
+                    of claiming "0.0 km". */}
+                <span className="text-sm font-semibold tabular-nums text-foreground">
+                  {strength
+                    ? formatDuration(activity.moving_time)
+                    : formatDistance(activity.distance)}
+                </span>
+              </div>
+            </li>
+          );
+        })}
       </ul>
       <div className="border-t border-border px-4 py-2.5">
         <Link

@@ -8,7 +8,9 @@ import {
 } from '@/shared/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dumbbell } from 'lucide-react';
 import { activityTypeAccent } from '../lib/activity-type-style';
+import { isStrength } from '../lib/discipline';
 import { tssTone, tssToneClass } from '../lib/activity-grouping';
 import { cn } from '@/lib/utils';
 
@@ -30,20 +32,30 @@ function m(label: string, value: string | null | undefined, hint?: string): Metr
 
 export function ActivityDetail({ activity }: ActivityDetailProps) {
   const accent = activityTypeAccent(activity.type);
+  const strength = isStrength(activity);
 
-  const summary: Metric[] = [
-    m('Distance', formatDistance(activity.distance)),
-    m('Moving Time', formatDuration(activity.moving_time)),
-    m('Elapsed Time', formatDuration(activity.elapsed_time)),
-    m(
-      'Elevation Gain',
-      activity.total_elevation_gain != null ? formatElevation(activity.total_elevation_gain) : null,
-    ),
-    m('Avg Speed', activity.avg_speed ? formatSpeed(activity.avg_speed) : null),
-    m('Max Speed', activity.max_speed ? formatSpeed(activity.max_speed) : null),
-    m('Elev. High', activity.elev_high != null ? formatElevation(activity.elev_high) : null),
-    m('Elev. Low', activity.elev_low != null ? formatElevation(activity.elev_low) : null),
-  ];
+  // A strength session has no distance, elevation or speed, so those tiles are
+  // omitted rather than shown as zeros or dashes.
+  const summary: Metric[] = strength
+    ? [
+        m('Moving Time', formatDuration(activity.moving_time)),
+        m('Elapsed Time', formatDuration(activity.elapsed_time)),
+      ]
+    : [
+        m('Distance', formatDistance(activity.distance)),
+        m('Moving Time', formatDuration(activity.moving_time)),
+        m('Elapsed Time', formatDuration(activity.elapsed_time)),
+        m(
+          'Elevation Gain',
+          activity.total_elevation_gain != null
+            ? formatElevation(activity.total_elevation_gain)
+            : null,
+        ),
+        m('Avg Speed', activity.avg_speed ? formatSpeed(activity.avg_speed) : null),
+        m('Max Speed', activity.max_speed ? formatSpeed(activity.max_speed) : null),
+        m('Elev. High', activity.elev_high != null ? formatElevation(activity.elev_high) : null),
+        m('Elev. Low', activity.elev_low != null ? formatElevation(activity.elev_low) : null),
+      ];
 
   const performance: Metric[] = [
     m('Avg Power', activity.avg_watts ? `${activity.avg_watts.toFixed(0)} W` : null),
@@ -71,7 +83,14 @@ export function ActivityDetail({ activity }: ActivityDetailProps) {
         <div className="flex items-center gap-2.5">
           <span className={cn('h-2.5 w-2.5 rounded-full', accent.dot)} aria-hidden="true" />
           <h3 className="text-xl font-semibold text-foreground">{activity.name}</h3>
-          <Badge variant="neutral">{activity.type}</Badge>
+          {strength ? (
+            <Badge variant="neutral">
+              <Dumbbell aria-hidden="true" />
+              Strength
+            </Badge>
+          ) : (
+            <Badge variant="neutral">{activity.type}</Badge>
+          )}
           {activity.device_watts && <Badge variant="success">Power meter</Badge>}
         </div>
         <p className="mt-1 text-sm text-muted-foreground">

@@ -20,6 +20,7 @@ export type {
   SyncResult,
   ActivityLap,
   ActivityZone,
+  Discipline,
 } from './types/activity';
 export type { SyncStatus } from './hooks/useSync';
 export {

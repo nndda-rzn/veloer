@@ -60,7 +60,8 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
             <Zap className="h-6 w-6 text-stone-300" aria-hidden="true" />
             <p className="text-sm font-medium text-foreground">No training load yet</p>
             <p className="max-w-sm text-sm text-muted-foreground">
-              Sync rides with power meter data to track fitness (CTL) and fatigue (ATL) over time.
+              Sync sessions with power or heart rate data to track fitness (CTL) and fatigue (ATL)
+              over time.
             </p>
           </div>
         </CardContent>
@@ -114,7 +115,7 @@ export function TrainingLoadCard({ loadHistory, fitness, loading }: TrainingLoad
           </div>
         ) : (
           <div className="mt-4 rounded-lg border border-dashed border-border bg-secondary p-6 text-center text-xs text-muted-foreground">
-            No load history yet. Keep syncing rides to build your fitness trend.
+            No load history yet. Keep syncing sessions to build your fitness trend.
           </div>
         )}
 

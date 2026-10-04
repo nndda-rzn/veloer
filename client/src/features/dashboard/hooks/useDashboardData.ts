@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { activityApi } from '@/features/activity';
+import type { Discipline } from '@/features/activity';
 import { bikeApi } from '@/features/inventory';
 import { maintenanceApi } from '@/features/maintenance';
 import { financeApi } from '@/features/finance';
@@ -38,7 +39,10 @@ const RECENT_LIMIT = 5;
 export interface UseDashboardData {
   stats: { current: ActivityStats | null; previous: ActivityStats | null };
   statsLoading: boolean;
-  recentActivities: Pick<Activity, 'id' | 'name' | 'start_date' | 'distance' | 'type'>[];
+  recentActivities: Pick<
+    Activity,
+    'id' | 'name' | 'start_date' | 'distance' | 'moving_time' | 'type' | 'discipline'
+  >[];
   recentLoading: boolean;
   bikes: Bike[];
   bikesLoading: boolean;
@@ -166,11 +170,21 @@ interface RecentActivitySlim {
   name: string;
   start_date: string;
   distance: number | null;
+  moving_time: number;
   type: string;
+  discipline: Discipline;
 }
 
 function toRecent(a: Activity): RecentActivitySlim {
-  return { id: a.id, name: a.name, start_date: a.start_date, distance: a.distance, type: a.type };
+  return {
+    id: a.id,
+    name: a.name,
+    start_date: a.start_date,
+    distance: a.distance,
+    moving_time: a.moving_time,
+    type: a.type,
+    discipline: a.discipline,
+  };
 }
 
 export type { RecentActivitySlim };

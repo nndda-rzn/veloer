@@ -21,6 +21,11 @@ const ACCENTS: Record<string, ActivityTypeAccent> = {
   Cyclocross: { dot: 'bg-teal-500', badge: 'bg-teal-50 text-teal-800' },
   Handcycle: { dot: 'bg-stone-500', badge: 'bg-secondary text-muted-foreground' },
   Velomobile: { dot: 'bg-stone-500', badge: 'bg-secondary text-muted-foreground' },
+  // Strength sessions. One steel accent for the whole discipline, always paired
+  // with the Dumbbell icon so colour is not the only signal.
+  WeightTraining: { dot: 'bg-slate-600', badge: 'bg-slate-100 text-slate-700' },
+  Workout: { dot: 'bg-slate-600', badge: 'bg-slate-100 text-slate-700' },
+  Crossfit: { dot: 'bg-slate-600', badge: 'bg-slate-100 text-slate-700' },
 };
 
 const FALLBACK: ActivityTypeAccent = {
