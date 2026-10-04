@@ -19,9 +19,9 @@ const TICK_MS = 30_000;
 
 const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
-function formatRelative(timestamp: string | null): string | null {
+function formatRelative(timestamp: string | null, now: number): string | null {
   if (!timestamp) return null;
-  const diffMs = Date.now() - new Date(timestamp).getTime();
+  const diffMs = now - new Date(timestamp).getTime();
   const diffSeconds = Math.round(diffMs / 1000);
   const abs = Math.abs(diffSeconds);
   if (abs < 60) return 'just now';
@@ -44,9 +44,8 @@ export function LastSyncIndicator() {
   const now = useNow(TICK_MS);
   const [open, setOpen] = useState(false);
 
-  const relative = useMemo(() => formatRelative(lastSyncAt), [lastSyncAt, now]);
-  const stale =
-    lastSyncAt !== null && Date.now() - new Date(lastSyncAt).getTime() > STALE_THRESHOLD_MS;
+  const relative = useMemo(() => formatRelative(lastSyncAt, now), [lastSyncAt, now]);
+  const stale = lastSyncAt !== null && now - new Date(lastSyncAt).getTime() > STALE_THRESHOLD_MS;
 
   const handleSync = () => {
     setOpen(false);

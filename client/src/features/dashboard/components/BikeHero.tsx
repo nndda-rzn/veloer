@@ -46,13 +46,18 @@ export function BikeHero({
   loading = false,
 }: BikeHeroProps) {
   const activeBikes = bikes.filter((b) => b.status === 'active');
+  const defaultBike = activeBikes.find((b) => b.id === defaultBikeId) ?? activeBikes[0] ?? null;
+
+  // Hooks must run on every render, before any early return. Placing useState
+  // after the loading guard made the first render (empty cache) call zero hooks
+  // and the next render call one, which React rejects with "Rendered more hooks
+  // than during the previous render".
+  const [selectedBikeId, setSelectedBikeId] = useState(defaultBike?.id ?? null);
+  const selectedBike = activeBikes.find((b) => b.id === selectedBikeId) ?? defaultBike ?? null;
 
   if (loading && bikes.length === 0) {
     return <div className="h-40 animate-pulse rounded-xl bg-secondary" />;
   }
-  const defaultBike = activeBikes.find((b) => b.id === defaultBikeId) ?? activeBikes[0] ?? null;
-  const [selectedBikeId, setSelectedBikeId] = useState(defaultBike?.id ?? null);
-  const selectedBike = activeBikes.find((b) => b.id === selectedBikeId) ?? defaultBike ?? null;
 
   if (!selectedBike) {
     return (
