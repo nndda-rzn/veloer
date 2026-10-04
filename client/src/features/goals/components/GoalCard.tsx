@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
+  CalendarCheck,
 } from 'lucide-react';
 import type { Goal } from '../types/goal';
 import { ProgressRing } from './ProgressRing';
@@ -29,6 +30,7 @@ import {
   GOAL_STATUS_VARIANTS,
   GOAL_TYPE_LABELS,
   goalProgress,
+  projectedCompletion,
 } from '../lib/goal-progress';
 
 interface GoalCardProps {
@@ -52,6 +54,9 @@ export function GoalCard({
   const unit = goal.unit || '';
   const isClosed =
     goal.status === 'completed' || goal.status === 'cancelled' || goal.status === 'failed';
+  const projection = goal.status === 'active' ? projectedCompletion(goal) : null;
+  const projectedLate =
+    projection != null && projection.getTime() > new Date(`${goal.end_date}T00:00:00`).getTime();
 
   return (
     <Card>
@@ -70,6 +75,22 @@ export function GoalCard({
             {GOAL_TYPE_LABELS[goal.type]} · {GOAL_PERIOD_LABELS[goal.period]} ·{' '}
             {formatDate(goal.start_date)} – {formatDate(goal.end_date)}
           </p>
+
+          {/* Progress bar with milestone ticks */}
+          <div className="relative mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+            <div
+              className="h-full rounded-full bg-primary transition-[width]"
+              style={{ width: `${progress.percent}%` }}
+            />
+            {[25, 50, 75].map((m) => (
+              <span
+                key={m}
+                className="absolute top-0 h-full w-px bg-card/80"
+                style={{ left: `${m}%` }}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
 
           {/* Current / target */}
           <p className="mt-2 text-sm text-foreground">
@@ -107,6 +128,19 @@ export function GoalCard({
               </span>
             )}
           </p>
+
+          {/* Projection at current pace */}
+          {projection && (
+            <p
+              className={`mt-1 flex items-center gap-1 text-xs font-medium ${
+                projectedLate ? 'text-warning' : 'text-success'
+              }`}
+            >
+              <CalendarCheck className="h-3 w-3" aria-hidden="true" />
+              At this pace: {formatDate(projection)}{' '}
+              {projectedLate ? '(after deadline)' : '(on time)'}
+            </p>
+          )}
         </div>
 
         <DropdownMenu>
