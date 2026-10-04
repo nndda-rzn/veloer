@@ -9,6 +9,8 @@ import { RecommendationCard } from '@/features/training/components/Recommendatio
 import { FormGauge } from '@/features/training/components/FormGauge';
 import { ActivityLinker } from '@/features/training/components/ActivityLinker';
 import { TrainingLoadChart } from '@/features/training/components/TrainingLoadChart';
+import { NextWorkoutPanel } from '@/features/training/components/NextWorkoutPanel';
+import { WeeklySummary } from '@/features/training/components/WeeklySummary';
 import { useRecommendation } from '@/features/training';
 import { useTrainingLoad } from '@/features/training';
 import { PageHeader, ConfirmDialog } from '@/shared/components/ui';
@@ -155,6 +157,13 @@ export function TrainingPlanDetailPage() {
   const progressPct =
     workouts.length > 0 ? Math.round((completedCount / workouts.length) * 100) : 0;
 
+  // Next planned workout on/after today (fallback to the earliest upcoming).
+  const today = new Date().toISOString().slice(0, 10);
+  const nextWorkout =
+    workouts
+      .filter((w) => w.status === 'planned' && w.scheduled_date >= today)
+      .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date))[0] ?? null;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -197,23 +206,17 @@ export function TrainingPlanDetailPage() {
         </div>
       </div>
 
+      {/* Today focus: next workout + form/recommendation */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Calendar: 2/3 width */}
         <div className="lg:col-span-2">
-          {workoutsLoading ? (
-            <div className="h-96 animate-pulse rounded-xl bg-secondary" />
-          ) : (
-            <WorkoutCalendar
-              workouts={workouts}
-              onSelectWorkout={setSelectedWorkout}
-              onSelectSlot={handleSelectSlot}
-            />
-          )}
+          <NextWorkoutPanel
+            workout={nextWorkout}
+            onOpen={setSelectedWorkout}
+            onMarkComplete={handleMarkComplete}
+            onMarkSkipped={handleMarkSkipped}
+          />
         </div>
-
-        {/* Sidebar: 1/3 width */}
         <div className="space-y-4">
-          {/* Form gauge */}
           {!recLoading && recommendation && (
             <FormGauge
               tsb={recommendation.metrics.tsb}
@@ -221,18 +224,31 @@ export function TrainingPlanDetailPage() {
               atl={recommendation.metrics.atl}
             />
           )}
-
-          {/* Recommendation */}
-          {!recLoading && recommendation && (
-            <RecommendationCard
-              recommendation={recommendation}
-              onAddToPlan={handleAddRecommendation}
-            />
-          )}
-
           {recLoading && <div className="h-48 animate-pulse rounded-xl bg-secondary" />}
         </div>
       </div>
+
+      {/* This week */}
+      {!workoutsLoading && <WeeklySummary workouts={workouts} />}
+
+      {/* Calendar */}
+      <div>
+        {workoutsLoading ? (
+          <div className="h-96 animate-pulse rounded-xl bg-secondary" />
+        ) : (
+          <WorkoutCalendar
+            workouts={workouts}
+            onSelectWorkout={setSelectedWorkout}
+            onSelectSlot={handleSelectSlot}
+          />
+        )}
+      </div>
+
+      {/* Recommendation */}
+      {!recLoading && recommendation && (
+        <RecommendationCard recommendation={recommendation} onAddToPlan={handleAddRecommendation} />
+      )}
+      {recLoading && <div className="h-48 animate-pulse rounded-xl bg-secondary" />}
 
       {/* Training Load Chart */}
       {loadHistoryLoading ? (
