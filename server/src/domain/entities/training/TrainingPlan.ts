@@ -22,3 +22,16 @@ export type TrainingPlanCreateData = Omit<
 > & {
   status?: TrainingPlanStatus;
 };
+
+/** Per-plan workout totals used to render progress in the plan list. */
+export interface TrainingPlanWorkoutCounts {
+  plan_id: string;
+  total: number;
+  completed: number;
+}
+
+/** A plan together with its aggregate workout counts. */
+export type TrainingPlanSummary = TrainingPlan & {
+  workout_count: number;
+  completed_count: number;
+};

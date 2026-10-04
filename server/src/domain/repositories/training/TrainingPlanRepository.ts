@@ -1,4 +1,8 @@
-import type { TrainingPlan, TrainingPlanCreateData } from '../../entities/training/TrainingPlan.js';
+import type {
+  TrainingPlan,
+  TrainingPlanCreateData,
+  TrainingPlanWorkoutCounts,
+} from '../../entities/training/TrainingPlan.js';
 import type {
   TrainingWorkout,
   TrainingWorkoutCreateData,
@@ -11,6 +15,9 @@ export interface TrainingPlanRepository {
   create(data: TrainingPlanCreateData): Promise<TrainingPlan>;
   update(id: string, userId: string, data: Partial<TrainingPlan>): Promise<TrainingPlan | null>;
   delete(id: string, userId: string): Promise<void>;
+
+  /** Aggregate workout totals per plan for a user (for list progress bars). */
+  getWorkoutCountsByUser(userId: string): Promise<TrainingPlanWorkoutCounts[]>;
 
   // Workouts
   findWorkouts(planId: string, userId: string): Promise<TrainingWorkout[]>;

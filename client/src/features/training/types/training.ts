@@ -26,6 +26,9 @@ export interface TrainingPlan {
   status: PlanStatus;
   created_at: string;
   updated_at: string;
+  /** Aggregate workout totals, present on the list endpoint. */
+  workout_count?: number;
+  completed_count?: number;
 }
 
 export interface TrainingWorkout {
