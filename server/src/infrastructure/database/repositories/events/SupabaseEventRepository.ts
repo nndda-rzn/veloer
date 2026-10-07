@@ -32,9 +32,14 @@ export class SupabaseEventRepository implements EventRepository {
     return (data || []) as Event[];
   }
 
-  async findById(id: string): Promise<Event | null> {
+  async findById(id: string, userId: string): Promise<Event | null> {
     const supabase = getSupabaseClient();
-    const { data, error } = await supabase.from('events').select('*').eq('id', id).single();
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
     if (error) return null;
     return data as Event;
   }
@@ -46,21 +51,22 @@ export class SupabaseEventRepository implements EventRepository {
     return result as Event;
   }
 
-  async update(id: string, data: Partial<Event>): Promise<Event | null> {
+  async update(id: string, userId: string, data: Partial<Event>): Promise<Event | null> {
     const supabase = getSupabaseClient();
     const { data: result, error } = await supabase
       .from('events')
       .update(data)
       .eq('id', id)
+      .eq('user_id', userId)
       .select()
       .single();
     if (error) throw new Error(`Failed to update event: ${error.message}`);
     return result as Event;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, userId: string): Promise<void> {
     const supabase = getSupabaseClient();
-    const { error } = await supabase.from('events').delete().eq('id', id);
+    const { error } = await supabase.from('events').delete().eq('id', id).eq('user_id', userId);
     if (error) throw new Error(`Failed to delete event: ${error.message}`);
   }
 }
