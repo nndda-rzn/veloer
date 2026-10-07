@@ -23,12 +23,12 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ToasterProvider>
-        <SyncProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <SyncProvider>
             {/* Feeds the shared formatters (units, timezone) from the profile. */}
             <PreferencesProvider>{children}</PreferencesProvider>
-          </AuthProvider>
-        </SyncProvider>
+          </SyncProvider>
+        </AuthProvider>
       </ToasterProvider>
     </QueryClientProvider>
   );
