@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { activityApi } from '@/features/activity';
 import type { Discipline } from '@/features/activity';
-import { bikeApi } from '@/features/inventory';
+import { bikeApi, wearApi } from '@/features/inventory';
 import { maintenanceApi } from '@/features/maintenance';
 import { financeApi } from '@/features/finance';
 import { goalApi } from '@/features/goals';
@@ -9,7 +9,7 @@ import { eventApi } from '@/features/events';
 import { settingsApi } from '@/features/settings';
 import { trainingApi } from '@/features/training';
 import type { Activity, ActivityStats } from '@/features/activity';
-import type { Bike } from '@/features/inventory';
+import type { Bike, WearAlert } from '@/features/inventory';
 import type { MaintenanceSchedule } from '@/features/maintenance';
 import type { Budget, FinanceSummary } from '@/features/finance';
 import type { Goal } from '@/features/goals';
@@ -24,6 +24,7 @@ export const dashboardKeys = {
   recent: ['dashboard', 'recent'] as const,
   bikes: ['dashboard', 'bikes'] as const,
   due: ['dashboard', 'due'] as const,
+  wearAlerts: ['dashboard', 'wear-alerts'] as const,
   finance: ['dashboard', 'finance'] as const,
   budgets: ['dashboard', 'budgets'] as const,
   goals: ['dashboard', 'goals'] as const,
@@ -48,6 +49,7 @@ export interface UseDashboardData {
   bikesLoading: boolean;
   dueSchedules: MaintenanceSchedule[];
   dueLoading: boolean;
+  wearAlerts: WearAlert[];
   financeSummary: FinanceSummary | null;
   financeLoading: boolean;
   budgets: Budget[];
@@ -90,6 +92,10 @@ export function useDashboardData(): UseDashboardData {
     queryKey: dashboardKeys.due,
     queryFn: () => maintenanceApi.getDueSchedules(),
   });
+  const wearAlertsQuery = useQuery({
+    queryKey: dashboardKeys.wearAlerts,
+    queryFn: () => wearApi.list(),
+  });
   const financeQuery = useQuery({
     queryKey: dashboardKeys.finance,
     queryFn: () => financeApi.getSummary(financeRange.start, financeRange.end),
@@ -127,6 +133,7 @@ export function useDashboardData(): UseDashboardData {
     recentQuery.error,
     bikesQuery.error,
     dueQuery.error,
+    wearAlertsQuery.error,
     financeQuery.error,
     goalsQuery.error,
     eventsQuery.error,
@@ -145,6 +152,7 @@ export function useDashboardData(): UseDashboardData {
     bikesLoading: bikesQuery.isLoading,
     dueSchedules: dueQuery.data ?? [],
     dueLoading: dueQuery.isLoading,
+    wearAlerts: wearAlertsQuery.data ?? [],
     financeSummary: financeQuery.data ?? null,
     financeLoading: financeQuery.isLoading,
     budgets: budgetsQuery.data ?? [],

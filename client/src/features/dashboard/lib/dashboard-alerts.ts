@@ -1,4 +1,4 @@
-import type { Bike } from '@/features/inventory';
+import type { Bike, WearAlert } from '@/features/inventory';
 import type { MaintenanceSchedule } from '@/features/maintenance';
 import type { Goal } from '@/features/goals';
 import type { FitnessAnalysis } from '@/features/training';
@@ -22,6 +22,7 @@ export interface DashboardAlertInput {
   dueSchedules: MaintenanceSchedule[];
   bikes: Bike[];
   goals: Goal[];
+  wearAlerts: WearAlert[];
   fitness: FitnessAnalysis | null;
   monthlySpent: number;
   budgets: {
@@ -80,6 +81,19 @@ export function buildDashboardAlerts(
         href: `/inventory/${bike.id}`,
       });
     }
+  }
+
+  // --- Per-component wear alerts: strictly more specific than the count above ---
+  for (const alert of input.wearAlerts) {
+    if (alert.level === 'info') continue;
+    const percent = alert.wear_percent == null ? null : Math.round(alert.wear_percent);
+    alerts.push({
+      id: `wear-${alert.component_id}`,
+      level: alert.level,
+      title: `${alert.bike_name}: ${alert.component_name}`,
+      detail: percent == null ? 'Needs attention' : `Worn ${percent}%`,
+      href: `/inventory/${alert.bike_id}`,
+    });
   }
 
   // --- Goals that are overdue ---

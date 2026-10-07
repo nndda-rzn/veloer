@@ -11,6 +11,7 @@ export { useBikeDetail } from './hooks/useBikeDetail';
 export { useBikeActivities } from './hooks/useBikeActivities';
 export { bikeApi } from './api/bike.api';
 export { componentApi } from './api/component.api';
+export { wearApi } from './api/wear.api';
 export {
   wearKm,
   wearPercent,
@@ -40,4 +41,10 @@ export {
   type FleetHealth,
 } from './lib/garage-metrics';
 export { weeklyKmRate, projectWear, type WearProjection } from './lib/wear-projection';
-export type { Bike, Component, BikeFormData, ComponentFormData } from './types/inventory';
+export type {
+  Bike,
+  Component,
+  BikeFormData,
+  ComponentFormData,
+  WearAlert,
+} from './types/inventory';

@@ -33,6 +33,20 @@ export interface Component {
   updated_at: string;
 }
 
+export interface WearAlert {
+  component_id: string;
+  bike_id: string;
+  bike_name: string;
+  component_name: string;
+  category: Component['category'];
+  wear_km: number;
+  expected_lifespan_km: number | null;
+  wear_percent: number | null;
+  remaining_km: number | null;
+  level: 'critical' | 'warning' | 'info';
+  estimated_due_date: string | null;
+}
+
 export interface BikeFormData {
   name: string;
   brand?: string | null;
