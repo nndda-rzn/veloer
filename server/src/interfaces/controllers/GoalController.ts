@@ -138,7 +138,7 @@ export class GoalController {
     }
     const { id } = req.params;
     const deleteGoal = container.resolve(DeleteGoal);
-    const deleted = await deleteGoal.execute(String(id));
+    const deleted = await deleteGoal.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
       return;

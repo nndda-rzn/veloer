@@ -50,9 +50,9 @@ export class UpdateGoal {
 export class DeleteGoal {
   constructor(@inject('GoalRepository') private goalRepo: GoalRepository) {}
 
-  async execute(id: string): Promise<boolean> {
+  async execute(id: string, userId: string): Promise<boolean> {
     const goal = await this.goalRepo.findById(id);
-    if (!goal) return false;
+    if (!goal || goal.user_id !== userId) return false;
     await this.goalRepo.delete(id);
     return true;
   }

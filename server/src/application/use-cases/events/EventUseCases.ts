@@ -40,8 +40,8 @@ export class AddEvent {
 export class UpdateEvent {
   constructor(@inject('EventRepository') private eventRepo: EventRepository) {}
 
-  async execute(id: string, data: Partial<Event>): Promise<Event | null> {
-    return this.eventRepo.update(id, data);
+  async execute(id: string, userId: string, data: Partial<Event>): Promise<Event | null> {
+    return this.eventRepo.update(id, userId, data);
   }
 }
 
@@ -49,10 +49,10 @@ export class UpdateEvent {
 export class DeleteEvent {
   constructor(@inject('EventRepository') private eventRepo: EventRepository) {}
 
-  async execute(id: string): Promise<boolean> {
-    const event = await this.eventRepo.findById(id);
+  async execute(id: string, userId: string): Promise<boolean> {
+    const event = await this.eventRepo.findById(id, userId);
     if (!event) return false;
-    await this.eventRepo.delete(id);
+    await this.eventRepo.delete(id, userId);
     return true;
   }
 }
