@@ -6,6 +6,9 @@ const router = Router();
 const controller = new InventoryController();
 
 // Component CRUD by component id
+router.get('/wear-alerts', authMiddleware, (req, res, next) => {
+  void controller.listWearAlerts(req, res).catch(next);
+});
 router.patch('/:id', authMiddleware, (req, res, next) => {
   void controller.updateComponent(req, res).catch(next);
 });

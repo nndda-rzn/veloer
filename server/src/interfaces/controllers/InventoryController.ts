@@ -13,6 +13,7 @@ import {
   ReplaceComponent,
   ComponentNotFoundError,
 } from '../../application/use-cases/inventory/ManageComponents.js';
+import { GetWearAlerts } from '../../application/use-cases/inventory/GetWearAlerts.js';
 
 export class InventoryController {
   // --- BIKES ---
@@ -117,6 +118,16 @@ export class InventoryController {
   }
 
   // --- COMPONENTS ---
+
+  async listWearAlerts(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const getWearAlerts = container.resolve(GetWearAlerts);
+    const alerts = await getWearAlerts.execute(req.user.userId);
+    res.json(alerts);
+  }
 
   async listComponents(req: Request, res: Response): Promise<void> {
     if (!req.user) {
