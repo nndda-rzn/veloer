@@ -4,6 +4,8 @@ export interface Goal {
   type: 'distance' | 'time' | 'elevation' | 'activities_count';
   target_value: number;
   current_value: number;
+  /** User-entered adjustment added on top of activity-derived progress. */
+  manual_adjustment: number;
   unit: string; // km, hours, m, count
   period: 'weekly' | 'monthly' | 'yearly' | 'custom';
   start_date: string;

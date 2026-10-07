@@ -5,6 +5,8 @@ import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import type { TrainingWorkout } from '../types/training';
 import { WORKOUT_TYPE_COLORS, WORKOUT_TYPE_LABELS } from '../types/training';
+import { isStrengthType } from '../lib/discipline';
+import { useChartColors } from '@/shared/lib/use-chart-colors';
 import { useState } from 'react';
 
 const localizer = dateFnsLocalizer({
@@ -30,6 +32,7 @@ interface WorkoutCalendarProps {
 }
 
 export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: WorkoutCalendarProps) {
+  const c = useChartColors();
   const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
 
@@ -37,9 +40,12 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
     () =>
       workouts.map((w) => {
         const d = new Date(w.scheduled_date + 'T00:00:00');
+        const prefix = isStrengthType(w.workout_type)
+          ? 'Strength'
+          : WORKOUT_TYPE_LABELS[w.workout_type];
         return {
           id: w.id,
-          title: `${WORKOUT_TYPE_LABELS[w.workout_type]}: ${w.title}`,
+          title: `${prefix}: ${w.title}`,
           start: d,
           end: d,
           resource: w,
@@ -55,7 +61,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
     const isMissed = workout.status === 'missed';
     return {
       style: {
-        backgroundColor: isDone ? '#16a34a' : isMissed ? '#9ca3af' : color,
+        backgroundColor: isDone ? c.success : isMissed ? c.missed : color,
         borderColor: 'transparent',
         borderRadius: '4px',
         color: '#fff',
@@ -66,7 +72,7 @@ export function WorkoutCalendar({ workouts, onSelectWorkout, onSelectSlot }: Wor
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="veloer-calendar rounded-xl border border-border bg-card p-4">
       <Calendar
         localizer={localizer}
         events={events}

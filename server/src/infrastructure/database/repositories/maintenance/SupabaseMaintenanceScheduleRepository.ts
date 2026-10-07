@@ -17,20 +17,47 @@ export class SupabaseMaintenanceScheduleRepository implements MaintenanceSchedul
   }
 
   async findDueSchedules(
-    _userId: string,
-    _options?: { currentKm?: number; date?: string },
+    userId: string,
+    options?: { currentKm?: number; date?: string },
   ): Promise<MaintenanceSchedule[]> {
-    // TODO: Implement due schedule logic with joins to bikes for current_km
-    // For now, return active schedules with next_due_date <= now or next_due_km <= current_km
     const supabase = getSupabaseClient();
-    const now = new Date().toISOString();
+
+    // The server uses the service-role key, which bypasses RLS, so ownership
+    // must be enforced here: only ever look at schedules on this user's bikes.
+    const { data: bikes, error: bikeError } = await supabase
+      .from('bikes')
+      .select('id, current_km')
+      .eq('user_id', userId);
+    if (bikeError) throw new Error(`Failed to fetch bikes: ${bikeError.message}`);
+
+    const bikeIds = (bikes || []).map((b) => b.id as string);
+    if (bikeIds.length === 0) return [];
+
+    const currentKmByBike = new Map<string, number>(
+      (bikes || []).map((b) => [b.id as string, Number(b.current_km) || 0]),
+    );
+
     const { data, error } = await supabase
       .from('maintenance_schedules')
       .select('*')
       .eq('is_active', true)
-      .or(`next_due_date.lte.${now},next_due_date.is.null`);
+      .in('bike_id', bikeIds);
     if (error) throw new Error(`Failed to fetch due schedules: ${error.message}`);
-    return (data || []) as MaintenanceSchedule[];
+
+    const today = options?.date ?? new Date().toISOString().slice(0, 10);
+
+    // A schedule is due only when it actually has a trigger that has passed.
+    // A schedule with neither a due date nor a due distance is a template, not
+    // a warning, so it is excluded rather than surfaced as "due".
+    return ((data || []) as MaintenanceSchedule[]).filter((schedule) => {
+      const dueByDate =
+        schedule.next_due_date != null && schedule.next_due_date.slice(0, 10) <= today;
+
+      const bikeKm = options?.currentKm ?? currentKmByBike.get(schedule.bike_id) ?? 0;
+      const dueByKm = schedule.next_due_km != null && bikeKm >= Number(schedule.next_due_km);
+
+      return dueByDate || dueByKm;
+    });
   }
 
   async findById(id: string): Promise<MaintenanceSchedule | null> {

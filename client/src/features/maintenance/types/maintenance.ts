@@ -50,6 +50,9 @@ export interface ScheduleFormData {
   task_name: string;
   interval_km?: number | null;
   interval_days?: number | null;
+  /** When the task was last done, so a new reminder can compute its next due. */
+  last_performed_km?: number | null;
+  last_performed_date?: string | null;
   next_due_date?: string | null;
   next_due_km?: number | null;
 }

@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { activityApi } from '@/features/activity';
 import type { Activity } from '@/features/activity';
+import { filterLinkable } from '../lib/filter-linkable';
 import { Button } from '@/components/ui/button';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface ActivityLinkerProps {
   workoutId: string;
   planId: string;
   scheduledDate: string;
   currentActivityId: string | null;
+  /** A strength workout can only be linked to a strength session. */
+  workoutIsStrength: boolean;
   onLink: (workoutId: string, activityId: string) => Promise<void>;
 }
 
@@ -15,6 +19,7 @@ export function ActivityLinker({
   workoutId,
   scheduledDate,
   currentActivityId,
+  workoutIsStrength,
   onLink,
 }: ActivityLinkerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -35,9 +40,9 @@ export function ActivityLinker({
         endDate: to.toISOString().split('T')[0],
         limit: 20,
       })
-      .then(setActivities)
+      .then((rows) => setActivities(filterLinkable(rows, workoutIsStrength)))
       .catch(() => {});
-  }, [scheduledDate]);
+  }, [scheduledDate, workoutIsStrength]);
 
   const handleLink = async () => {
     if (!selected) return;
@@ -49,17 +54,26 @@ export function ActivityLinker({
     }
   };
 
+  if (activities.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No matching {workoutIsStrength ? 'strength sessions' : 'rides'} within ±2 days of this
+        workout.
+      </p>
+    );
+  }
+
   return (
     <div className="flex gap-2">
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="h-8 flex-1 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        className={`flex-1 ${selectClass}`}
       >
         <option value="">Select activity…</option>
         {activities.map((a) => (
           <option key={a.id} value={a.id}>
-            {a.name} — {new Date(a.start_date).toLocaleDateString()}
+            {a.name} · {new Date(a.start_date).toLocaleDateString()}
           </option>
         ))}
       </select>

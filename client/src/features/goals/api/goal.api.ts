@@ -1,5 +1,5 @@
 import { apiClient } from '@/shared/lib/api-client';
-import type { Goal, GoalFormData } from '../types/goal';
+import type { Goal, GoalFormData, GoalUpdateData } from '../types/goal';
 
 export const goalApi = {
   async list(active?: boolean): Promise<Goal[]> {
@@ -19,12 +19,22 @@ export const goalApi = {
     return data;
   },
 
-  async update(id: string, formData: Partial<GoalFormData>): Promise<Goal> {
+  async update(id: string, formData: GoalUpdateData): Promise<Goal> {
     const { data } = await apiClient.patch<Goal>(`/api/goals/${id}`, formData);
     return data;
   },
 
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/api/goals/${id}`);
+  },
+
+  async recalculate(id: string): Promise<Goal> {
+    const { data } = await apiClient.post<Goal>(`/api/goals/${id}/recalculate`);
+    return data;
+  },
+
+  async adjustProgress(id: string, delta: number): Promise<Goal> {
+    const { data } = await apiClient.patch<Goal>(`/api/goals/${id}/progress`, { delta });
+    return data;
   },
 };

@@ -3,6 +3,8 @@ import type { ActivityRepository } from '../../../domain/repositories/activity/A
 import type { UserProfileRepository } from '../../../domain/repositories/auth/UserProfileRepository.js';
 import type { TrainingPlanRepository } from '../../../domain/repositories/training/TrainingPlanRepository.js';
 import type { WorkoutType } from '../../../domain/entities/training/TrainingWorkout.js';
+import { daysSinceLastRide } from './last-ride.js';
+import { cyclingWeeklyHours } from './weekly-hours.js';
 
 export interface RecommendationMetrics {
   ctl: number;
@@ -61,13 +63,10 @@ export class GenerateRecommendation {
 
     // Build TSS-per-day map
     const tssMap: Record<string, number> = {};
-    let lastRideDate: Date | null = null;
 
     for (const act of activities) {
       const date = act.start_date.split('T')[0];
       tssMap[date] = (tssMap[date] ?? 0) + (act.tss ?? 0);
-      const actDate = new Date(date);
-      if (!lastRideDate || actDate > lastRideDate) lastRideDate = actDate;
     }
 
     // Build 42-day array ordered oldest→newest
@@ -79,14 +78,14 @@ export class GenerateRecommendation {
       days42.push({ date: ds, tss: tssMap[ds] ?? 0 });
     }
 
-    // CTL — 42-day EMA (decay = e^(-1/42))
+    // CTL: 42-day EMA (decay = e^(-1/42))
     const decayCTL = Math.exp(-1 / 42);
     let ctl = 0;
     for (const { tss } of days42) {
       ctl = ctl * decayCTL + tss * (1 - decayCTL);
     }
 
-    // ATL — 7-day EMA (decay = e^(-1/7))
+    // ATL: 7-day EMA (decay = e^(-1/7))
     const decayATL = Math.exp(-1 / 7);
     let atl = 0;
     const days7 = days42.slice(-7);
@@ -99,18 +98,15 @@ export class GenerateRecommendation {
 
     // Weekly totals
     const weekly_tss = days7.reduce((s, d) => s + d.tss, 0);
-    const weekly_hours =
-      activities
-        .filter((a) => {
-          const d = a.start_date.split('T')[0];
-          return days7.some((day) => day.date === d);
-        })
-        .reduce((s, a) => s + a.moving_time, 0) / 3600;
+    // Cycling hours only: this gates intensity prescriptions in decide(), so a
+    // strength session must not count toward it.
+    const weekly_hours = cyclingWeeklyHours(
+      activities,
+      days7.map((d) => d.date),
+    );
 
-    // Days since last ride
-    const days_since_last_ride = lastRideDate
-      ? Math.floor((today.getTime() - lastRideDate.getTime()) / 86400000)
-      : 999;
+    // Days since last ride: cycling only. A gym session must not reset this.
+    const days_since_last_ride = daysSinceLastRide(activities, today);
 
     // Consecutive days riding
     let consecutive_days = 0;
@@ -155,11 +151,11 @@ export class GenerateRecommendation {
   ): WorkoutRecommendation {
     // Override: too many consecutive days
     if (consecutiveDays >= 3) {
-      return this.recovery('3 consecutive days riding — active recovery recommended', ftp, metrics);
+      return this.recovery('3 consecutive days riding. Active recovery recommended', ftp, metrics);
     }
 
     if (tsb < -30) {
-      return this.recovery('High fatigue (TSB < -30) — prioritize recovery', ftp, metrics);
+      return this.recovery('High fatigue (TSB < -30). Prioritize recovery', ftp, metrics);
     }
 
     if (tsb < -15) {
@@ -244,7 +240,7 @@ export class GenerateRecommendation {
       };
     }
 
-    // TSB >= 20 — very fresh
+    // TSB >= 20: very fresh
     return {
       workout_type: 'anaerobic',
       title: 'Anaerobic Sprint Session',

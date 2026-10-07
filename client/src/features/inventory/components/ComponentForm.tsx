@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface ComponentFormProps {
   bikeId: string;
@@ -21,9 +22,6 @@ const categories: { value: Component['category']; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-const selectClass =
-  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
-
 export function ComponentForm({ bikeId, component, onSubmit, onCancel }: ComponentFormProps) {
   const [formData, setFormData] = useState<ComponentFormData>({
     bike_id: bikeId,
@@ -32,7 +30,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
     brand: component?.brand ?? '',
     model: component?.model ?? '',
     install_date: component?.install_date ?? new Date().toISOString().slice(0, 10),
-    install_km: component?.install_km ?? 0,
+    install_km: component?.install_km ?? null,
     expected_lifespan_km: component?.expected_lifespan_km ?? null,
     notes: component?.notes ?? '',
   });
@@ -46,6 +44,7 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
         ...formData,
         brand: formData.brand || null,
         model: formData.model || null,
+        install_km: formData.install_km ?? null,
         expected_lifespan_km: formData.expected_lifespan_km || null,
         notes: formData.notes || null,
       });
@@ -128,8 +127,14 @@ export function ComponentForm({ bikeId, component, onSubmit, onCancel }: Compone
                 id="install_km"
                 type="number"
                 min="0"
-                value={formData.install_km}
-                onChange={(e) => setFormData({ ...formData, install_km: Number(e.target.value) })}
+                value={formData.install_km ?? ''}
+                placeholder="Bike odometer"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    install_km: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
               />
             </div>
           </div>

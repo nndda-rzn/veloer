@@ -8,16 +8,16 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-card text-card-foreground',
+        default: 'border-border bg-card text-card-foreground',
         destructive:
-          'border-red-200 bg-red-50 text-red-700 *:data-[slot=alert-description]:text-red-700/90 *:[svg]:text-current',
+          'border-red-200 bg-red-50 text-red-800 *:data-[slot=alert-description]:text-red-800/90 *:[svg]:text-current',
         error:
-          'border-red-200 bg-red-50 text-red-700 *:data-[slot=alert-description]:text-red-700/90 *:[svg]:text-current',
+          'border-red-200 bg-red-50 text-red-800 *:data-[slot=alert-description]:text-red-800/90 *:[svg]:text-current',
         success:
-          'border-green-200 bg-green-50 text-green-700 *:data-[slot=alert-description]:text-green-700/90 *:[svg]:text-current',
+          'border-emerald-200 bg-emerald-50 text-emerald-800 *:data-[slot=alert-description]:text-emerald-800/90 *:[svg]:text-current',
         warning:
-          'border-amber-200 bg-amber-50 text-amber-700 *:data-[slot=alert-description]:text-amber-700/90 *:[svg]:text-current',
-        info: 'border-blue-200 bg-blue-50 text-blue-700 *:data-[slot=alert-description]:text-blue-700/90 *:[svg]:text-current',
+          'border-amber-200 bg-amber-50 text-amber-800 *:data-[slot=alert-description]:text-amber-800/90 *:[svg]:text-current',
+        info: 'border-blue-200 bg-blue-50 text-blue-800 *:data-[slot=alert-description]:text-blue-800/90 *:[svg]:text-current',
       },
     },
     defaultVariants: {

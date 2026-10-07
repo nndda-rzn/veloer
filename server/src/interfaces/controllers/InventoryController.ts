@@ -10,7 +10,10 @@ import {
   GetComponents,
   UpdateComponent,
   DeleteComponent,
+  ReplaceComponent,
+  ComponentNotFoundError,
 } from '../../application/use-cases/inventory/ManageComponents.js';
+import { GetWearAlerts } from '../../application/use-cases/inventory/GetWearAlerts.js';
 
 export class InventoryController {
   // --- BIKES ---
@@ -116,6 +119,16 @@ export class InventoryController {
 
   // --- COMPONENTS ---
 
+  async listWearAlerts(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const getWearAlerts = container.resolve(GetWearAlerts);
+    const alerts = await getWearAlerts.execute(req.user.userId);
+    res.json(alerts);
+  }
+
   async listComponents(req: Request, res: Response): Promise<void> {
     if (!req.user) {
       res.status(401).json({ error: 'Unauthorized' });
@@ -123,8 +136,16 @@ export class InventoryController {
     }
     const { bikeId } = req.params;
     const getComponents = container.resolve(GetComponents);
-    const components = await getComponents.executeByBikeId(String(bikeId));
-    res.json(components);
+    try {
+      const components = await getComponents.executeByBikeId(String(bikeId), req.user.userId);
+      res.json(components);
+    } catch (err) {
+      if (err instanceof ComponentNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async createComponent(req: Request, res: Response): Promise<void> {
@@ -133,8 +154,16 @@ export class InventoryController {
       return;
     }
     const addComponent = container.resolve(AddComponent);
-    const component = await addComponent.execute(req.body);
-    res.status(201).json(component);
+    try {
+      const component = await addComponent.execute(req.user.userId, req.body);
+      res.status(201).json(component);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'BIKE_NOT_FOUND') {
+        res.status(404).json({ error: 'Not Found', message: 'Bike not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async updateComponent(req: Request, res: Response): Promise<void> {
@@ -144,12 +173,31 @@ export class InventoryController {
     }
     const { id } = req.params;
     const updateComponent = container.resolve(UpdateComponent);
-    const component = await updateComponent.execute(String(id), req.body);
+    const component = await updateComponent.execute(String(id), req.user.userId, req.body);
     if (!component) {
       res.status(404).json({ error: 'Not Found', message: 'Component not found' });
       return;
     }
     res.json(component);
+  }
+
+  async replaceComponent(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const replaceComponent = container.resolve(ReplaceComponent);
+    try {
+      const result = await replaceComponent.execute(String(id), req.user.userId, req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      if (err instanceof ComponentNotFoundError) {
+        res.status(404).json({ error: 'Not Found', message: 'Component not found' });
+        return;
+      }
+      throw err;
+    }
   }
 
   async deleteComponent(req: Request, res: Response): Promise<void> {
@@ -159,7 +207,7 @@ export class InventoryController {
     }
     const { id } = req.params;
     const deleteComponent = container.resolve(DeleteComponent);
-    const deleted = await deleteComponent.execute(String(id));
+    const deleted = await deleteComponent.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Component not found' });
       return;

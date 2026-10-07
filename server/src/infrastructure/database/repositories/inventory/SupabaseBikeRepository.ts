@@ -62,18 +62,19 @@ export class SupabaseBikeRepository implements BikeRepository {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('components')
-      .select('bike_id, current_km, expected_lifespan_km, status')
+      .select('bike_id, install_km, current_km, expected_lifespan_km, status')
       .in('bike_id', bikeIds);
 
     if (error) throw new Error(`Failed to fetch component alerts: ${error.message}`);
 
     const counts: Record<string, number> = {};
     for (const c of data || []) {
-      // Alert if: failed status, or lifespan usage >= 90%
+      // Alert if: failed status, or wear (km since install) >= 90% of lifespan
       const isFailed = c.status === 'failed';
+      const wearKm = Number(c.current_km) - Number(c.install_km ?? 0);
       const isLifespanCritical =
         c.expected_lifespan_km && c.expected_lifespan_km > 0
-          ? c.current_km / c.expected_lifespan_km >= 0.9
+          ? wearKm / c.expected_lifespan_km >= 0.9
           : false;
 
       if (isFailed || isLifespanCritical) {

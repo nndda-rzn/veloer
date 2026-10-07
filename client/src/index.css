@@ -4,43 +4,66 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ==========================================================================
+   Veloer design tokens: source of truth.
+   Aesthetic: timeless, clean, elegant. Warm "stone" neutrals + deep ride-green.
+   Every value below is verified for WCAG AA contrast (see docs/20-design-system.md).
+   ========================================================================== */
 @theme {
-  /* Brand colors */
-  --color-primary: #16a34a;
-  --color-primary-dark: #15803d;
-  --color-primary-light: #22c55e;
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
-  --color-primary-900: #14532d;
+  /* Typography ---------------------------------------------------------- */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', monospace;
 
-  /* Accent colors */
-  --color-accent: #f97316;
-  --color-accent-dark: #ea580c;
+  /* Type scale: Minor Third (1.2). See docs/20-design-system.md */
+  --text-caption: 0.75rem; /* 12px: metadata, small labels */
+  --text-caption--line-height: 1.5;
+  --text-body-sm: 0.875rem; /* 14px: default dense UI (tables) */
+  --text-body-sm--line-height: 1.5;
+  --text-body: 1rem; /* 16px: prose, descriptions */
+  --text-body--line-height: 1.6;
+  --text-h3: 1rem; /* 16px: card titles */
+  --text-h3--line-height: 1.4;
+  --text-h2: 1.25rem; /* 20px: section titles */
+  --text-h2--line-height: 1.3;
+  --text-h1: 1.5rem; /* 24px: page titles */
+  --text-h1--line-height: 1.2;
 
-  /* Status colors */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  /* Brand: deep ride-green ---------------------------------------------- */
+  /* #0f6e4e = 6.25:1 on white → passes AA for text and for white-on-brand */
+  --color-primary: #0f6e4e;
+  --color-primary-dark: #0c5b41;
+  --color-primary-light: #17936a;
+  --color-primary-50: #f0f7f3;
+  --color-primary-100: #dcefe5;
+  --color-primary-200: #bbdfcd;
+  --color-primary-500: #17936a;
+  --color-primary-600: #0f6e4e;
+  --color-primary-700: #0c5b41;
+  --color-primary-900: #07301f;
 
-  /* Strava brand */
+  /* Semantic (all pass AA on white) ------------------------------------- */
+  --color-success: #047857;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-info: #1d4ed8;
+
+  /* Strength accent: slate. Distinguished from cycling's ride-green, and
+     outside the semantic set so it never reads as success/warning/error.
+     Always paired with the Dumbbell icon and a label (colour is never the
+     only signal). */
+  --color-strength: #475569;
+
+  /* Strava brand -------------------------------------------------------- */
   --color-strava: #fc4c02;
-  --color-strava-dark: #e04302;
-
-  /* Font family */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-strava-dark: #c93c02;
 }
 
 /* Base styles */
 body {
-  @apply bg-gray-50 text-gray-900 font-sans antialiased;
+  @apply bg-background text-foreground font-sans antialiased;
 }
 
-/* Reduce motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -52,9 +75,9 @@ body {
   }
 }
 
-/* Global focus-visible ring */
+/* Global focus-visible ring (brand colour, 6.25:1) */
 :focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -68,12 +91,13 @@ body {
   width: 100%;
   height: 100%;
   z-index: 0;
+  font-family: var(--font-sans);
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -81,17 +105,134 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-200 rounded-full;
+  @apply rounded-full bg-stone-200;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-300;
+  @apply bg-stone-300;
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #e5e7eb transparent;
+  scrollbar-color: #e7e5e4 transparent;
+}
+
+/* ==========================================================================
+   react-big-calendar: restyle to match Veloer tokens (no default blue).
+   Scoped under .veloer-calendar so it never leaks into other surfaces.
+   ========================================================================== */
+.veloer-calendar .rbc-calendar {
+  font-family: var(--font-sans);
+  color: var(--foreground);
+}
+.veloer-calendar .rbc-toolbar {
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.veloer-calendar .rbc-toolbar button {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.veloer-calendar .rbc-toolbar button:hover {
+  background: var(--secondary);
+  border-color: var(--input);
+}
+.veloer-calendar .rbc-toolbar button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.veloer-calendar .rbc-toolbar button.rbc-active,
+.veloer-calendar .rbc-toolbar button.rbc-active:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: none;
+}
+.veloer-calendar .rbc-toolbar-label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--foreground);
+}
+.veloer-calendar .rbc-header {
+  border-color: var(--border);
+  padding: 0.5rem 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+}
+.veloer-calendar .rbc-month-view,
+.veloer-calendar .rbc-time-view,
+.veloer-calendar .rbc-agenda-view table {
+  border-color: var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.veloer-calendar .rbc-day-bg + .rbc-day-bg,
+.veloer-calendar .rbc-month-row + .rbc-month-row,
+.veloer-calendar .rbc-header + .rbc-header,
+.veloer-calendar .rbc-time-content > * + * > * {
+  border-color: var(--border);
+}
+.veloer-calendar .rbc-off-range-bg {
+  background: var(--secondary);
+}
+.veloer-calendar .rbc-off-range {
+  color: var(--muted-foreground);
+}
+.veloer-calendar .rbc-today {
+  background: var(--primary-50);
+}
+.veloer-calendar .rbc-date-cell {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+.veloer-calendar .rbc-date-cell.rbc-now {
+  font-weight: 600;
+  color: var(--primary-700);
+}
+.veloer-calendar .rbc-event {
+  border: none;
+}
+.veloer-calendar .rbc-event:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.veloer-calendar .rbc-show-more {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: transparent;
+}
+.veloer-calendar .rbc-agenda-view table.rbc-agenda-table {
+  border-color: var(--border);
+}
+.veloer-calendar .rbc-agenda-view table.rbc-agenda-table thead > tr > th,
+.veloer-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+  border-color: var(--border);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+}
+.veloer-calendar .rbc-agenda-date-cell,
+.veloer-calendar .rbc-agenda-time-cell {
+  color: var(--muted-foreground);
+}
+
+/* Numerals align in tabular contexts by default for data-heavy UI */
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
 @theme inline {
@@ -137,38 +278,52 @@ body {
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #111827;
+  /* Surfaces: warm stone neutrals */
+  --background: #fafaf9;
+  --foreground: #1c1917;
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #1c1917;
   --popover: #ffffff;
-  --popover-foreground: #111827;
-  --primary: #16a34a;
+  --popover-foreground: #1c1917;
+
+  /* Brand */
+  --primary: #0f6e4e;
   --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #111827;
-  --muted: #f9fafb;
-  --muted-foreground: #6b7280;
-  --accent: #f0fdf4;
-  --accent-foreground: #15803d;
-  --destructive: #dc2626;
-  --border: #e5e7eb;
-  --input: #d1d5db;
-  --ring: #16a34a;
-  --chart-1: #16a34a;
-  --chart-2: #f97316;
-  --chart-3: #3b82f6;
-  --chart-4: #8b5cf6;
-  --chart-5: #ef4444;
-  --radius: 0.625rem;
+
+  /* Subtle surfaces */
+  --secondary: #f5f5f4;
+  --secondary-foreground: #1c1917;
+  --muted: #f5f5f4;
+  --muted-foreground: #57534e; /* 7.63:1 on white */
+  --accent: #f5f5f4;
+  --accent-foreground: #1c1917;
+
+  /* Feedback */
+  --destructive: #b91c1c; /* 6.47:1 on white */
+
+  /* Lines */
+  --border: #e7e5e4; /* dividers, card edges */
+  --input: #948d88; /* form field boundary: 3.27:1 on white (WCAG 1.4.11) */
+  --ring: #0f6e4e;
+
+  /* Data-viz: harmonised with brand */
+  --chart-1: #0f6e4e;
+  --chart-2: #c2410c;
+  --chart-3: #1d4ed8;
+  --chart-4: #6d28d9;
+  --chart-5: #b91c1c;
+
+  --radius: 0.5rem; /* 8px base → lg 8px, xl 11.2px, 2xl 14.4px */
+
+  /* Sidebar */
   --sidebar: #ffffff;
-  --sidebar-foreground: #374151;
-  --sidebar-primary: #16a34a;
+  --sidebar-foreground: #44403c;
+  --sidebar-primary: #0f6e4e;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0fdf4;
-  --sidebar-accent-foreground: #15803d;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #16a34a;
+  --sidebar-accent: #f0f7f3;
+  --sidebar-accent-foreground: #0c5b41;
+  --sidebar-border: #e7e5e4;
+  --sidebar-ring: #0f6e4e;
 }
 
 @layer base {
@@ -180,5 +335,11 @@ body {
   }
   html {
     @apply font-sans;
+  }
+  /* Headings sit tighter and use balanced wrapping */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 }

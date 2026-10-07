@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import type { ActivityRepository } from '../../../domain/repositories/activity/ActivityRepository.js';
 import type { UserProfileRepository } from '../../../domain/repositories/auth/UserProfileRepository.js';
+import { isCycling } from '../../../infrastructure/database/repositories/activity/cycling-filter.js';
 
 export type FitnessAnalysisConfidence = 'high' | 'low' | 'none';
 export type SuggestedTemplate =
@@ -67,29 +68,33 @@ export class AnalyzeStravaFitness {
       } else {
         ftpConfidence = 'low';
         warnings.push(
-          `Limited power data (${activitiesWithPower.length} rides with power) — FTP estimate may not reflect current fitness.`,
+          `Limited power data (${activitiesWithPower.length} rides with power). FTP estimate may not reflect current fitness.`,
         );
       }
     } else {
-      warnings.push('No power data found — FTP estimate is based on your Settings value.');
+      warnings.push('No power data found. FTP estimate is based on your Settings value.');
     }
 
     if (activityCount < 5) {
       warnings.push(
-        `Only ${activityCount} ${activityCount === 1 ? 'activity' : 'activities'} synced — estimates may not be accurate. Sync more rides for better results.`,
+        `Only ${activityCount} ${activityCount === 1 ? 'activity' : 'activities'} synced. Estimates may not be accurate. Sync more rides for better results.`,
       );
     }
 
     // ---- Weekly volume (hours + TSS) ----
+    // Cycling only: this feeds the FTP/template suggestion, so a gym session
+    // must not inflate weekly hours or the load curve.
+    const cyclingActivities = activities.filter(isCycling);
+
     let avgWeeklyHours = 0;
     let avgWeeklyTss = 0;
 
-    if (activityCount > 0) {
-      const totalHours = activities.reduce((s, a) => s + a.moving_time / 3600, 0);
-      const totalTss = activities.reduce((s, a) => s + (a.tss ?? 0), 0);
+    if (cyclingActivities.length > 0) {
+      const totalHours = cyclingActivities.reduce((s, a) => s + a.moving_time / 3600, 0);
+      const totalTss = cyclingActivities.reduce((s, a) => s + (a.tss ?? 0), 0);
 
       // Number of weeks covered by the data
-      const dates = activities.map((a) => new Date(a.start_date).getTime());
+      const dates = cyclingActivities.map((a) => new Date(a.start_date).getTime());
       const minDate = Math.min(...dates);
       const maxDate = Math.max(...dates);
       const weeksSpan = Math.max((maxDate - minDate) / (7 * 24 * 3600 * 1000), 1);
@@ -99,12 +104,12 @@ export class AnalyzeStravaFitness {
     }
 
     if (avgWeeklyHours < 2 && activityCount >= 3) {
-      warnings.push('Low weekly volume detected — starting with Base Build is recommended.');
+      warnings.push('Low weekly volume detected. Starting with Base Build is recommended.');
     }
 
     // ---- CTL (42-day EMA of daily TSS) ----
     const tssMap: Record<string, number> = {};
-    for (const act of activities) {
+    for (const act of cyclingActivities) {
       const date = act.start_date.split('T')[0];
       tssMap[date] = (tssMap[date] ?? 0) + (act.tss ?? 0);
     }

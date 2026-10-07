@@ -33,6 +33,20 @@ export interface Component {
   updated_at: string;
 }
 
+export interface WearAlert {
+  component_id: string;
+  bike_id: string;
+  bike_name: string;
+  component_name: string;
+  category: Component['category'];
+  wear_km: number;
+  expected_lifespan_km: number | null;
+  wear_percent: number | null;
+  remaining_km: number | null;
+  level: 'critical' | 'warning' | 'info';
+  estimated_due_date: string | null;
+}
+
 export interface BikeFormData {
   name: string;
   brand?: string | null;
@@ -40,6 +54,7 @@ export interface BikeFormData {
   type: Bike['type'];
   purchase_date?: string | null;
   purchase_price?: number | null;
+  status?: Bike['status'];
   photo_url?: string | null;
   notes?: string | null;
 }
@@ -51,7 +66,9 @@ export interface ComponentFormData {
   brand?: string | null;
   model?: string | null;
   install_date: string;
-  install_km: number;
+  /** Odometer at install. Omit to default to the bike's current km. */
+  install_km?: number | null;
   expected_lifespan_km?: number | null;
+  status?: Component['status'];
   notes?: string | null;
 }

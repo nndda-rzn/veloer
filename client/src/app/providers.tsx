@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/features/auth';
-import { SyncProvider } from '@/features/activity';
+import { AuthProvider } from '@/features/auth/context/AuthContext';
+import { SyncProvider } from '@/features/activity/hooks/useSync';
 import { ToasterProvider } from '@/shared/components/feedback/Toaster';
+import { PreferencesProvider } from '@/features/settings/components/PreferencesProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,9 +23,12 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ToasterProvider>
-        <SyncProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </SyncProvider>
+        <AuthProvider>
+          <SyncProvider>
+            {/* Feeds the shared formatters (units, timezone) from the profile. */}
+            <PreferencesProvider>{children}</PreferencesProvider>
+          </SyncProvider>
+        </AuthProvider>
       </ToasterProvider>
     </QueryClientProvider>
   );

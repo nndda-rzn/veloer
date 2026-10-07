@@ -8,11 +8,27 @@ export type WorkoutType =
   | 'anaerobic'
   | 'sprint'
   | 'race'
-  | 'interval';
+  | 'interval'
+  | 'lower'
+  | 'upper'
+  | 'full_body'
+  | 'core'
+  | 'mobility';
 
 export type WorkoutStatus = 'planned' | 'completed' | 'skipped' | 'missed';
 export type PlanStatus = 'active' | 'completed' | 'archived';
 export type PlanGoalType = 'ftp' | 'endurance' | 'century' | 'gran_fondo' | 'custom';
+
+/** The two training disciplines. Defined here so types do not import from lib. */
+export type Discipline = 'cycling' | 'strength';
+
+/** One entry in a strength workout's optional exercise list. */
+export interface WorkoutExercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight_kg: number | null;
+}
 
 export interface TrainingPlan {
   id: string;
@@ -26,6 +42,9 @@ export interface TrainingPlan {
   status: PlanStatus;
   created_at: string;
   updated_at: string;
+  /** Aggregate workout totals, present on the list endpoint. */
+  workout_count?: number;
+  completed_count?: number;
 }
 
 export interface TrainingWorkout {
@@ -33,6 +52,7 @@ export interface TrainingWorkout {
   plan_id: string;
   user_id: string;
   scheduled_date: string;
+  discipline: Discipline;
   workout_type: WorkoutType;
   title: string;
   description: string | null;
@@ -47,6 +67,8 @@ export interface TrainingWorkout {
   interval_power_pct_ftp: number | null;
   rest_duration_seconds: number | null;
   rest_power_pct_ftp: number | null;
+  /** Optional strength exercise list; null for cycling. */
+  exercises: WorkoutExercise[] | null;
   status: WorkoutStatus;
   actual_activity_id: string | null;
   actual_tss: number | null;
@@ -69,6 +91,7 @@ export interface TrainingPlanFormData {
 
 export interface WorkoutFormData {
   scheduled_date: string;
+  discipline?: Discipline;
   workout_type: WorkoutType;
   title: string;
   description?: string | null;
@@ -83,6 +106,7 @@ export interface WorkoutFormData {
   interval_power_pct_ftp?: number | null;
   rest_duration_seconds?: number | null;
   rest_power_pct_ftp?: number | null;
+  exercises?: WorkoutExercise[] | null;
   notes?: string | null;
 }
 
@@ -97,22 +121,40 @@ export const WORKOUT_TYPE_LABELS: Record<WorkoutType, string> = {
   sprint: 'Sprint',
   race: 'Race',
   interval: 'Interval',
+  lower: 'Lower body',
+  upper: 'Upper body',
+  full_body: 'Full body',
+  core: 'Core',
+  mobility: 'Mobility',
 };
 
 export const WORKOUT_TYPE_COLORS: Record<WorkoutType, string> = {
-  recovery: '#64748b',
-  endurance: '#3b82f6',
-  tempo: '#eab308',
-  sweet_spot: '#f59e0b',
-  threshold: '#f97316',
-  vo2max: '#ef4444',
-  anaerobic: '#8b5cf6',
-  sprint: '#ec4899',
-  race: '#111827',
-  interval: '#6366f1',
+  recovery: '#78716c',
+  endurance: '#2563eb',
+  tempo: '#0891b2',
+  sweet_spot: '#0f6e4e',
+  threshold: '#c2410c',
+  vo2max: '#b91c1c',
+  anaerobic: '#7c3aed',
+  sprint: '#be185d',
+  race: '#1c1917',
+  interval: '#4f46e5',
+  // Strength: one steel accent for the whole discipline (see --color-strength).
+  lower: '#475569',
+  upper: '#475569',
+  full_body: '#475569',
+  core: '#475569',
+  mobility: '#475569',
 };
 
-export type TemplateKey = 'BASE_BUILD_4W' | 'FTP_BUILDER_6W' | 'CENTURY_PREP_8W' | 'GRAN_FONDO_12W';
+export type TemplateKey =
+  | 'BASE_BUILD_4W'
+  | 'FTP_BUILDER_6W'
+  | 'CENTURY_PREP_8W'
+  | 'GRAN_FONDO_12W'
+  | 'STRENGTH_FOCUS_4W'
+  | 'BALANCED_6W'
+  | 'ENDURANCE_STRENGTH_6W';
 
 export interface TemplateInfo {
   key: TemplateKey;
@@ -127,7 +169,7 @@ export interface TemplateInfo {
 export const TEMPLATE_LIST: TemplateInfo[] = [
   {
     key: 'BASE_BUILD_4W',
-    title: 'Base Build — 4 Weeks',
+    title: 'Base Build · 4 Weeks',
     description: 'Progressive Z2 endurance volume. Build aerobic base with 3-4 rides/week.',
     weeks: 4,
     goal_type: 'endurance',
@@ -136,7 +178,7 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'FTP_BUILDER_6W',
-    title: 'FTP Builder — 6 Weeks',
+    title: 'FTP Builder · 6 Weeks',
     description: 'Sweet spot and threshold intervals. Designed to raise FTP progressively.',
     weeks: 6,
     goal_type: 'ftp',
@@ -145,7 +187,7 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'CENTURY_PREP_8W',
-    title: 'Century Prep — 8 Weeks',
+    title: 'Century Prep · 8 Weeks',
     description: 'Build endurance for a 100-160km event. Long rides with progressive overload.',
     weeks: 8,
     goal_type: 'century',
@@ -154,12 +196,40 @@ export const TEMPLATE_LIST: TemplateInfo[] = [
   },
   {
     key: 'GRAN_FONDO_12W',
-    title: 'Gran Fondo — 12 Weeks',
+    title: 'Gran Fondo · 12 Weeks',
     description: 'Full periodized plan: base → build → peak → taper. Ideal for gran fondo events.',
     weeks: 12,
     goal_type: 'gran_fondo',
     workouts_per_week: 5,
     focus: 'Periodized peak performance',
+  },
+  {
+    key: 'STRENGTH_FOCUS_4W',
+    title: 'Strength Focus · 4 Weeks',
+    description: 'Three lifting days plus two rides. Build strength without losing the bike.',
+    weeks: 4,
+    goal_type: 'custom',
+    workouts_per_week: 5,
+    focus: 'Strength focus',
+  },
+  {
+    key: 'BALANCED_6W',
+    title: 'Balanced · 6 Weeks',
+    description: 'Two lifting days and three rides a week. Even split for general fitness.',
+    weeks: 6,
+    goal_type: 'custom',
+    workouts_per_week: 5,
+    focus: 'Balanced strength + cycling',
+  },
+  {
+    key: 'ENDURANCE_STRENGTH_6W',
+    title: 'Endurance + Strength · 6 Weeks',
+    description:
+      'Four rides with two lifting days. Keeps riding the priority while adding strength.',
+    weeks: 6,
+    goal_type: 'custom',
+    workouts_per_week: 6,
+    focus: 'Endurance with strength',
   },
 ];
 

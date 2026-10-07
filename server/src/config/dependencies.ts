@@ -37,7 +37,11 @@ import { StravaAdapter } from '../infrastructure/strava/StravaAdapter.js';
 import { SupabaseStorage } from '../infrastructure/storage/SupabaseStorage.js';
 import { JwtTokenAdapter } from '../infrastructure/auth/JwtTokenAdapter.js';
 import { RefreshStravaToken } from '../application/use-cases/auth/RefreshStravaToken.js';
-import { GetGoals, UpdateGoalProgress } from '../application/use-cases/goals/GoalUseCases.js';
+import {
+  GetGoals,
+  RecomputeGoalProgress,
+  AdjustGoalProgress,
+} from '../application/use-cases/goals/GoalUseCases.js';
 import { AddTransaction } from '../application/use-cases/finance/TransactionUseCases.js';
 import {
   GetActivityLaps,
@@ -47,6 +51,8 @@ import { GenerateRecommendation } from '../application/use-cases/training/Genera
 import { AutoRescheduleMissed } from '../application/use-cases/training/AutoRescheduleMissed.js';
 import { GetPlanRetrospective } from '../application/use-cases/training/GetPlanRetrospective.js';
 import { GeneratePlanFromTemplate } from '../application/use-cases/training/GeneratePlanFromTemplate.js';
+import { ReplaceComponent } from '../application/use-cases/inventory/ManageComponents.js';
+import { UploadAvatar } from '../application/use-cases/auth/UploadAvatar.js';
 
 // Register repositories (interfaces -> implementations)
 container.registerSingleton<UserRepository>('UserRepository', SupabaseUserRepository);
@@ -83,7 +89,8 @@ container.registerSingleton<TrainingPlanRepository>(
 // Register use cases that are injected as class references
 container.registerSingleton(RefreshStravaToken);
 container.registerSingleton(GetGoals);
-container.registerSingleton(UpdateGoalProgress);
+container.registerSingleton(RecomputeGoalProgress);
+container.registerSingleton(AdjustGoalProgress);
 container.registerSingleton(AddTransaction);
 container.registerSingleton(GetActivityLaps);
 container.registerSingleton(GetActivityZones);
@@ -91,6 +98,8 @@ container.registerSingleton(GenerateRecommendation);
 container.registerSingleton(AutoRescheduleMissed);
 container.registerSingleton(GetPlanRetrospective);
 container.registerSingleton(GeneratePlanFromTemplate);
+container.registerSingleton(ReplaceComponent);
+container.registerSingleton(UploadAvatar);
 
 // Register service adapters (ports -> implementations)
 container.registerSingleton<StravaPort>('StravaPort', StravaAdapter);

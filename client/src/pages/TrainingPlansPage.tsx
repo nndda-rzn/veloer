@@ -2,32 +2,32 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlans, trainingApi } from '@/features/training';
 import { TrainingPlanCard } from '@/features/training/components/TrainingPlanCard';
+import { ActivePlanHero } from '@/features/training/components/ActivePlanHero';
 import { TrainingPlanForm } from '@/features/training/components/TrainingPlanForm';
 import { TemplateLibrary } from '@/features/training/components/TemplateLibrary';
 import { SmartPlanModal } from '@/features/training/components/SmartPlanModal';
 import { useFitnessAnalysis } from '@/features/training';
 import type { TrainingPlan, TrainingPlanFormData, TemplateKey } from '@/features/training';
+import { isCurrentPlan } from '@/features/training/lib/plan-progress';
 import { settingsApi } from '@/features/settings';
-import { useEffect, useRef } from 'react';
-import { PageHeader, EmptyState } from '@/shared/components/ui';
+import { useEffect, useMemo, useRef } from 'react';
+import { PageHeader, EmptyState, ConfirmDialog } from '@/shared/components/ui';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { ClipboardList, Sparkles } from 'lucide-react';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ClipboardList, Sparkles, ChevronDown, LayoutTemplate } from 'lucide-react';
 
 export function TrainingPlansPage() {
   const navigate = useNavigate();
-  const { plans, loading, error, createPlan, deletePlan, refetch } = usePlans();
+  const { plans, loading, error, createPlan, updatePlan, deletePlan, refetch } = usePlans();
   const [showForm, setShowForm] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<TrainingPlan | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showSmartPlan, setShowSmartPlan] = useState(false);
   const [templateError, setTemplateError] = useState<string | null>(null);
@@ -52,15 +52,16 @@ export function TrainingPlansPage() {
   }, []);
 
   const handleCreate = async (data: TrainingPlanFormData) => {
-    await createPlan(data);
+    if (editingPlan) {
+      await updatePlan(editingPlan.id, data);
+    } else {
+      await createPlan(data);
+    }
     setShowForm(false);
+    setEditingPlan(null);
   };
 
   const [deletingPlan, setDeletingPlan] = useState<TrainingPlan | null>(null);
-
-  const handleDelete = async (plan: TrainingPlan) => {
-    setDeletingPlan(plan);
-  };
 
   const confirmDelete = async () => {
     if (deletingPlan) {
@@ -101,26 +102,50 @@ export function TrainingPlansPage() {
     refetch();
   };
 
+  const { activePlan, otherPlans } = useMemo(() => {
+    const active = plans.find((p) => isCurrentPlan(p)) ?? plans.find((p) => p.status === 'active');
+    return {
+      activePlan: active ?? null,
+      otherPlans: plans.filter((p) => p.id !== active?.id),
+    };
+  }, [plans]);
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Training Plans"
         description="Plan and schedule your cycling training"
         action={
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                Start from
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => void handleOpenSmartPlan()}
+                    disabled={analysisLoading}
+                  >
+                    <Sparkles aria-hidden="true" />
+                    Smart Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowTemplates(true)}>
+                    <LayoutTemplate aria-hidden="true" />
+                    Template
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
-              variant="secondary"
-              onClick={() => void handleOpenSmartPlan()}
-              disabled={analysisLoading}
-              loading={analysisLoading}
+              onClick={() => {
+                setEditingPlan(null);
+                setShowForm(true);
+              }}
             >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              {analysisLoading ? 'Analyzing...' : 'Smart Plan'}
+              New Plan
             </Button>
-            <Button variant="outline" onClick={() => setShowTemplates(true)}>
-              From Template
-            </Button>
-            <Button onClick={() => setShowForm(true)}>New Plan</Button>
           </div>
         }
       />
@@ -130,16 +155,12 @@ export function TrainingPlansPage() {
       {loading && (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-secondary" />
           ))}
         </div>
       )}
 
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <Alert variant="error">{error}</Alert>}
 
       {!loading && !error && plans.length === 0 && (
         <EmptyState
@@ -151,23 +172,51 @@ export function TrainingPlansPage() {
       )}
 
       {!loading && plans.length > 0 && (
-        <div className="space-y-3">
-          {plans.map((plan) => (
-            <TrainingPlanCard
-              key={plan.id}
-              plan={plan}
-              onClick={(p) => navigate(`/training-plans/${p.id}`)}
-              onDelete={handleDelete}
+        <div className="space-y-6">
+          {activePlan && (
+            <ActivePlanHero
+              plan={activePlan}
+              onEdit={(p) => {
+                setEditingPlan(p);
+                setShowForm(true);
+              }}
+              onDelete={setDeletingPlan}
             />
-          ))}
+          )}
+
+          {otherPlans.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold text-foreground">
+                {activePlan ? 'Other plans' : 'All plans'}
+              </h2>
+              <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+                {otherPlans.map((plan) => (
+                  <TrainingPlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onClick={(p) => navigate(`/training-plans/${p.id}`)}
+                    onEdit={(p) => {
+                      setEditingPlan(p);
+                      setShowForm(true);
+                    }}
+                    onDelete={setDeletingPlan}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
 
       {showForm && (
         <TrainingPlanForm
+          plan={editingPlan ?? undefined}
           defaultFtp={defaultFtp}
           onSubmit={handleCreate}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingPlan(null);
+          }}
         />
       )}
 
@@ -193,22 +242,13 @@ export function TrainingPlansPage() {
       )}
 
       {deletingPlan && (
-        <AlertDialog open onOpenChange={(open) => !open && setDeletingPlan(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Plan</AlertDialogTitle>
-              <AlertDialogDescription>
-                Delete &quot;{deletingPlan.title}&quot;? This will remove all workouts in this plan.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="danger" onClick={() => void confirmDelete()}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => !open && setDeletingPlan(null)}
+          title="Delete plan"
+          description={`Delete “${deletingPlan.title}”? This will remove all workouts in this plan.`}
+          onConfirm={confirmDelete}
+        />
       )}
     </div>
   );

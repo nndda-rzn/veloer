@@ -63,11 +63,11 @@ export function ActivityMap({ encodedPolyline }: ActivityMapProps) {
 
   if (!encodedPolyline) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-lg border border-gray-200 bg-gray-50">
-        <p className="text-sm text-gray-400">No map data for this activity</p>
+      <div className="flex h-64 items-center justify-center rounded-lg border border-border bg-secondary">
+        <p className="text-sm text-muted-foreground">No map data for this activity</p>
       </div>
     );
   }
 
-  return <div ref={containerRef} className="h-64 w-full rounded-lg border border-gray-200" />;
+  return <div ref={containerRef} className="h-64 w-full rounded-lg border border-border" />;
 }

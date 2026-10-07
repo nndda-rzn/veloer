@@ -56,7 +56,7 @@ export class EventController {
     }
     const { id } = req.params;
     const updateEvent = container.resolve(UpdateEvent);
-    const event = await updateEvent.execute(String(id), req.body);
+    const event = await updateEvent.execute(String(id), req.user.userId, req.body);
     if (!event) {
       res.status(404).json({ error: 'Not Found', message: 'Event not found' });
       return;
@@ -84,7 +84,7 @@ export class EventController {
     }
     const { id } = req.params;
     const deleteEvent = container.resolve(DeleteEvent);
-    const deleted = await deleteEvent.execute(String(id));
+    const deleted = await deleteEvent.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Event not found' });
       return;

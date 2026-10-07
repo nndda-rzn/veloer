@@ -5,10 +5,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { selectClass } from '@/shared/lib/form-styles';
 
 interface MaintenanceFormProps {
   bikeId: string;
   currentKm: number;
+  /** Preselect a component (used by the "Log service" action on a component). */
+  defaultComponentId?: string | null;
+  /** Components to attribute the service to. Omit when the caller has none. */
+  components?: { id: string; name: string }[];
+  /** Prefill the description. */
+  defaultDescription?: string;
+  /** Prefill the log type. */
+  defaultType?: MaintenanceLogFormData['type'];
   onSubmit: (data: MaintenanceLogFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,16 +30,23 @@ const logTypes: { value: MaintenanceLogFormData['type']; label: string }[] = [
   { value: 'tuning', label: 'Tuning' },
 ];
 
-const selectClass =
-  'flex h-8 w-full items-center justify-between rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50';
-
-export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: MaintenanceFormProps) {
+export function MaintenanceForm({
+  bikeId,
+  currentKm,
+  defaultComponentId = null,
+  components = [],
+  defaultDescription = '',
+  defaultType = 'routine',
+  onSubmit,
+  onCancel,
+}: MaintenanceFormProps) {
   const [formData, setFormData] = useState<MaintenanceLogFormData>({
     bike_id: bikeId,
+    component_id: defaultComponentId,
     service_date: new Date().toISOString().slice(0, 10),
     service_km: Math.round(currentKm),
-    type: 'routine',
-    description: '',
+    type: defaultType,
+    description: defaultDescription,
     cost: null,
     performed_by: 'self',
     shop_name: null,
@@ -103,6 +119,25 @@ export function MaintenanceForm({ bikeId, currentKm, onSubmit, onCancel }: Maint
               ))}
             </select>
           </div>
+
+          {components.length > 0 && (
+            <div className="space-y-1.5">
+              <Label htmlFor="component_id">Component</Label>
+              <select
+                id="component_id"
+                value={formData.component_id ?? ''}
+                onChange={(e) => setFormData({ ...formData, component_id: e.target.value || null })}
+                className={selectClass}
+              >
+                <option value="">Whole bike</option>
+                {components.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="description">Description *</Label>

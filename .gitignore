@@ -55,3 +55,6 @@ coverage/
 
 # Husky internals
 .husky/_/
+
+# Superpowers execution workspace (scratch: ledger, briefs, review packages)
+.superpowers/

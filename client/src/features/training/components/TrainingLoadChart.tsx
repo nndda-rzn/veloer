@@ -9,7 +9,10 @@ import {
   Legend,
   Bar,
 } from 'recharts';
+import { Activity as ActivityIcon } from 'lucide-react';
 import type { TrainingLoadDataPoint } from '../types/training';
+import { EmptyState } from '@/shared/components/ui';
+import { useChartColors } from '@/shared/lib/use-chart-colors';
 
 interface TrainingLoadChartProps {
   data: TrainingLoadDataPoint[];
@@ -17,41 +20,45 @@ interface TrainingLoadChartProps {
 }
 
 export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartProps) {
+  const c = useChartColors();
+
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-gray-200 bg-white">
-        <p className="text-sm text-gray-400">No training data available</p>
-      </div>
+      <EmptyState
+        icon={ActivityIcon}
+        title="No training load yet"
+        description="Sync sessions with power or heart rate to build the curve."
+      />
     );
   }
 
   const chart = (
     <ResponsiveContainer width="100%" height={embedded ? 220 : 240}>
       <ComposedChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-        <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" vertical={false} />
+        <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 10, fill: '#94a3b8' }}
+          tick={{ fontSize: 10, fill: c.axis }}
           tickFormatter={formatChartDate}
           tickLine={false}
           axisLine={false}
         />
-        <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
+        <YAxis tick={{ fontSize: 10, fill: c.axis }} tickLine={false} axisLine={false} />
         <Tooltip
           labelFormatter={(date) => formatLongDate(String(date))}
           contentStyle={{
             borderRadius: 8,
-            border: '1px solid #e2e8f0',
+            border: `1px solid ${c.grid}`,
             fontSize: 12,
           }}
         />
         <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
-        <Bar dataKey="tss" name="Daily TSS" fill="#cbd5e1" radius={[2, 2, 0, 0]} />
+        <Bar dataKey="tss" name="Daily TSS" fill={c.bar} radius={[2, 2, 0, 0]} />
         <Line
           type="monotone"
           dataKey="ctl"
           name="CTL (Fitness)"
-          stroke="#16a34a"
+          stroke={c.ctl}
           dot={false}
           strokeWidth={2}
         />
@@ -59,7 +66,7 @@ export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartP
           type="monotone"
           dataKey="atl"
           name="ATL (Fatigue)"
-          stroke="#f97316"
+          stroke={c.atl}
           dot={false}
           strokeWidth={2}
         />
@@ -70,8 +77,8 @@ export function TrainingLoadChart({ data, embedded = false }: TrainingLoadChartP
   if (embedded) return chart;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">Training Load (8 weeks)</h3>
+    <div className="rounded-xl border border-border bg-card p-4">
+      <h3 className="mb-3 text-base font-semibold text-foreground">Training Load (8 weeks)</h3>
       {chart}
     </div>
   );

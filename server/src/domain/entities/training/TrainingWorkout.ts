@@ -1,3 +1,5 @@
+import type { Discipline } from '../activity/discipline.js';
+
 export type WorkoutType =
   | 'recovery'
   | 'endurance'
@@ -8,15 +10,29 @@ export type WorkoutType =
   | 'anaerobic'
   | 'sprint'
   | 'race'
-  | 'interval';
+  | 'interval'
+  | 'lower'
+  | 'upper'
+  | 'full_body'
+  | 'core'
+  | 'mobility';
 
 export type WorkoutStatus = 'planned' | 'completed' | 'skipped' | 'missed';
+
+/** One entry in a strength workout's optional exercise list. */
+export interface WorkoutExercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight_kg: number | null;
+}
 
 export interface TrainingWorkout {
   id: string;
   plan_id: string;
   user_id: string;
   scheduled_date: string; // ISO date
+  discipline: Discipline;
   workout_type: WorkoutType;
   title: string;
   description: string | null;
@@ -33,6 +49,8 @@ export interface TrainingWorkout {
   interval_power_pct_ftp: number | null;
   rest_duration_seconds: number | null;
   rest_power_pct_ftp: number | null;
+  // Optional strength exercise list (null for cycling)
+  exercises: WorkoutExercise[] | null;
   // Completion tracking
   status: WorkoutStatus;
   actual_activity_id: string | null;
@@ -56,7 +74,12 @@ export type TrainingWorkoutCreateData = Omit<
   | 'actual_duration_minutes'
   | 'completed_at'
   | 'rescheduled_from'
+  | 'discipline'
+  | 'exercises'
 > & {
   status?: WorkoutStatus;
   rescheduled_from?: string | null;
+  /** Defaults to 'cycling' at insert when omitted. */
+  discipline?: Discipline;
+  exercises?: WorkoutExercise[] | null;
 };

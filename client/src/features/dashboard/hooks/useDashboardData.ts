@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { activityApi } from '@/features/activity';
-import { bikeApi } from '@/features/inventory';
+import type { Discipline } from '@/features/activity';
+import { bikeApi, wearApi } from '@/features/inventory';
 import { maintenanceApi } from '@/features/maintenance';
 import { financeApi } from '@/features/finance';
 import { goalApi } from '@/features/goals';
@@ -8,7 +9,7 @@ import { eventApi } from '@/features/events';
 import { settingsApi } from '@/features/settings';
 import { trainingApi } from '@/features/training';
 import type { Activity, ActivityStats } from '@/features/activity';
-import type { Bike } from '@/features/inventory';
+import type { Bike, WearAlert } from '@/features/inventory';
 import type { MaintenanceSchedule } from '@/features/maintenance';
 import type { Budget, FinanceSummary } from '@/features/finance';
 import type { Goal } from '@/features/goals';
@@ -23,6 +24,7 @@ export const dashboardKeys = {
   recent: ['dashboard', 'recent'] as const,
   bikes: ['dashboard', 'bikes'] as const,
   due: ['dashboard', 'due'] as const,
+  wearAlerts: ['dashboard', 'wear-alerts'] as const,
   finance: ['dashboard', 'finance'] as const,
   budgets: ['dashboard', 'budgets'] as const,
   goals: ['dashboard', 'goals'] as const,
@@ -38,16 +40,19 @@ const RECENT_LIMIT = 5;
 export interface UseDashboardData {
   stats: { current: ActivityStats | null; previous: ActivityStats | null };
   statsLoading: boolean;
-  recentActivities: Pick<Activity, 'id' | 'name' | 'start_date' | 'distance' | 'type'>[];
+  recentActivities: Pick<
+    Activity,
+    'id' | 'name' | 'start_date' | 'distance' | 'moving_time' | 'type' | 'discipline'
+  >[];
   recentLoading: boolean;
   bikes: Bike[];
   bikesLoading: boolean;
   dueSchedules: MaintenanceSchedule[];
   dueLoading: boolean;
+  wearAlerts: WearAlert[];
   financeSummary: FinanceSummary | null;
   financeLoading: boolean;
   budgets: Budget[];
-  budgetsLoading: boolean;
   activeGoals: Goal[];
   goalsLoading: boolean;
   upcomingEvents: Event[];
@@ -58,7 +63,6 @@ export interface UseDashboardData {
   loadHistoryLoading: boolean;
   fitness: FitnessAnalysis | null;
   fitnessLoading: boolean;
-  initialLoading: boolean;
   error: string | null;
 }
 
@@ -87,6 +91,10 @@ export function useDashboardData(): UseDashboardData {
   const dueQuery = useQuery({
     queryKey: dashboardKeys.due,
     queryFn: () => maintenanceApi.getDueSchedules(),
+  });
+  const wearAlertsQuery = useQuery({
+    queryKey: dashboardKeys.wearAlerts,
+    queryFn: () => wearApi.list(),
   });
   const financeQuery = useQuery({
     queryKey: dashboardKeys.finance,
@@ -125,6 +133,7 @@ export function useDashboardData(): UseDashboardData {
     recentQuery.error,
     bikesQuery.error,
     dueQuery.error,
+    wearAlertsQuery.error,
     financeQuery.error,
     goalsQuery.error,
     eventsQuery.error,
@@ -143,10 +152,10 @@ export function useDashboardData(): UseDashboardData {
     bikesLoading: bikesQuery.isLoading,
     dueSchedules: dueQuery.data ?? [],
     dueLoading: dueQuery.isLoading,
+    wearAlerts: wearAlertsQuery.data ?? [],
     financeSummary: financeQuery.data ?? null,
     financeLoading: financeQuery.isLoading,
     budgets: budgetsQuery.data ?? [],
-    budgetsLoading: budgetsQuery.isLoading,
     activeGoals: goalsQuery.data ?? [],
     goalsLoading: goalsQuery.isLoading,
     upcomingEvents: eventsQuery.data ?? [],
@@ -157,11 +166,6 @@ export function useDashboardData(): UseDashboardData {
     loadHistoryLoading: loadHistoryQuery.isLoading,
     fitness: fitnessQuery.data ?? null,
     fitnessLoading: fitnessQuery.isLoading,
-    initialLoading:
-      statsQuery.isLoading &&
-      recentQuery.isLoading &&
-      bikesQuery.isLoading &&
-      profileQuery.isLoading,
     error:
       queryErrors.length > 0
         ? 'Some dashboard data could not be loaded. Refresh to try again.'
@@ -173,12 +177,22 @@ interface RecentActivitySlim {
   id: string;
   name: string;
   start_date: string;
-  distance: number;
+  distance: number | null;
+  moving_time: number;
   type: string;
+  discipline: Discipline;
 }
 
 function toRecent(a: Activity): RecentActivitySlim {
-  return { id: a.id, name: a.name, start_date: a.start_date, distance: a.distance, type: a.type };
+  return {
+    id: a.id,
+    name: a.name,
+    start_date: a.start_date,
+    distance: a.distance,
+    moving_time: a.moving_time,
+    type: a.type,
+    discipline: a.discipline,
+  };
 }
 
 export type { RecentActivitySlim };

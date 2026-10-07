@@ -1,6 +1,8 @@
 import { inject, injectable } from 'tsyringe';
 import type { MaintenanceScheduleRepository } from '../../../domain/repositories/maintenance/MaintenanceLogRepository.js';
 import type { MaintenanceSchedule } from '../../../domain/entities/maintenance/MaintenanceLog.js';
+import type { BikeRepository } from '../../../domain/repositories/inventory/BikeRepository.js';
+import { BikeNotFoundError } from './MaintenanceLogUseCases.js';
 
 export interface AddScheduleInput {
   bike_id: string;
@@ -19,9 +21,13 @@ export interface AddScheduleInput {
 export class AddSchedule {
   constructor(
     @inject('MaintenanceScheduleRepository') private scheduleRepo: MaintenanceScheduleRepository,
+    @inject('BikeRepository') private bikeRepo: BikeRepository,
   ) {}
 
-  async execute(input: AddScheduleInput): Promise<MaintenanceSchedule> {
+  async execute(userId: string, input: AddScheduleInput): Promise<MaintenanceSchedule> {
+    const bike = await this.bikeRepo.findById(input.bike_id);
+    if (!bike || bike.user_id !== userId) throw new BikeNotFoundError();
+
     return this.scheduleRepo.create({
       bike_id: input.bike_id,
       component_id: input.component_id ?? null,
@@ -41,9 +47,12 @@ export class AddSchedule {
 export class GetSchedules {
   constructor(
     @inject('MaintenanceScheduleRepository') private scheduleRepo: MaintenanceScheduleRepository,
+    @inject('BikeRepository') private bikeRepo: BikeRepository,
   ) {}
 
-  async executeByBikeId(bikeId: string): Promise<MaintenanceSchedule[]> {
+  async executeByBikeId(bikeId: string, userId: string): Promise<MaintenanceSchedule[]> {
+    const bike = await this.bikeRepo.findById(bikeId);
+    if (!bike || bike.user_id !== userId) throw new BikeNotFoundError();
     return this.scheduleRepo.findByBikeId(bikeId);
   }
 }
@@ -63,12 +72,18 @@ export class CheckDueSchedules {
 export class UpdateSchedule {
   constructor(
     @inject('MaintenanceScheduleRepository') private scheduleRepo: MaintenanceScheduleRepository,
+    @inject('BikeRepository') private bikeRepo: BikeRepository,
   ) {}
 
   async execute(
     id: string,
+    userId: string,
     data: Partial<MaintenanceSchedule>,
   ): Promise<MaintenanceSchedule | null> {
+    const schedule = await this.scheduleRepo.findById(id);
+    if (!schedule) return null;
+    const bike = await this.bikeRepo.findById(schedule.bike_id);
+    if (!bike || bike.user_id !== userId) return null;
     return this.scheduleRepo.update(id, data);
   }
 }
@@ -77,11 +92,15 @@ export class UpdateSchedule {
 export class DeleteSchedule {
   constructor(
     @inject('MaintenanceScheduleRepository') private scheduleRepo: MaintenanceScheduleRepository,
+    @inject('BikeRepository') private bikeRepo: BikeRepository,
   ) {}
 
-  async execute(id: string): Promise<boolean> {
+  async execute(id: string, userId: string): Promise<boolean> {
     const schedule = await this.scheduleRepo.findById(id);
     if (!schedule) return false;
+    const bike = await this.bikeRepo.findById(schedule.bike_id);
+    if (!bike || bike.user_id !== userId) return false;
+
     await this.scheduleRepo.delete(id);
     return true;
   }

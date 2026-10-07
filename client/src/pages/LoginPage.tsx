@@ -1,10 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/features/auth';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
+/** Friendly copy for the error codes the server sends back on the login redirect. */
+const ERROR_MESSAGES: Record<string, string> = {
+  no_code: 'Sign-in was cancelled before it finished. Try again when you are ready.',
+  auth_failed: 'We could not complete sign-in with Strava. Please try again.',
+};
+
+/**
+ * Sign-in screen.
+ *
+ * Veloer has a single auth path (Strava OAuth), so this is deliberately one
+ * focused column rather than a form with fields: there is exactly one action
+ * to take. The right-hand brand panel was removed because a login screen for
+ * an app is not a place for marketing copy.
+ */
 export function LoginPage() {
   const { login } = useAuth();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+
+  const errorCode = searchParams.get('error');
+  const errorMessage = errorCode
+    ? (ERROR_MESSAGES[errorCode] ?? 'Something went wrong signing in. Please try again.')
+    : null;
+
+  // login() navigates away to Strava. If the user comes back via the browser's
+  // Back button (bfcache restore), this component re-appears with loading still
+  // true, leaving the button stuck on "Connecting…". Reset it on pageshow.
+  useEffect(() => {
+    const reset = () => setLoading(false);
+    window.addEventListener('pageshow', reset);
+    return () => window.removeEventListener('pageshow', reset);
+  }, []);
 
   const handleLogin = () => {
     setLoading(true);
@@ -12,60 +44,56 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-dvh">
-      {/* Left — form */}
-      <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 lg:px-16">
-        <div className="mx-auto w-full max-w-sm">
-          {/* Logo */}
-          <div className="mb-10">
-            <img src="/logo.png" alt="Veloer" className="h-10 w-auto" />
-          </div>
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-12">
+      <main className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-0">
+          <img src="/logo.webp" alt="Veloer" width={160} height={40} className="h-9 w-auto" />
+        </div>
 
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            Track your rides, gear, and training in one place.
-          </p>
+        <h1 className="mt-10 text-2xl font-semibold leading-tight tracking-tight text-foreground animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-75">
+          Sign in to Veloer
+        </h1>
 
-          <div className="mt-8 space-y-4">
-            <Button
-              onClick={handleLogin}
-              disabled={loading}
-              loading={loading}
-              className="w-full gap-3 bg-strava px-4 py-3 text-sm font-semibold text-white hover:bg-strava-dark focus-visible:ring-strava"
-            >
+        <p className="mt-2 text-sm text-muted-foreground animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-150">
+          Sync your rides from Strava, then track your gear and training in one place.
+        </p>
+
+        {errorMessage && (
+          <Alert
+            variant="error"
+            className="mt-6 animate-in fade-in-0 slide-in-from-top-1 duration-200"
+          >
+            <AlertCircle aria-hidden="true" />
+            <span>{errorMessage}</span>
+          </Alert>
+        )}
+
+        <div className="mt-8 animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-200">
+          <Button
+            onClick={handleLogin}
+            disabled={loading}
+            loading={loading}
+            className="h-11 w-full gap-3 bg-strava-dark px-4 text-sm font-semibold text-white transition-transform hover:bg-strava active:scale-[0.99] focus-visible:ring-strava"
+          >
+            {!loading && (
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
               </svg>
-              {loading ? 'Connecting to Strava...' : 'Continue with Strava'}
-            </Button>
-
-            <p className="text-center text-xs text-gray-400">
-              Sign in with your Strava account to sync your cycling activities
-            </p>
-          </div>
-
-          <div className="mt-12 border-t border-gray-100 pt-6">
-            <p className="text-xs text-gray-400">Track. Maintain. Ride.</p>
-          </div>
+            )}
+            {loading ? 'Connecting to Strava…' : 'Continue with Strava'}
+          </Button>
         </div>
-      </div>
 
-      {/* Right — hero image (hidden on mobile) */}
-      <div className="relative hidden overflow-hidden bg-gradient-to-br from-gray-900 via-primary-900 to-primary-800 lg:flex lg:w-1/2 lg:items-center lg:justify-center">
-        <img
-          src="/road-bike.png"
-          alt="Road bike"
-          width={560}
-          height={360}
-          className="max-h-[360px] w-auto object-contain opacity-90 drop-shadow-2xl"
-        />
-        <div className="absolute bottom-10 left-10 right-10">
-          <p className="text-xl font-bold text-white">Your personal cycling companion</p>
-          <p className="mt-1 text-sm text-primary-200">
-            From training plans to gear maintenance — all in one place.
-          </p>
+        <p className="mt-6 text-xs leading-relaxed text-muted-foreground animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-300">
+          Veloer only reads your ride data. No posting, no messages, and no changes to your Strava
+          profile.
+        </p>
+
+        <div className="mt-10 border-t border-border pt-6 animate-in fade-in-0 slide-in-from-bottom-1 duration-200 delay-500">
+          <p className="text-xs tracking-wide text-muted-foreground">Track · Maintain · Ride</p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

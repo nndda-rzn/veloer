@@ -22,7 +22,7 @@ const typeLabels: Record<Event['type'], string> = {
 
 export function UpcomingEvents({ events, loading }: UpcomingEventsProps) {
   if (loading) {
-    return <div className="h-24 animate-pulse rounded-xl bg-gray-100" />;
+    return <div className="h-24 animate-pulse rounded-xl bg-secondary" />;
   }
 
   if (events.length === 0) {
@@ -39,7 +39,7 @@ export function UpcomingEvents({ events, loading }: UpcomingEventsProps) {
     <Card>
       <CardContent>
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Upcoming Events</h3>
+          <h3 className="text-base font-semibold text-foreground">Upcoming Events</h3>
           <Link
             to="/events"
             className="text-xs font-medium text-primary hover:text-primary-dark hover:underline"
@@ -51,12 +51,12 @@ export function UpcomingEvents({ events, loading }: UpcomingEventsProps) {
           {events.slice(0, 3).map((event) => (
             <div key={event.id} className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-gray-900">{event.name}</p>
-                <p className="text-xs text-gray-400">{formatDate(event.date)}</p>
+                <p className="truncate text-sm font-medium text-foreground">{event.name}</p>
+                <p className="text-xs text-muted-foreground">{formatDate(event.date)}</p>
               </div>
               <div className="flex flex-shrink-0 items-center gap-2">
                 {event.distance != null && (
-                  <span className="text-xs text-gray-500">{event.distance} km</span>
+                  <span className="text-xs text-muted-foreground">{event.distance} km</span>
                 )}
                 <Badge variant="info">{typeLabels[event.type]}</Badge>
               </div>

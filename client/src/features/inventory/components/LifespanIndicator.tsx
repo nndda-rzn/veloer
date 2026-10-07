@@ -1,57 +1,62 @@
-import { lifespanPercentage, lifespanStatus } from '@/shared/lib/utils';
+import { wearPercent, remainingKm, lifespanBar, lifespanTextColor } from '../lib/lifespan';
 
 interface LifespanIndicatorProps {
   currentKm: number;
+  installKm: number;
   expectedLifespanKm: number | null;
 }
 
-const statusColors = {
-  good: 'bg-green-500',
-  warning: 'bg-yellow-500',
-  danger: 'bg-orange-500',
-  overdue: 'bg-red-500',
-};
+export function LifespanIndicator({
+  currentKm,
+  installKm,
+  expectedLifespanKm,
+}: LifespanIndicatorProps) {
+  const percentage = wearPercent(currentKm, installKm, expectedLifespanKm);
 
-const statusTextColors = {
-  good: 'text-green-700',
-  warning: 'text-yellow-700',
-  danger: 'text-orange-700',
-  overdue: 'text-red-700',
-};
-
-export function LifespanIndicator({ currentKm, expectedLifespanKm }: LifespanIndicatorProps) {
-  if (!expectedLifespanKm || expectedLifespanKm === 0) {
+  if (percentage === null) {
     return (
       <div>
-        <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Lifespan</p>
-        <p className="text-sm text-gray-500">Not set</p>
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Lifespan
+        </p>
+        <p className="text-sm text-muted-foreground">Not set</p>
       </div>
     );
   }
 
-  const percentage = lifespanPercentage(currentKm, expectedLifespanKm);
-  const status = lifespanStatus(percentage);
-  const remainingKm = Math.max(0, expectedLifespanKm - currentKm);
+  const remaining = remainingKm(currentKm, installKm, expectedLifespanKm) ?? 0;
+  const barColor = lifespanBar[statusFromPercent(percentage)];
 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium uppercase tracking-wider text-gray-400">Lifespan</p>
-        <p className={`text-xs font-medium ${statusTextColors[status]}`}>
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Lifespan
+        </p>
+        <p
+          className={`text-xs font-medium tabular-nums ${lifespanTextColor(currentKm, installKm, expectedLifespanKm)}`}
+        >
           {percentage.toFixed(0)}%
         </p>
       </div>
-      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div
-          className={`h-full rounded-full transition-all ${statusColors[status]}`}
-          style={{ width: `${Math.min(100, percentage)}%` }}
+          className={`h-full rounded-full transition-[width] ${barColor}`}
+          style={{ width: `${percentage}%` }}
         />
       </div>
-      <p className="mt-1 text-xs text-gray-500">
-        {remainingKm > 0
-          ? `${remainingKm.toFixed(0)} km remaining`
-          : `${Math.abs(remainingKm).toFixed(0)} km overdue`}
+      <p className="mt-1 text-xs tabular-nums text-muted-foreground">
+        {remaining > 0
+          ? `${remaining.toFixed(0)} km remaining`
+          : `${Math.abs(remaining).toFixed(0)} km overdue`}
       </p>
     </div>
   );
+}
+
+function statusFromPercent(pct: number): keyof typeof lifespanBar {
+  if (pct >= 100) return 'overdue';
+  if (pct >= 90) return 'danger';
+  if (pct >= 70) return 'warning';
+  return 'good';
 }

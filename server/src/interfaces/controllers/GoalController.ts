@@ -6,6 +6,8 @@ import {
   DeleteGoal,
   GetGoals,
   GetGoalStatus,
+  RecomputeGoalProgress,
+  AdjustGoalProgress,
 } from '../../application/use-cases/goals/GoalUseCases.js';
 
 export class GoalController {
@@ -54,12 +56,78 @@ export class GoalController {
       return;
     }
     const { id } = req.params;
-    const updateGoal = container.resolve(UpdateGoal);
-    const goal = await updateGoal.execute(String(id), req.body);
-    if (!goal) {
+
+    // Verify ownership before mutating.
+    const getGoalStatus = container.resolve(GetGoalStatus);
+    const existing = await getGoalStatus.execute(String(id));
+    if (!existing || existing.user_id !== req.user.userId) {
       res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
       return;
     }
+
+    // Separate an explicit status change so it can be applied after recompute.
+    const { status, ...fields } = req.body ?? {};
+    const hasFields = Object.keys(fields).length > 0;
+
+    const updateGoal = container.resolve(UpdateGoal);
+    let updated = existing;
+
+    if (hasFields) {
+      const goal = await updateGoal.execute(String(id), fields);
+      if (!goal) {
+        res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
+        return;
+      }
+      // Changing target or date range can change derived progress.
+      const recompute = container.resolve(RecomputeGoalProgress);
+      updated = (await recompute.execute(String(id))) ?? goal;
+    }
+
+    // A user-set status always wins over auto-completion.
+    if (status) {
+      const applied = await updateGoal.execute(String(id), { status });
+      if (applied) updated = applied;
+    }
+
+    res.json(updated);
+  }
+
+  async recalculate(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const getGoalStatus = container.resolve(GetGoalStatus);
+    const existing = await getGoalStatus.execute(String(id));
+    if (!existing || existing.user_id !== req.user.userId) {
+      res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
+      return;
+    }
+    const recompute = container.resolve(RecomputeGoalProgress);
+    const goal = await recompute.execute(String(id));
+    res.json(goal);
+  }
+
+  async adjustProgress(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const delta = Number(req.body?.delta);
+    if (!Number.isFinite(delta) || delta === 0) {
+      res.status(400).json({ error: 'Bad Request', message: 'delta must be a non-zero number' });
+      return;
+    }
+    const getGoalStatus = container.resolve(GetGoalStatus);
+    const existing = await getGoalStatus.execute(String(id));
+    if (!existing || existing.user_id !== req.user.userId) {
+      res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
+      return;
+    }
+    const adjust = container.resolve(AdjustGoalProgress);
+    const goal = await adjust.execute(String(id), delta);
     res.json(goal);
   }
 
@@ -70,7 +138,7 @@ export class GoalController {
     }
     const { id } = req.params;
     const deleteGoal = container.resolve(DeleteGoal);
-    const deleted = await deleteGoal.execute(String(id));
+    const deleted = await deleteGoal.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Goal not found' });
       return;

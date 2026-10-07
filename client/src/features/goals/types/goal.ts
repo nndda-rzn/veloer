@@ -4,6 +4,8 @@ export interface Goal {
   type: 'distance' | 'time' | 'elevation' | 'activities_count';
   target_value: number;
   current_value: number;
+  /** User-entered adjustment added on top of activity-derived progress. */
+  manual_adjustment: number;
   unit: string;
   period: 'weekly' | 'monthly' | 'yearly' | 'custom';
   start_date: string;
@@ -25,3 +27,6 @@ export interface GoalFormData {
   title?: string | null;
   description?: string | null;
 }
+
+/** Partial update payload, including status changes. */
+export type GoalUpdateData = Partial<GoalFormData> & { status?: Goal['status'] };

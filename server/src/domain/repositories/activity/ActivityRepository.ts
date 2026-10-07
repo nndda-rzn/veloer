@@ -1,4 +1,5 @@
 import type { Activity } from '../../entities/activity/Activity.js';
+import type { Discipline } from '../../entities/activity/discipline.js';
 
 export interface ActivityRepository {
   findByUserId(
@@ -9,10 +10,13 @@ export interface ActivityRepository {
       bikeId?: string;
       startDate?: string;
       endDate?: string;
+      discipline?: Discipline;
     },
   ): Promise<Activity[]>;
   findById(id: string): Promise<Activity | null>;
   findByStravaId(stravaId: number): Promise<Activity | null>;
+  findExistingStravaIds(stravaIds: number[]): Promise<Set<number>>;
+  findLatestStravaActivityDate(userId: string): Promise<string | null>;
   create(data: Omit<Activity, 'id' | 'created_at' | 'updated_at'>): Promise<Activity>;
   createMany(data: Omit<Activity, 'id' | 'created_at' | 'updated_at'>[]): Promise<Activity[]>;
   updateBikeId(activityId: string, bikeId: string | null): Promise<void>;

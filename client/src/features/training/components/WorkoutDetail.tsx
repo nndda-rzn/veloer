@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import type { TrainingWorkout, WorkoutStatus } from '../types/training';
-import { WORKOUT_TYPE_LABELS, WORKOUT_TYPE_COLORS } from '../types/training';
 import { formatDate, formatEnumLabel } from '@/shared/lib/utils';
+import { WORKOUT_TYPE_COLORS } from '../types/training';
+import { isStrengthType } from '../lib/discipline';
+import { formatExercise } from '../lib/exercises';
+import { WorkoutTypeChip } from './WorkoutTypeChip';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
@@ -27,8 +30,8 @@ function MetricRow({ label, value }: { label: string; value: string | number | n
   if (value == null) return null;
   return (
     <div className="flex justify-between py-1 text-sm">
-      <span className="text-gray-500">{label}</span>
-      <span className="font-medium text-gray-900">{value}</span>
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium text-foreground">{value}</span>
     </div>
   );
 }
@@ -43,6 +46,7 @@ export function WorkoutDetail({
   onLinkActivity,
 }: WorkoutDetailProps) {
   const color = WORKOUT_TYPE_COLORS[workout.workout_type];
+  const isStrength = isStrengthType(workout.workout_type);
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -53,61 +57,84 @@ export function WorkoutDetail({
         <div className="p-4" style={{ borderBottom: `3px solid ${color}` }}>
           <div className="flex items-start justify-between">
             <div>
-              <span
-                className="inline-block rounded-full px-2 py-0.5 text-xs font-medium text-white"
-                style={{ backgroundColor: color }}
-              >
-                {WORKOUT_TYPE_LABELS[workout.workout_type]}
-              </span>
-              <h2 className="mt-1 text-lg font-bold text-gray-900">{workout.title}</h2>
-              <p className="text-sm text-gray-500">{formatDate(workout.scheduled_date)}</p>
+              <WorkoutTypeChip type={workout.workout_type} />
+              <h2 className="mt-1 text-lg font-semibold text-foreground">{workout.title}</h2>
+              <p className="text-sm text-muted-foreground">{formatDate(workout.scheduled_date)}</p>
             </div>
           </div>
           <Badge variant={statusVariants[workout.status]}>{formatEnumLabel(workout.status)}</Badge>
         </div>
 
         <div className="space-y-4 p-4">
-          {workout.description && <p className="text-sm text-gray-600">{workout.description}</p>}
+          {workout.description && (
+            <p className="text-sm text-muted-foreground">{workout.description}</p>
+          )}
 
-          {/* Target metrics */}
+          {/* Target metrics. Strength has no power/cadence/TSS targets, so only
+              duration applies. */}
           <div>
-            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Targets
             </h3>
-            <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-gray-50 px-3">
+            <div className="divide-y divide-border rounded-lg border border-border bg-secondary px-3">
               <MetricRow
                 label="Duration"
                 value={
                   workout.target_duration_minutes ? `${workout.target_duration_minutes} min` : null
                 }
               />
-              <MetricRow label="TSS" value={workout.target_tss} />
-              <MetricRow
-                label="Power"
-                value={workout.target_avg_power ? `${workout.target_avg_power} W` : null}
-              />
-              <MetricRow
-                label="HR"
-                value={workout.target_avg_hr ? `${workout.target_avg_hr} bpm` : null}
-              />
-              <MetricRow
-                label="Cadence"
-                value={
-                  workout.target_cadence_min && workout.target_cadence_max
-                    ? `${workout.target_cadence_min}–${workout.target_cadence_max} rpm`
-                    : null
-                }
-              />
+              {!isStrength && <MetricRow label="TSS" value={workout.target_tss} />}
+              {!isStrength && (
+                <MetricRow
+                  label="Power"
+                  value={workout.target_avg_power ? `${workout.target_avg_power} W` : null}
+                />
+              )}
+              {!isStrength && (
+                <MetricRow
+                  label="HR"
+                  value={workout.target_avg_hr ? `${workout.target_avg_hr} bpm` : null}
+                />
+              )}
+              {!isStrength && (
+                <MetricRow
+                  label="Cadence"
+                  value={
+                    workout.target_cadence_min && workout.target_cadence_max
+                      ? `${workout.target_cadence_min}–${workout.target_cadence_max} rpm`
+                      : null
+                  }
+                />
+              )}
             </div>
           </div>
 
-          {/* Interval structure */}
-          {workout.intervals_count && workout.intervals_count > 0 && (
+          {/* Strength exercise list (optional) */}
+          {isStrength && workout.exercises && workout.exercises.length > 0 && (
             <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Exercises
+              </h3>
+              <div className="divide-y divide-border rounded-lg border border-border bg-secondary px-3">
+                {workout.exercises.map((exercise, index) => (
+                  <div
+                    key={`${exercise.name}-${index}`}
+                    className="py-1.5 text-sm tabular-nums text-foreground"
+                  >
+                    {formatExercise(exercise)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Interval structure (cycling only) */}
+          {!isStrength && workout.intervals_count && workout.intervals_count > 0 && (
+            <div>
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Intervals
               </h3>
-              <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-gray-50 px-3">
+              <div className="divide-y divide-border rounded-lg border border-border bg-secondary px-3">
                 <MetricRow label="Reps" value={workout.intervals_count} />
                 <MetricRow
                   label="On"
@@ -132,10 +159,10 @@ export function WorkoutDetail({
           {/* Actual results */}
           {workout.status === 'completed' && (
             <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Actual
               </h3>
-              <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-gray-50 px-3">
+              <div className="divide-y divide-border rounded-lg border border-border bg-secondary px-3">
                 <MetricRow
                   label="Duration"
                   value={
@@ -147,7 +174,7 @@ export function WorkoutDetail({
                 <MetricRow label="TSS" value={workout.actual_tss ?? null} />
                 {workout.actual_activity_id && (
                   <div className="flex justify-between py-1 text-sm">
-                    <span className="text-gray-500">Activity</span>
+                    <span className="text-muted-foreground">Activity</span>
                     <Link
                       to={`/activities/${workout.actual_activity_id}`}
                       className="font-medium text-primary hover:underline"
@@ -163,10 +190,10 @@ export function WorkoutDetail({
 
           {workout.notes && (
             <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Notes
               </h3>
-              <p className="text-sm text-gray-600">{workout.notes}</p>
+              <p className="text-sm text-muted-foreground">{workout.notes}</p>
             </div>
           )}
 
@@ -176,7 +203,7 @@ export function WorkoutDetail({
               <Button
                 variant="default"
                 onClick={() => onMarkComplete(workout.id)}
-                className="bg-green-600 hover:bg-green-700 focus-visible:ring-green-500"
+                className="w-full"
               >
                 Mark Complete
               </Button>
@@ -190,13 +217,13 @@ export function WorkoutDetail({
             Link Activity
           </Button>
 
-          <div className="flex gap-2 border-t border-gray-100 pt-2">
+          <div className="flex gap-2 border-t border-border pt-2">
             <Button variant="secondary" className="flex-1" onClick={() => onEdit(workout)}>
               Edit
             </Button>
             <Button
               variant="danger"
-              className="flex-1 bg-transparent text-red-600 hover:bg-red-50 focus-visible:ring-red-400"
+              className="flex-1 bg-transparent text-danger hover:bg-red-50 focus-visible:ring-red-400"
               onClick={() => onDelete(workout)}
             >
               Delete

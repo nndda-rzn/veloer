@@ -12,6 +12,7 @@ import {
 import { activityApi } from '../api/activity.api';
 import type { SyncResult } from '../types/activity';
 import { useToast } from '@/shared/components/feedback/Toaster';
+import { useAuthContext } from '@/features/auth/context/AuthContext';
 import {
   SYNC_STORAGE_KEYS,
   clearSyncStorage,
@@ -38,6 +39,13 @@ const initialStatus: SyncStatus = {
   syncRevision: 0,
 };
 
+/**
+ * Refresh threshold for the background auto-sync. A manual sync always works;
+ * this only decides whether opening the app should pull Strava in the
+ * background when the last sync is stale.
+ */
+const AUTO_SYNC_INTERVAL_MS = 6 * 60 * 60 * 1000;
+
 const SyncContext = createContext<UseSyncReturn | null>(null);
 
 function readInitialStatus(): SyncStatus {
@@ -53,6 +61,7 @@ function readInitialStatus(): SyncStatus {
 export function SyncProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
+  const { isAuthenticated } = useAuthContext();
   const [status, setStatus] = useState<SyncStatus>(() => readInitialStatus());
   const revisionRef = useRef(status.syncRevision);
   const inFlightRef = useRef<Promise<SyncResult> | null>(null);
@@ -98,6 +107,18 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     inFlightRef.current = promise;
     return promise;
   }, [mutation]);
+
+  // Background auto-sync: on mount, pull Strava in when the last sync is stale.
+  // The in-flight guard in `triggerSync` keeps this from racing a manual sync.
+  const autoSyncDoneRef = useRef(false);
+  useEffect(() => {
+    if (!isAuthenticated || autoSyncDoneRef.current) return;
+    autoSyncDoneRef.current = true;
+    const lastSyncAt = window.localStorage.getItem(SYNC_STORAGE_KEYS.lastSyncAt);
+    const lastMs = lastSyncAt ? new Date(lastSyncAt).getTime() : 0;
+    if (Date.now() - lastMs < AUTO_SYNC_INTERVAL_MS) return;
+    void triggerSync();
+  }, [isAuthenticated, triggerSync]);
 
   // Reset in-memory state when AuthContext clears the storage (same-tab via custom event).
   useEffect(() => {
