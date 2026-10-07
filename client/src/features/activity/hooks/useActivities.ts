@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { activityApi } from '../api/activity.api';
 import type { Activity } from '../types/activity';
 import {
@@ -13,6 +14,11 @@ import {
  */
 export const ACTIVITY_FETCH_LIMIT = 2000;
 
+export const activityKeys = {
+  all: ['activities'] as const,
+  detail: (id: string) => ['activities', id] as const,
+};
+
 interface UseActivitiesReturn {
   /** Every activity on record, newest first. */
   activities: Activity[];
@@ -24,37 +30,22 @@ interface UseActivitiesReturn {
 }
 
 export function useActivities(): UseActivitiesReturn {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [refetchFlag, setRefetchFlag] = useState(0);
+  const query = useQuery({
+    queryKey: activityKeys.all,
+    queryFn: () => activityApi.list({ limit: ACTIVITY_FETCH_LIMIT }),
+  });
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setError(null);
-    activityApi
-      .list({ limit: ACTIVITY_FETCH_LIMIT })
-      .then((list) => {
-        if (active) setActivities(list);
-      })
-      .catch((err) => {
-        if (active) setError(err instanceof Error ? err.message : 'Failed to load activities');
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [refetchFlag]);
+  // Stable identity so consumers can depend on it without re-render churn.
+  const refetch = useCallback(() => {
+    void query.refetch();
+  }, [query]);
 
-  const refetch = useCallback(() => setRefetchFlag((f) => f + 1), []);
+  const activities = query.data ?? [];
 
   return {
     activities,
-    loading,
-    error,
+    loading: query.isPending,
+    error: query.error instanceof Error ? query.error.message : null,
     truncated: activities.length >= ACTIVITY_FETCH_LIMIT,
     refetch,
   };
