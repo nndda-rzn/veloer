@@ -1,6 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { goalApi } from '../api/goal.api';
 import type { Goal, GoalFormData, GoalUpdateData } from '../types/goal';
+
+export const goalKeys = {
+  all: ['goals'] as const,
+};
 
 interface UseGoalsReturn {
   goals: Goal[];
@@ -16,56 +21,75 @@ interface UseGoalsReturn {
 }
 
 export function useGoals(): UseGoalsReturn {
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [refetchFlag, setRefetchFlag] = useState(0);
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: goalKeys.all,
+    queryFn: () => goalApi.list(),
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    goalApi
-      .list()
-      .then(setGoals)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load goals'))
-      .finally(() => setLoading(false));
-  }, [refetchFlag]);
+  // Any mutation re-reads the canonical list; Query owns the error state, so a
+  // later success clears a prior failure instead of leaving it stuck on screen.
+  const invalidate = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: goalKeys.all }),
+    [queryClient],
+  );
 
-  const refetch = useCallback(() => setRefetchFlag((f) => f + 1), []);
+  const createGoal = useCallback(
+    async (data: GoalFormData) => {
+      await goalApi.create(data);
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const createGoal = useCallback(async (data: GoalFormData) => {
-    await goalApi.create(data);
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const updateGoal = useCallback(
+    async (id: string, data: GoalUpdateData) => {
+      await goalApi.update(id, data);
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const updateGoal = useCallback(async (id: string, data: GoalUpdateData) => {
-    await goalApi.update(id, data);
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const deleteGoal = useCallback(
+    async (id: string) => {
+      await goalApi.delete(id);
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const deleteGoal = useCallback(async (id: string) => {
-    await goalApi.delete(id);
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const adjustProgress = useCallback(
+    async (id: string, delta: number) => {
+      await goalApi.adjustProgress(id, delta);
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const adjustProgress = useCallback(async (id: string, delta: number) => {
-    await goalApi.adjustProgress(id, delta);
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const recalculate = useCallback(
+    async (id: string) => {
+      await goalApi.recalculate(id);
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const recalculate = useCallback(async (id: string) => {
-    await goalApi.recalculate(id);
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const setStatus = useCallback(
+    async (id: string, status: Goal['status']) => {
+      await goalApi.update(id, { status });
+      await invalidate();
+    },
+    [invalidate],
+  );
 
-  const setStatus = useCallback(async (id: string, status: Goal['status']) => {
-    await goalApi.update(id, { status });
-    setRefetchFlag((f) => f + 1);
-  }, []);
+  const refetch = useCallback(() => {
+    void query.refetch();
+  }, [query]);
 
   return {
-    goals,
-    loading,
-    error,
+    goals: query.data ?? [],
+    loading: query.isPending,
+    error: query.error instanceof Error ? query.error.message : null,
     refetch,
     createGoal,
     updateGoal,
