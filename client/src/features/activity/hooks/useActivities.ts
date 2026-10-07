@@ -12,7 +12,7 @@ import {
  * Upper bound for the "load everything" list query. High enough that a normal
  * rider never hits it, low enough to stay a sane payload.
  */
-export const ACTIVITY_FETCH_LIMIT = 2000;
+export const ACTIVITY_FETCH_LIMIT = 1000;
 
 export const activityKeys = {
   all: ['activities'] as const,
@@ -29,10 +29,20 @@ interface UseActivitiesReturn {
   refetch: () => void;
 }
 
-export function useActivities(): UseActivitiesReturn {
+/**
+ * Load activities, defaulting to the current calendar year. Pages that need a
+ * wider window can pass an explicit `range`; the client-side filter helpers
+ * still operate on whatever comes back.
+ */
+export function useActivities(range?: {
+  startDate?: string;
+  endDate?: string;
+}): UseActivitiesReturn {
+  const startDate = range?.startDate ?? `${new Date().getFullYear()}-01-01`;
+  const endDate = range?.endDate;
   const query = useQuery({
-    queryKey: activityKeys.all,
-    queryFn: () => activityApi.list({ limit: ACTIVITY_FETCH_LIMIT }),
+    queryKey: [...activityKeys.all, startDate, endDate ?? null],
+    queryFn: () => activityApi.list({ limit: ACTIVITY_FETCH_LIMIT, startDate, endDate }),
   });
 
   // Stable identity so consumers can depend on it without re-render churn.
