@@ -27,9 +27,10 @@ export interface BikeWithAlerts extends Bike {
 export class GetBikeById {
   constructor(@inject('BikeRepository') private bikeRepo: BikeRepository) {}
 
-  async execute(id: string, userId: string): Promise<Bike | null> {
+  async execute(id: string, userId: string): Promise<BikeWithAlerts | null> {
     const bike = await this.bikeRepo.findById(id);
     if (!bike || bike.user_id !== userId) return null;
-    return bike;
+    const alertCounts = await this.bikeRepo.findMaintenanceAlertCounts([bike.id]);
+    return { ...bike, maintenance_alert_count: alertCounts[bike.id] ?? 0 };
   }
 }
