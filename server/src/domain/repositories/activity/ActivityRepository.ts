@@ -15,6 +15,8 @@ export interface ActivityRepository {
   ): Promise<Activity[]>;
   findById(id: string): Promise<Activity | null>;
   findByStravaId(stravaId: number): Promise<Activity | null>;
+  findExistingStravaIds(stravaIds: number[]): Promise<Set<number>>;
+  findLatestStravaActivityDate(userId: string): Promise<string | null>;
   create(data: Omit<Activity, 'id' | 'created_at' | 'updated_at'>): Promise<Activity>;
   createMany(data: Omit<Activity, 'id' | 'created_at' | 'updated_at'>[]): Promise<Activity[]>;
   updateBikeId(activityId: string, bikeId: string | null): Promise<void>;

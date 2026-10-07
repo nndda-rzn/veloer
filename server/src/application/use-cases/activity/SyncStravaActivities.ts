@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import type { ActivityRepository } from '../../../domain/repositories/activity/ActivityRepository.js';
 import type { UserProfileRepository } from '../../../domain/repositories/auth/UserProfileRepository.js';
 import type { TrainingPlanRepository } from '../../../domain/repositories/training/TrainingPlanRepository.js';
-import type { StravaPort } from '../../ports/StravaPort.js';
+import type { StravaActivity, StravaPort } from '../../ports/StravaPort.js';
 import { RefreshStravaToken } from '../auth/RefreshStravaToken.js';
 import { GetGoals, RecomputeGoalProgress } from '../goals/GoalUseCases.js';
 import type { Activity } from '../../../domain/entities/activity/Activity.js';
@@ -11,6 +11,8 @@ import {
   STRENGTH_STRAVA_TYPES,
 } from '../../../domain/entities/activity/discipline.js';
 import { computeStrengthTss } from '../../../domain/entities/activity/training-load.js';
+/** Safety cap: 20 pages * 100 per page = 2000 activities on a cold first sync. */
+const MAX_SYNC_PAGES = 20;
 
 export interface SyncResult {
   synced: number;
@@ -63,11 +65,33 @@ export class SyncStravaActivities {
     const profile = await this.profileRepo.findByUserId(userId);
     const ftp = profile?.ftp ?? null;
 
-    // Fetch activities from Strava (last 30 activities, page 1)
-    const stravaActivities = await this.stravaPort.getActivities(token.access_token, {
-      page: 1,
-      perPage: 30,
-    });
+    // Incremental cursor: only pull activities at/after the newest synced ride,
+    // less a 1-hour overlap so late Strava edits to the latest ride are not missed.
+    const latest = await this.activityRepo.findLatestStravaActivityDate(userId);
+    const after = latest ? Math.floor(new Date(latest).getTime() / 1000) - 3600 : undefined;
+
+    const stravaActivities: StravaActivity[] = [];
+    let page = 1;
+    let hitPageCap = false;
+    for (;;) {
+      const batch = await this.stravaPort.getActivities(token.access_token, {
+        page,
+        perPage: 100,
+        after,
+      });
+      stravaActivities.push(...batch);
+      if (batch.length < 100) break;
+      if (page >= MAX_SYNC_PAGES) {
+        hitPageCap = true;
+        break;
+      }
+      page++;
+    }
+    if (hitPageCap) {
+      console.warn(
+        `[sync] Strava pagination stopped at the ${MAX_SYNC_PAGES}-page cap (${stravaActivities.length} activities); older rides remain unsynced until the next run.`,
+      );
+    }
 
     // Keep rides and strength sessions; drop everything else (runs, swims, ...).
     const relevant = stravaActivities.filter(
@@ -75,18 +99,22 @@ export class SyncStravaActivities {
         a.type === 'Ride' || a.type === 'VirtualRide' || STRENGTH_STRAVA_TYPES.includes(a.type),
     );
 
+    // One batch lookup replaces the previous per-activity N+1 findByStravaId call.
+    const existingIds = await this.activityRepo.findExistingStravaIds(relevant.map((a) => a.id));
+
     let synced = 0;
     let skipped = 0;
     let workoutsLinked = 0;
     const toCreate: Omit<Activity, 'id' | 'created_at' | 'updated_at'>[] = [];
 
     for (const sa of relevant) {
-      // Check if already synced
-      const existing = await this.activityRepo.findByStravaId(sa.id);
-      if (existing) {
+      // Skip anything already stored, including duplicates appearing twice in
+      // this batch (e.g. a Strava page boundary repeat).
+      if (existingIds.has(sa.id)) {
         skipped++;
         continue;
       }
+      existingIds.add(sa.id);
 
       const discipline = disciplineForStravaType(sa.type);
       const lthr = profile?.lthr ?? null;

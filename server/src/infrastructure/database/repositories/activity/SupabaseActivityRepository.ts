@@ -90,6 +90,31 @@ export class SupabaseActivityRepository implements ActivityRepository {
     return data as Activity;
   }
 
+  async findExistingStravaIds(stravaIds: number[]): Promise<Set<number>> {
+    if (stravaIds.length === 0) return new Set();
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('activities')
+      .select('strava_id')
+      .in('strava_id', stravaIds);
+    if (error) throw new Error(`Failed to fetch existing strava ids: ${error.message}`);
+    return new Set((data || []).map((row) => row.strava_id as number));
+  }
+
+  async findLatestStravaActivityDate(userId: string): Promise<string | null> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('activities')
+      .select('start_date')
+      .eq('user_id', userId)
+      .not('strava_id', 'is', null)
+      .order('start_date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw new Error(`Failed to fetch latest strava activity date: ${error.message}`);
+    return data?.start_date ?? null;
+  }
+
   async create(data: Omit<Activity, 'id' | 'created_at' | 'updated_at'>): Promise<Activity> {
     const supabase = getSupabaseClient();
     const { data: result, error } = await supabase
