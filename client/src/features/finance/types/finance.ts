@@ -10,6 +10,7 @@ export interface Transaction {
   component_id: string | null;
   event_id: string | null;
   activity_id: string | null;
+  maintenance_log_id: string | null;
   payment_method: string | null;
   merchant: string | null;
   created_at: string;
@@ -43,6 +44,16 @@ export interface TransactionFormData {
   description?: string | null;
   payment_method?: string | null;
   merchant?: string | null;
+}
+
+export interface BudgetStatus {
+  category: Budget['category'];
+  /** IDR limit for the period. */
+  budgetAmount: number;
+  /** IDR expense recorded in the period. */
+  spent: number;
+  /** `spent / budgetAmount * 100`, one decimal; 0 when the limit is 0. */
+  percentage: number;
 }
 
 export interface BudgetFormData {

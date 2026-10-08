@@ -12,6 +12,7 @@ import {
   UpdateBudget,
   DeleteBudget,
   GetBudgets,
+  GetBudgetStatus,
 } from '../../application/use-cases/finance/BudgetUseCases.js';
 
 export class FinanceController {
@@ -119,7 +120,7 @@ export class FinanceController {
     }
     const { id } = req.params;
     const updateBudget = container.resolve(UpdateBudget);
-    const budget = await updateBudget.execute(String(id), req.body);
+    const budget = await updateBudget.execute(String(id), req.user.userId, req.body);
     if (!budget) {
       res.status(404).json({ error: 'Not Found', message: 'Budget not found' });
       return;
@@ -134,11 +135,28 @@ export class FinanceController {
     }
     const { id } = req.params;
     const deleteBudget = container.resolve(DeleteBudget);
-    const deleted = await deleteBudget.execute(String(id));
+    const deleted = await deleteBudget.execute(String(id), req.user.userId);
     if (!deleted) {
       res.status(404).json({ error: 'Not Found', message: 'Budget not found' });
       return;
     }
     res.status(204).send();
+  }
+
+  async getBudgetStatus(req: Request, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    // Default to the current month when the caller omits a range, so the
+    // endpoint is useful on its own (dashboard, scripts) without a query string.
+    const today = new Date().toISOString().slice(0, 10);
+    const { startDate, endDate } = req.query;
+    const start = startDate ? String(startDate) : `${today.slice(0, 7)}-01`;
+    const end = endDate ? String(endDate) : today;
+
+    const getBudgetStatus = container.resolve(GetBudgetStatus);
+    const status = await getBudgetStatus.execute(req.user.userId, start, end);
+    res.json(status);
   }
 }

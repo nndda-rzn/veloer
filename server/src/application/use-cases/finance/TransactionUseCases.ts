@@ -1,3 +1,5 @@
+import { assertPositiveAmount, ValidationError } from './ValidationError.js';
+
 import { inject, injectable } from 'tsyringe';
 import type { TransactionRepository } from '../../../domain/repositories/finance/TransactionRepository.js';
 import type { Transaction } from '../../../domain/entities/finance/Transaction.js';
@@ -22,6 +24,9 @@ export class AddTransaction {
   constructor(@inject('TransactionRepository') private txRepo: TransactionRepository) {}
 
   async execute(userId: string, input: TransactionInput): Promise<Transaction> {
+    assertPositiveAmount(input.amount);
+    if (!input.date) throw new ValidationError('date is required');
+
     const payload: Omit<Transaction, 'id' | 'created_at' | 'updated_at'> = {
       user_id: userId,
       type: input.type,
