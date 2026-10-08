@@ -1,28 +1,17 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import type { FinanceSummary } from '../types/finance';
-import { formatIDR } from '@/shared/lib/utils';
+import { formatIDR, formatEnumLabel } from '@/shared/lib/utils';
+import { CATEGORY_LABELS } from '../lib/finance-meta';
+import { useFinanceColors } from '../lib/use-finance-colors';
+import type { Transaction } from '../types/finance';
 
 interface CategoryChartProps {
   summary: FinanceSummary | null;
 }
 
-const categoryColors: Record<string, string> = {
-  gear: '#0f6e4e',
-  maintenance: '#b91c1c',
-  event: '#6d28d9',
-  nutrition: '#047857',
-  other: '#c2410c',
-};
-
-const categoryLabels: Record<string, string> = {
-  gear: 'Gear',
-  maintenance: 'Maintenance',
-  event: 'Event',
-  nutrition: 'Nutrition',
-  other: 'Other',
-};
-
 export function CategoryChart({ summary }: CategoryChartProps) {
+  const colors = useFinanceColors();
+
   if (!summary || Object.keys(summary.byCategory).length === 0) {
     return (
       <div className="flex h-64 items-center justify-center rounded-xl border border-border bg-card">
@@ -32,9 +21,9 @@ export function CategoryChart({ summary }: CategoryChartProps) {
   }
 
   const chartData = Object.entries(summary.byCategory).map(([category, amount]) => ({
-    name: categoryLabels[category] || category,
+    name: CATEGORY_LABELS[category as Transaction['category']] ?? formatEnumLabel(category),
     value: amount,
-    color: categoryColors[category] || '#78716c',
+    color: colors.byCategory[category as Transaction['category']] ?? colors.axis,
   }));
 
   return (

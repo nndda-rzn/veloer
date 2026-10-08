@@ -1,4 +1,4 @@
-import type { Transaction, Budget } from '../../entities/finance/Transaction.js';
+import type { Transaction, Budget, BudgetStatus } from '../../entities/finance/Transaction.js';
 
 export interface TransactionRepository {
   findByUserId(
@@ -30,4 +30,6 @@ export interface BudgetRepository {
   create(data: Omit<Budget, 'id' | 'created_at' | 'updated_at'>): Promise<Budget>;
   update(id: string, data: Partial<Budget>): Promise<Budget | null>;
   delete(id: string): Promise<void>;
+  /** Active budgets paired with the expense recorded in each one's window. */
+  getStatus(userId: string, startDate: string, endDate: string): Promise<BudgetStatus[]>;
 }

@@ -143,10 +143,10 @@ Tracking pengeluaran terkait sepeda dengan budget bulanan & laporan.
 ### Fitur
 
 - **Transactions**: Pemasukan & pengeluaran (gear, maintenance, event, nutrition, other)
-- **Budget**: Set budget bulanan/tahunan per kategori
-- **Budget progress**: Visual progress bar budget vs actual spending
-- **Summary**: Total spending per bulan/tahun, breakdown per kategori
-- **Charts**: Pie chart kategori, bar chart bulanan
+- **Budget**: Set budget bulanan/tahunan per kategori (gear, maintenance, event, nutrition, other, atau `total`)
+- **Budget progress**: Progress bar budget vs actual spending per kategori, dengan warna peringatan saat mendekati/melewati limit
+- **Summary**: Total spending per bulan/tahun, breakdown per kategori, filter rentang tanggal (bulan ini / tahun ini / semua)
+- **Charts**: Pie chart kategori + bar chart tren pengeluaran 6 bulan terakhir
 - **Link ke modul lain**: Transaction bisa terlink ke bike, component, event, activity
 
 ### Kategori Transaction
@@ -168,18 +168,18 @@ Tracking pengeluaran terkait sepeda dengan budget bulanan & laporan.
 ### Endpoint API
 
 ```
-GET    /api/transactions          # List dengan filter (date, category, type)
-POST   /api/transactions          # Tambah transaction
-PUT    /api/transactions/:id      # Update
-DELETE /api/transactions/:id      # Hapus
+GET    /api/finance/transactions          # List dengan filter (date, category, type)
+POST   /api/finance/transactions          # Tambah transaction
+PATCH  /api/finance/transactions/:id      # Update
+DELETE /api/finance/transactions/:id      # Hapus
 
-GET    /api/budgets               # List budget
-POST   /api/budgets               # Tambah budget
-PUT    /api/budgets/:id           # Update
-DELETE /api/budgets/:id           # Hapus
+GET    /api/finance/budgets               # List budget
+POST   /api/finance/budgets               # Tambah budget
+PATCH  /api/finance/budgets/:id           # Update
+DELETE /api/finance/budgets/:id           # Hapus
 
-GET    /api/finance/summary       # Summary per periode
-GET    /api/finance/budget-status # Budget vs actual per kategori
+GET    /api/finance/summary               # Summary per periode
+GET    /api/finance/budget-status         # Budget vs actual per kategori
 ```
 
 ---

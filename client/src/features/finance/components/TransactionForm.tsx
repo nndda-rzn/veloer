@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { TransactionFormData } from '../types/finance';
+import type { Transaction, TransactionFormData } from '../types/finance';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { selectClass } from '@/shared/lib/form-styles';
 
 interface TransactionFormProps {
+  /** When set, the dialog edits this transaction instead of creating one. */
+  transaction?: Transaction | null;
   onSubmit: (data: TransactionFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -19,16 +21,28 @@ const categories: { value: string; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
-  const [formData, setFormData] = useState<TransactionFormData>({
-    type: 'expense',
-    category: 'gear',
-    amount: 0,
-    date: new Date().toISOString().slice(0, 10),
-    description: '',
-    payment_method: '',
-    merchant: '',
-  });
+export function TransactionForm({ transaction, onSubmit, onCancel }: TransactionFormProps) {
+  const [formData, setFormData] = useState<TransactionFormData>(() =>
+    transaction
+      ? {
+          type: transaction.type,
+          category: transaction.category,
+          amount: transaction.amount,
+          date: transaction.date,
+          description: transaction.description ?? '',
+          payment_method: transaction.payment_method ?? '',
+          merchant: transaction.merchant ?? '',
+        }
+      : {
+          type: 'expense',
+          category: 'gear',
+          amount: 0,
+          date: new Date().toISOString().slice(0, 10),
+          description: '',
+          payment_method: '',
+          merchant: '',
+        },
+  );
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +64,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
     <Dialog open onOpenChange={(open) => !open && onCancel()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogTitle>{transaction ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -150,7 +164,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
               Cancel
             </Button>
             <Button type="submit" loading={saving}>
-              {saving ? 'Saving…' : 'Add'}
+              {saving ? 'Saving…' : transaction ? 'Save' : 'Add'}
             </Button>
           </div>
         </form>

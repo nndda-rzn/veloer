@@ -24,6 +24,10 @@ router.get('/summary', authMiddleware, (req, res, next) => {
   void controller.getSummary(req, res).catch(next);
 });
 
+router.get('/budget-status', authMiddleware, (req, res, next) => {
+  void controller.getBudgetStatus(req, res).catch(next);
+});
+
 // Budgets
 router.get('/budgets', authMiddleware, (req, res, next) => {
   void controller.listBudgets(req, res).catch(next);

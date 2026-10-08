@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { Transaction } from '../types/finance';
 import { formatIDR, formatDate } from '@/shared/lib/utils';
+import { CATEGORY_LABELS } from '../lib/finance-meta';
 import { useTableControls } from '@/shared/lib/useTableControls';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -20,19 +21,11 @@ interface TransactionListProps {
   transactions: Transaction[];
   loading: boolean;
   onDelete: (tx: Transaction) => void;
+  onEdit: (tx: Transaction) => void;
 }
 
-const categoryLabels: Record<Transaction['category'], string> = {
-  gear: 'Gear',
-  maintenance: 'Maintenance',
-  event: 'Event',
-  nutrition: 'Nutrition',
-  other: 'Other',
-};
-
 type SortKey = 'date' | 'description' | 'category' | 'amount';
-
-export function TransactionList({ transactions, loading, onDelete }: TransactionListProps) {
+export function TransactionList({ transactions, loading, onDelete, onEdit }: TransactionListProps) {
   const [category, setCategory] = useState<'all' | Transaction['category']>('all');
   const [type, setType] = useState<'all' | Transaction['type']>('all');
 
@@ -105,7 +98,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
         className={`${selectClass} h-9 w-auto`}
       >
         <option value="all">All categories</option>
-        {Object.entries(categoryLabels).map(([value, label]) => (
+        {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
           <option key={value} value={value}>
             {label}
           </option>
@@ -178,7 +171,7 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
                   {tx.description || tx.merchant || '–'}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="neutral">{categoryLabels[tx.category]}</Badge>
+                  <Badge variant="neutral">{CATEGORY_LABELS[tx.category]}</Badge>
                 </TableCell>
                 <TableCell
                   className={`whitespace-nowrap text-right text-sm font-medium tabular-nums ${
@@ -189,6 +182,9 @@ export function TransactionList({ transactions, loading, onDelete }: Transaction
                   {formatIDR(tx.amount)}
                 </TableCell>
                 <TableCell className="text-right">
+                  <Button variant="ghost" size="sm" onClick={() => onEdit(tx)}>
+                    Edit
+                  </Button>
                   <Button variant="ghost" size="sm" onClick={() => onDelete(tx)}>
                     Delete
                   </Button>

@@ -30,3 +30,14 @@ export interface Budget {
   created_at: string;
   updated_at: string;
 }
+
+/** A budget compared against the expense recorded in its active window. */
+export interface BudgetStatus {
+  category: Budget['category'];
+  /** IDR limit for the period. */
+  budgetAmount: number;
+  /** IDR expense recorded in the period. */
+  spent: number;
+  /** `spent / budgetAmount * 100`, one decimal; 0 when the limit is 0. */
+  percentage: number;
+}

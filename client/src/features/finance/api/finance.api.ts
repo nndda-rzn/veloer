@@ -2,6 +2,7 @@ import { apiClient } from '@/shared/lib/api-client';
 import type {
   Transaction,
   Budget,
+  BudgetStatus,
   FinanceSummary,
   TransactionFormData,
   BudgetFormData,
@@ -68,5 +69,13 @@ export const financeApi = {
 
   async deleteBudget(id: string): Promise<void> {
     await apiClient.delete(`/api/finance/budgets/${id}`);
+  },
+
+  // Budget status (budget vs actual spend for a period)
+  async getBudgetStatus(startDate: string, endDate: string): Promise<BudgetStatus[]> {
+    const { data } = await apiClient.get<BudgetStatus[]>('/api/finance/budget-status', {
+      params: { startDate, endDate },
+    });
+    return data;
   },
 };
